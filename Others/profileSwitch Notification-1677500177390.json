@@ -1,0 +1,1904 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": 166,
+  "links": [],
+  "panels": [
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": true,
+      "colors": [
+        "#37872D",
+        "#37872D",
+        "#37872D"
+      ],
+      "datasource": "OL-GC",
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "options": {},
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "count(distinct a.tracking_message_header)",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "select  count(distinct a.tracking_message_header) from\n(\nselect tracking_message_header, \nfrom_unixtime(log_time) as log_time,\nmessage from gmonstar_orchestration_1_8.audit_log\n where is_successful = 1\n and message  like \"%/profileSwitch%\" \n and value like \"%profileSwitchState:Begun%\"\nand tracking_message_header in \n(\nselect tracking_message_header \n from gmonstar_orchestration_1_8.audit_log where parent_api_name = \"UpdateSimProfile\"\n and  $__unixEpochFilter(log_time)))a\n \ninner join\n(\nselect tracking_message_header from \n(\nselect tracking_message_header , substring_index(substring_index(value,'|#@|',1),'|#@|',1) as imsi\n from gmonstar_orchestration_1_8.audit_log where parent_api_name = \"UpdateSimProfile\"\n and   $__unixEpochFilter(log_time) )d\nwhere d.imsi = \"AE\")b\nON a.tracking_message_header = b.tracking_message_header",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "UAE Profile Switch Begun Success",
+      "type": "singlestat",
+      "valueFontSize": "80%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "avg"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": true,
+      "colors": [
+        "#C4162A",
+        "#C4162A",
+        "#C4162A"
+      ],
+      "datasource": "OL-GC",
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 4,
+        "y": 0
+      },
+      "id": 7,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "options": {},
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "count(distinct a.tracking_message_header)",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "select  count(distinct a.tracking_message_header) from\n(\nselect tracking_message_header, \nfrom_unixtime(log_time) as log_time,\nvalue,\nmessage from gmonstar_orchestration_1_8.audit_log\n where is_successful = 0 and\n message like \"%/profileSwitch%\"\n and value like \"%profileSwitchState:Begun%\"\n-- orderExpired\nand tracking_message_header in \n(\nselect tracking_message_header \n from gmonstar_orchestration_1_8.audit_log where parent_api_name = \"UpdateSimProfile\"\n and  $__unixEpochFilter(log_time)))a\n \ninner join\n(\nselect tracking_message_header, d.imsi from \n(\nselect tracking_message_header , substring_index(substring_index(value,'|#@|',1),'|#@|',1) as imsi\n from gmonstar_orchestration_1_8.audit_log where parent_api_name = \"UpdateSimProfile\"\n and   $__unixEpochFilter(log_time) )d\nwhere d.imsi = \"AE\")b\nON a.tracking_message_header = b.tracking_message_header",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "id"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "kafka_offset_manager",
+          "timeColumn": "processed_timestamp",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "UAE Profile Switch Begun Failure",
+      "type": "singlestat",
+      "valueFontSize": "80%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "avg"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": true,
+      "colors": [
+        "#1F60C4",
+        "#1F60C4",
+        "#1F60C4"
+      ],
+      "datasource": "OL-GC",
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 8,
+        "y": 0
+      },
+      "id": 8,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "options": {},
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "count(distinct a.tracking_message_header)",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "hide": true,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "select  count(b.imsi) from\n(\nselect log_id, imsi from \n(\nselect log_id , substring_index(substring_index(value,'|#@|',-4),'|#@|',1) as imsi\n from gmonstar_notification_engine_1_8.notification_audit_log where parent_api_name = 'OrderExpired' and is_successful IN (0, 1)\n and   $__unixEpochFilter(log_time) )d\nwhere d.imsi like '42402%')b",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "id"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "kafka_offset_manager",
+          "timeColumn": "processed_timestamp",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        },
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "select  count(distinct a.tracking_message_header) from\n(\nselect tracking_message_header, \nfrom_unixtime(log_time) as log_time,\nmessage from gmonstar_orchestration_1_8.audit_log\nwhere \n  message like \"%/profileSwitch%\"\n  and value like \"%profileSwitchState:Begun%\"\nand tracking_message_header in \n(\nselect tracking_message_header \n from gmonstar_orchestration_1_8.audit_log where parent_api_name = \"UpdateSimProfile\"\n and  $__unixEpochFilter(log_time)))a\n \ninner join\n(\nselect tracking_message_header, d.imsi from \n(\nselect tracking_message_header , substring_index(substring_index(value,'|#@|',1),'|#@|',1) as imsi\n from gmonstar_orchestration_1_8.audit_log where parent_api_name = \"UpdateSimProfile\"\n and   $__unixEpochFilter(log_time) )d\nwhere d.imsi = \"AE\")b\nON a.tracking_message_header = b.tracking_message_header\n",
+          "refId": "B",
+          "select": [
+            [
+              {
+                "params": [
+                  "id"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "kafka_offset_manager",
+          "timeColumn": "processed_timestamp",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        },
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "select  count(distinct a.tracking_message_header) from\n(\nselect tracking_message_header, \nfrom_unixtime(log_time) as log_time,\nmessage from gmonstar_orchestration_1_8.audit_log\nwhere \n  is_successful IN (1,0)\n and message  like \"%/profileSwitch%\" \n and value like \"%profileSwitchState:Completed%\"\n\nand tracking_message_header in \n(\nselect tracking_message_header \n from gmonstar_orchestration_1_8.audit_log where parent_api_name = \"UpdateSimProfile\"\n and  $__unixEpochFilter(log_time)))a\n \ninner join\n(\nselect tracking_message_header, d.imsi from \n(\nselect tracking_message_header , substring_index(substring_index(value,'|#@|',1),'|#@|',1) as imsi\n from gmonstar_orchestration_1_8.audit_log where parent_api_name = \"UpdateSimProfile\"\n and   $__unixEpochFilter(log_time) )d\nwhere d.imsi = \"AE\")b\nON a.tracking_message_header = b.tracking_message_header\n",
+          "refId": "C",
+          "select": [
+            [
+              {
+                "params": [
+                  "id"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "kafka_offset_manager",
+          "timeColumn": "processed_timestamp",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "UAE Profile Switch Begun Total",
+      "type": "singlestat",
+      "valueFontSize": "80%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "avg"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": true,
+      "colors": [
+        "#37872D",
+        "#37872D",
+        "#37872D"
+      ],
+      "datasource": "OL-GC",
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 12,
+        "y": 0
+      },
+      "id": 14,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "options": {},
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "count(distinct a.tracking_message_header)",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "hide": true,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "select  count(distinct a.tracking_message_header) from\n(\nselect tracking_message_header, \nfrom_unixtime(log_time) as log_time,\nmessage from gmonstar_orchestration_1_8.audit_log\n where is_successful = 1\n and message  like \"%/profileSwitch%\" \n and value like \"%profileSwitchState:Begun%\"\nand tracking_message_header in \n(\nselect tracking_message_header \n from gmonstar_orchestration_1_8.audit_log where parent_api_name = \"UpdateSimProfile\"\n and  $__unixEpochFilter(log_time)))a\n \ninner join\n(\nselect tracking_message_header from \n(\nselect tracking_message_header , substring_index(substring_index(value,'|#@|',1),'|#@|',1) as imsi\n from gmonstar_orchestration_1_8.audit_log where parent_api_name = \"UpdateSimProfile\"\n and   $__unixEpochFilter(log_time) )d\nwhere d.imsi = \"KW\")b\nON a.tracking_message_header = b.tracking_message_header",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "id"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "kafka_offset_manager",
+          "timeColumn": "processed_timestamp",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        },
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "select  count(distinct a.tracking_message_header) from\n(\nselect tracking_message_header, \nfrom_unixtime(log_time) as log_time,\nmessage from gmonstar_orchestration_1_8.audit_log\n where is_successful = 1\n \n and value like \"%profileSwitchState:Begun%\"\nand tracking_message_header in \n(\nselect tracking_message_header \n from gmonstar_orchestration_1_8.audit_log where parent_api_name = \"UpdateSimProfile\"\n and  $__unixEpochFilter(log_time)))a\n \ninner join\n(\nselect tracking_message_header from \n(\nselect tracking_message_header , substring_index(substring_index(value,'|#@|',1),'|#@|',1) as imsi\n from gmonstar_orchestration_1_8.audit_log where parent_api_name = \"UpdateSimProfile\"\n and   $__unixEpochFilter(log_time) )d\nwhere d.imsi = \"KW\")b\nON a.tracking_message_header = b.tracking_message_header",
+          "refId": "B",
+          "select": [
+            [
+              {
+                "params": [
+                  "id"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "kafka_offset_manager",
+          "timeColumn": "processed_timestamp",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Kuwait Profile Switch Begun Success",
+      "type": "singlestat",
+      "valueFontSize": "80%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "avg"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": true,
+      "colors": [
+        "#C4162A",
+        "#C4162A",
+        "#C4162A"
+      ],
+      "datasource": "OL-GC",
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 16,
+        "y": 0
+      },
+      "id": 16,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "options": {},
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "count(distinct a.tracking_message_header)",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "hide": true,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "select  count(distinct a.tracking_message_header) from\n(\nselect tracking_message_header, \nfrom_unixtime(log_time) as log_time,\nvalue,\nmessage from gmonstar_orchestration_1_8.audit_log\n where is_successful = 0 and\nmessage like \"%/profileSwitch%\"\n and value like \"%profileSwitchState:Begun%\"\n-- orderExpired\nand tracking_message_header in \n(\nselect tracking_message_header \n from gmonstar_orchestration_1_8.audit_log where parent_api_name = \"UpdateSimProfile\"\n and  $__unixEpochFilter(log_time)))a\n \ninner join\n(\nselect tracking_message_header, d.imsi from \n(\nselect tracking_message_header , substring_index(substring_index(value,'|#@|',1),'|#@|',1) as imsi\n from gmonstar_orchestration_1_8.audit_log where parent_api_name = \"UpdateSimProfile\"\n and   $__unixEpochFilter(log_time) )d\nwhere d.imsi = \"KW\")b\nON a.tracking_message_header = b.tracking_message_header",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "id"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "kafka_offset_manager",
+          "timeColumn": "processed_timestamp",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        },
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "select  count(distinct a.tracking_message_header) from\n(\nselect tracking_message_header, \nfrom_unixtime(log_time) as log_time,\nmessage from gmonstar_orchestration_1_8.audit_log\n where is_successful = 0\n\n and value like \"%profileSwitchState:Begun%\"\nand tracking_message_header in \n(\nselect tracking_message_header \n from gmonstar_orchestration_1_8.audit_log where parent_api_name = \"UpdateSimProfile\"\n and  $__unixEpochFilter(log_time)))a\n \ninner join\n(\nselect tracking_message_header from \n(\nselect tracking_message_header , substring_index(substring_index(value,'|#@|',1),'|#@|',1) as imsi\n from gmonstar_orchestration_1_8.audit_log where parent_api_name = \"UpdateSimProfile\"\n and   $__unixEpochFilter(log_time) )d\nwhere d.imsi = \"KW\")b\nON a.tracking_message_header = b.tracking_message_header\n",
+          "refId": "B",
+          "select": [
+            [
+              {
+                "params": [
+                  "id"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "kafka_offset_manager",
+          "timeColumn": "processed_timestamp",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Kuwait Profile Switch Begun failure",
+      "type": "singlestat",
+      "valueFontSize": "80%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "avg"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": true,
+      "colors": [
+        "#1F60C4",
+        "#1F60C4",
+        "#1F60C4"
+      ],
+      "datasource": "OL-GC",
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 20,
+        "y": 0
+      },
+      "id": 18,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "options": {},
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "count(distinct a.tracking_message_header)",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "hide": true,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "select  count(b.imsi) from\n\n(\nselect log_id, d.imsi from \n(\nselect log_id , substring_index(substring_index(value,'|#@|',-4),'|#@|',1) as imsi\n from gmonstar_notification_engine_1_8.notification_audit_log where parent_api_name = 'OrderExpired'\n and   $__unixEpochFilter(log_time) )d\nwhere d.imsi like '41904%')b\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "id"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "kafka_offset_manager",
+          "timeColumn": "processed_timestamp",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        },
+        {
+          "format": "table",
+          "group": [],
+          "hide": true,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "select  count(b.imsi) from\n(select log_id, \nfrom_unixtime(log_time) as log_time,\nlog_description from gmonstar_notification_engine_1_8.notification_audit_log\n where is_successful IN (1, 0)\n and log_description like \"%orderExpired%\"  -- orderExpired\nand log_id in (select log_id \n from gmonstar_notification_engine_1_8.notification_audit_log where parent_api_name = 'OrderExpired'\n and  $__unixEpochFilter(log_time)))a\n \ninner join\n(\nselect log_id, d.imsi from \n(\nselect log_id , substring_index(substring_index(value,'|#@|',-4),'|#@|',1) as imsi\n from gmonstar_notification_engine_1_8.notification_audit_log where parent_api_name = 'OrderExpired'\n and   $__unixEpochFilter(log_time) )d\nwhere d.imsi like '41904%')b\nON a.log_id = b.log_id\n",
+          "refId": "B",
+          "select": [
+            [
+              {
+                "params": [
+                  "id"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "kafka_offset_manager",
+          "timeColumn": "processed_timestamp",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        },
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "select  count(distinct a.tracking_message_header) from\n(\nselect tracking_message_header, \nfrom_unixtime(log_time) as log_time,\nmessage from gmonstar_orchestration_1_8.audit_log\nwhere\n-- is_successful IN (0, 1) and\n   message like \"%/profileSwitch%\"\n   and value like \"%profileSwitchState:Begun%\"\nand tracking_message_header in \n(\nselect tracking_message_header \n from gmonstar_orchestration_1_8.audit_log where parent_api_name = \"UpdateSimProfile\"\n and  $__unixEpochFilter(log_time)))a\n \ninner join\n(\nselect tracking_message_header, d.imsi from \n(\nselect tracking_message_header , substring_index(substring_index(value,'|#@|',1),'|#@|',1) as imsi\n from gmonstar_orchestration_1_8.audit_log where parent_api_name = \"UpdateSimProfile\"\n and   $__unixEpochFilter(log_time) )d\nwhere d.imsi = \"KW\")b\nON a.tracking_message_header = b.tracking_message_header\n",
+          "refId": "C",
+          "select": [
+            [
+              {
+                "params": [
+                  "id"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "kafka_offset_manager",
+          "timeColumn": "processed_timestamp",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Kuwait Profile Switch Begun Total",
+      "type": "singlestat",
+      "valueFontSize": "80%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "avg"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": true,
+      "colors": [
+        "#37872D",
+        "#37872D",
+        "#37872D"
+      ],
+      "datasource": "OL-GC",
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 0,
+        "y": 4
+      },
+      "id": 23,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "options": {},
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "count(distinct a.tracking_message_header)",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "select  count(distinct a.tracking_message_header) from\n(\nselect distinct tracking_message_header, \nfrom_unixtime(log_time) as log_time,\nmessage from gmonstar_orchestration_1_8.audit_log\n where is_successful = 1\n and message  like \"%/profileSwitch%\" \n and value like \"%profileSwitchState:Completed%\"\nand tracking_message_header in \n(\nselect tracking_message_header \n from gmonstar_orchestration_1_8.audit_log where parent_api_name = \"UpdateSimProfile\"\n and  $__unixEpochFilter(log_time)))a\n \ninner join\n(\nselect tracking_message_header from \n(\nselect tracking_message_header , substring_index(substring_index(value,'|#@|',1),'|#@|',1) as imsi\n from gmonstar_orchestration_1_8.audit_log where parent_api_name = \"UpdateSimProfile\"\n and   $__unixEpochFilter(log_time) )d\nwhere d.imsi = \"AE\")b\nON a.tracking_message_header = b.tracking_message_header",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "UAE Profile Switch Complete Success",
+      "type": "singlestat",
+      "valueFontSize": "80%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "avg"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": true,
+      "colors": [
+        "#C4162A",
+        "#C4162A",
+        "#C4162A"
+      ],
+      "datasource": "OL-GC",
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 4,
+        "y": 4
+      },
+      "id": 24,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "options": {},
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "count(distinct a.tracking_message_header)",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "select  count(distinct a.tracking_message_header) from\n(\nselect tracking_message_header, \nfrom_unixtime(log_time) as log_time,\nvalue,\nmessage from gmonstar_orchestration_1_8.audit_log\n where is_successful = 0 and\nmessage like \"%/profileSwitch%\"\n and value like \"%profileSwitchState:Complete%\"\n-- orderExpired\nand tracking_message_header in \n(\nselect tracking_message_header \n from gmonstar_orchestration_1_8.audit_log where parent_api_name = \"UpdateSimProfile\"\n and  $__unixEpochFilter(log_time)))a\n \ninner join\n(\nselect tracking_message_header, d.imsi from \n(\nselect tracking_message_header , substring_index(substring_index(value,'|#@|',1),'|#@|',1) as imsi\n from gmonstar_orchestration_1_8.audit_log where parent_api_name = \"UpdateSimProfile\"\n and   $__unixEpochFilter(log_time) )d\nwhere d.imsi = \"AE\")b\nON a.tracking_message_header = b.tracking_message_header",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "id"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "kafka_offset_manager",
+          "timeColumn": "processed_timestamp",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "UAE Profile Switch Complete Failure",
+      "type": "singlestat",
+      "valueFontSize": "80%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "avg"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": true,
+      "colors": [
+        "#1F60C4",
+        "#1F60C4",
+        "#1F60C4"
+      ],
+      "datasource": "OL-GC",
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 8,
+        "y": 4
+      },
+      "id": 27,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "options": {},
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "count(distinct a.tracking_message_header)",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "hide": true,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "select  count(b.imsi) from\n(\nselect log_id, imsi from \n(\nselect log_id , substring_index(substring_index(value,'|#@|',-4),'|#@|',1) as imsi\n from gmonstar_notification_engine_1_8.notification_audit_log where parent_api_name = 'OrderExpired' and is_successful IN (0, 1)\n and   $__unixEpochFilter(log_time) )d\nwhere d.imsi like '42402%')b",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "id"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "kafka_offset_manager",
+          "timeColumn": "processed_timestamp",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        },
+        {
+          "format": "table",
+          "group": [],
+          "hide": true,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "select  count(distinct a.tracking_message_header) from\n(\nselect tracking_message_header, \nfrom_unixtime(log_time) as log_time,\nmessage from gmonstar_orchestration_1_8.audit_log\n where -- is_successful IN (1, 0) and\n  message like \"%/profileSwitch%\" -- orderExpired\nand tracking_message_header in \n(\nselect tracking_message_header \n from gmonstar_orchestration_1_8.audit_log where parent_api_name = \"UpdateSimProfile\"\n and  $__unixEpochFilter(log_time)))a\n \ninner join\n(\nselect tracking_message_header, d.imsi from \n(\nselect tracking_message_header , substring_index(substring_index(value,'|#@|',1),'|#@|',1) as imsi\n from gmonstar_orchestration_1_8.audit_log where parent_api_name = \"UpdateSimProfile\"\n and   $__unixEpochFilter(log_time) )d\nwhere d.imsi = \"AE\")b\nON a.tracking_message_header = b.tracking_message_header\n",
+          "refId": "B",
+          "select": [
+            [
+              {
+                "params": [
+                  "id"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "kafka_offset_manager",
+          "timeColumn": "processed_timestamp",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        },
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "select  count(distinct a.tracking_message_header) from\n(\nselect tracking_message_header, \nfrom_unixtime(log_time) as log_time,\nmessage from gmonstar_orchestration_1_8.audit_log\n where -- is_successful IN (1, 0) and\n  message like \"%/profileSwitch%\" -- orderExpired\n  and value like \"%profileSwitchState:Completed%\"\nand tracking_message_header in \n(\nselect tracking_message_header \n from gmonstar_orchestration_1_8.audit_log where parent_api_name = \"UpdateSimProfile\"\n and  $__unixEpochFilter(log_time)))a\n \ninner join\n(\nselect tracking_message_header, d.imsi from \n(\nselect tracking_message_header , substring_index(substring_index(value,'|#@|',1),'|#@|',1) as imsi\n from gmonstar_orchestration_1_8.audit_log where parent_api_name = \"UpdateSimProfile\"\n and   $__unixEpochFilter(log_time) )d\nwhere d.imsi = \"AE\")b\nON a.tracking_message_header = b.tracking_message_header\n",
+          "refId": "C",
+          "select": [
+            [
+              {
+                "params": [
+                  "id"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "kafka_offset_manager",
+          "timeColumn": "processed_timestamp",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "UAE Profile Switch Completed Total",
+      "type": "singlestat",
+      "valueFontSize": "80%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "avg"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": true,
+      "colors": [
+        "#37872D",
+        "#37872D",
+        "#37872D"
+      ],
+      "datasource": "OL-GC",
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 12,
+        "y": 4
+      },
+      "id": 25,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "options": {},
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "count(distinct a.tracking_message_header)",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "select  count(distinct a.tracking_message_header) from\n(\nselect tracking_message_header, \nfrom_unixtime(log_time) as log_time,\nmessage from gmonstar_orchestration_1_8.audit_log\n where is_successful = 1\n and message  like \"%Notification Sent Successfully Toward GM. [/profileSwitch]%\" \n and value like \"%profileSwitchState:Completed%\"\nand tracking_message_header in \n(\nselect tracking_message_header \n from gmonstar_orchestration_1_8.audit_log where parent_api_name = \"UpdateSimProfile\"\n and  $__unixEpochFilter(log_time)))a\n \ninner join\n(\nselect tracking_message_header from \n(\nselect tracking_message_header , substring_index(substring_index(value,'|#@|',1),'|#@|',1) as imsi\n from gmonstar_orchestration_1_8.audit_log where parent_api_name = \"UpdateSimProfile\"\n and   $__unixEpochFilter(log_time) )d\nwhere d.imsi = \"KW\")b\nON a.tracking_message_header = b.tracking_message_header",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "id"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "kafka_offset_manager",
+          "timeColumn": "processed_timestamp",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Kuwait Profile Switch Completed Success",
+      "type": "singlestat",
+      "valueFontSize": "80%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "avg"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": true,
+      "colors": [
+        "#C4162A",
+        "#C4162A",
+        "#C4162A"
+      ],
+      "datasource": "OL-GC",
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 16,
+        "y": 4
+      },
+      "id": 26,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "options": {},
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "count(distinct a.tracking_message_header)",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "select  count(distinct a.tracking_message_header) from\n(\nselect tracking_message_header, \nfrom_unixtime(log_time) as log_time,\nvalue,\nmessage from gmonstar_orchestration_1_8.audit_log\n where is_successful = 0 and\nmessage like \"%/profileSwitch%\"\n and value like \"%profileSwitchState:Completed%\"\n-- orderExpired\nand tracking_message_header in \n(\nselect tracking_message_header \n from gmonstar_orchestration_1_8.audit_log where parent_api_name = \"UpdateSimProfile\"\n and  $__unixEpochFilter(log_time)))a\n \ninner join\n(\nselect tracking_message_header, d.imsi from \n(\nselect tracking_message_header , substring_index(substring_index(value,'|#@|',1),'|#@|',1) as imsi\n from gmonstar_orchestration_1_8.audit_log where parent_api_name = \"UpdateSimProfile\"\n and   $__unixEpochFilter(log_time) )d\nwhere d.imsi = \"KW\")b\nON a.tracking_message_header = b.tracking_message_header",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "id"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "kafka_offset_manager",
+          "timeColumn": "processed_timestamp",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Kuwait Profile Switch Complete failure",
+      "type": "singlestat",
+      "valueFontSize": "80%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "avg"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": true,
+      "colors": [
+        "#1F60C4",
+        "#1F60C4",
+        "#1F60C4"
+      ],
+      "datasource": "OL-GC",
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 20,
+        "y": 4
+      },
+      "id": 28,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "options": {},
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "count(distinct a.tracking_message_header)",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "select  count(distinct a.tracking_message_header) from\n(\nselect tracking_message_header, \nfrom_unixtime(log_time) as log_time,\nmessage from gmonstar_orchestration_1_8.audit_log\n where \n-- is_successful IN (1, 0) and\n  message like \"%/profileSwitch%\"\n   and value like \"%profileSwitchState:Completed%\"\nand tracking_message_header in \n(\nselect tracking_message_header \n from gmonstar_orchestration_1_8.audit_log where parent_api_name = \"UpdateSimProfile\"\n and  $__unixEpochFilter(log_time)))a\n \ninner join\n(\nselect tracking_message_header, d.imsi from \n(\nselect tracking_message_header , substring_index(substring_index(value,'|#@|',1),'|#@|',1) as imsi\n from gmonstar_orchestration_1_8.audit_log where parent_api_name = \"UpdateSimProfile\"\n and   $__unixEpochFilter(log_time) )d\nwhere d.imsi = \"KW\")b\nON a.tracking_message_header = b.tracking_message_header\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "id"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "kafka_offset_manager",
+          "timeColumn": "processed_timestamp",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Kuwait Profile Switch Complete Total ",
+      "type": "singlestat",
+      "valueFontSize": "80%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "avg"
+    },
+    {
+      "columns": [],
+      "datasource": "OL-GC",
+      "fontSize": "100%",
+      "gridPos": {
+        "h": 13,
+        "w": 12,
+        "x": 0,
+        "y": 8
+      },
+      "id": 10,
+      "links": [],
+      "options": {},
+      "pageSize": 5,
+      "scroll": false,
+      "showHeader": true,
+      "sort": {
+        "col": null,
+        "desc": false
+      },
+      "styles": [
+        {
+          "alias": "Time",
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "pattern": "log_time",
+          "type": "date"
+        },
+        {
+          "alias": "",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "decimals": 2,
+          "pattern": "/.*/",
+          "thresholds": [],
+          "type": "string",
+          "unit": "short"
+        }
+      ],
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "hide": true,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "select   a.* from\n(\nselect tracking_message_header, \nfrom_unixtime(log_time) as log_time,\nsubstring_index(substring_index(value,\"profileSwitchState:\",-1),\",\",1) as \"profileSwitchState\",\nmessage from gmonstar_orchestration_1_8.audit_log\n where is_successful = 0 and\nmessage like \"%/profileSwitch%\" -- orderExpired\nand tracking_message_header in \n(\nselect tracking_message_header \n from gmonstar_orchestration_1_8.audit_log where parent_api_name = \"UpdateSimProfile\"\n and  $__unixEpochFilter(log_time)))a\n \ninner join\n(\nselect tracking_message_header, d.imsi from \n(\nselect tracking_message_header , substring_index(substring_index(value,'|#@|',1),'|#@|',1) as imsi\n from gmonstar_orchestration_1_8.audit_log where parent_api_name = \"UpdateSimProfile\"\n and   $__unixEpochFilter(log_time) )d\nwhere d.imsi = \"AE\")b\nON a.tracking_message_header = b.tracking_message_header\n-- group by a.tracking_message_header ",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        },
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "select   a.* from\n(\nselect tracking_message_header, \nfrom_unixtime(log_time) as log_time,\nsubstring_index(substring_index(value,\"profileSwitchState:\",-1),\",\",1) as \"ProfileSwitchState\",\nsubstring_index(substring_index(message,\"Imsi is:[\",-1),\"]\",1) as \"IMSI\",\nmessage as \"Message\"\n\nfrom gmonstar_orchestration_1_8.audit_log\n where is_successful = 0 and\nmessage like \"%/profileSwitch%\" -- orderExpired\nand tracking_message_header in \n(\nselect tracking_message_header \n from gmonstar_orchestration_1_8.audit_log where parent_api_name = \"UpdateSimProfile\"\n and  $__unixEpochFilter(log_time)))a\n \ninner join\n(\nselect tracking_message_header, d.imsi from \n(\nselect tracking_message_header , substring_index(substring_index(value,'|#@|',1),'|#@|',1) as imsi\n from gmonstar_orchestration_1_8.audit_log where parent_api_name = \"UpdateSimProfile\"\n and   $__unixEpochFilter(log_time) )d\nwhere d.imsi = \"AE\")b\nON a.tracking_message_header = b.tracking_message_header\n-- group by a.tracking_message_header ",
+          "refId": "B",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "UAE Profile Switch Error",
+      "transform": "table",
+      "type": "table"
+    },
+    {
+      "columns": [],
+      "datasource": "OL-GC",
+      "fontSize": "100%",
+      "gridPos": {
+        "h": 13,
+        "w": 12,
+        "x": 12,
+        "y": 8
+      },
+      "id": 20,
+      "links": [],
+      "options": {},
+      "pageSize": 5,
+      "scroll": false,
+      "showHeader": true,
+      "sort": {
+        "col": 0,
+        "desc": true
+      },
+      "styles": [
+        {
+          "alias": "Time",
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "pattern": "log_time",
+          "type": "date"
+        },
+        {
+          "alias": "",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "decimals": 2,
+          "pattern": "/.*/",
+          "thresholds": [],
+          "type": "string",
+          "unit": "short"
+        }
+      ],
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "select   a.* from\n(\nselect tracking_message_header, \nfrom_unixtime(log_time) as log_time,\nsubstring_index(substring_index(value,\"profileSwitchState:\",-1),\",\",1) as \"ProfileSwitchState\",\nsubstring_index(substring_index(message,\"Imsi is:[\",-1),\"]\",1) as \"IMSI\",\nmessage as \"Message\"\nfrom gmonstar_orchestration_1_8.audit_log\n where is_successful = 0 and\nmessage like \"%/profileSwitch%\" -- orderExpired\nand tracking_message_header in \n(\nselect tracking_message_header\n from gmonstar_orchestration_1_8.audit_log where parent_api_name = \"UpdateSimProfile\"\n and  $__unixEpochFilter(log_time)))a\n \ninner join\n(\nselect tracking_message_header, d.imsi from \n(\nselect tracking_message_header , substring_index(substring_index(value,'|#@|',1),'|#@|',1) as imsi\n from gmonstar_orchestration_1_8.audit_log where parent_api_name = \"UpdateSimProfile\"\n and   $__unixEpochFilter(log_time) )d\nwhere d.imsi = \"KW\")b\nON a.tracking_message_header = b.tracking_message_header\n-- group by a.tracking_message_header ",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Kuwait Profile Switch Error",
+      "transform": "table",
+      "type": "table"
+    },
+    {
+      "columns": [],
+      "datasource": "OL-GC",
+      "fontSize": "90%",
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 21
+      },
+      "id": 12,
+      "links": [],
+      "options": {},
+      "pageSize": 5,
+      "scroll": false,
+      "showHeader": true,
+      "sort": {
+        "col": 0,
+        "desc": true
+      },
+      "styles": [
+        {
+          "alias": "Time",
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "pattern": "Time",
+          "type": "date"
+        },
+        {
+          "alias": "",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "decimals": 2,
+          "pattern": "/.*/",
+          "thresholds": [],
+          "type": "string",
+          "unit": "short"
+        }
+      ],
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "select   a.* from\n(\nselect tracking_message_header, \nfrom_unixtime(log_time) as \"LogTime\",\nsubstring_index(substring_index(value,\"profileSwitchState:\",-1),\",\",1) as \"ProfileSwitchState\",\nsubstring_index(substring_index(message,\"Imsi is:[\",-1),\"]\",1) as \"IMSI\",\nmessage as \"Message\"\nfrom gmonstar_orchestration_1_8.audit_log\n where is_successful = 1 and\nmessage like \"%/profileSwitch%\" -- orderExpired\nand tracking_message_header in \n(\nselect tracking_message_header \n from gmonstar_orchestration_1_8.audit_log where parent_api_name = \"UpdateSimProfile\"\n and  $__unixEpochFilter(log_time)))a\n \ninner join\n(\nselect tracking_message_header, d.imsi from \n(\nselect tracking_message_header , substring_index(substring_index(value,'|#@|',1),'|#@|',1) as imsi\n from gmonstar_orchestration_1_8.audit_log where parent_api_name = \"UpdateSimProfile\"\n and   $__unixEpochFilter(log_time) )d\nwhere d.imsi = \"AE\")b\nON a.tracking_message_header = b.tracking_message_header\n-- group by a.tracking_message_header ",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "UAE Profiile Switch Success",
+      "transform": "table",
+      "type": "table"
+    },
+    {
+      "columns": [],
+      "datasource": "OL-GC",
+      "fontSize": "90%",
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 21
+      },
+      "id": 22,
+      "links": [],
+      "options": {},
+      "pageSize": 5,
+      "scroll": false,
+      "showHeader": true,
+      "sort": {
+        "col": 0,
+        "desc": true
+      },
+      "styles": [
+        {
+          "alias": "Time",
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "pattern": "Time",
+          "type": "date"
+        },
+        {
+          "alias": "",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "decimals": 2,
+          "pattern": "/.*/",
+          "thresholds": [],
+          "type": "string",
+          "unit": "short"
+        }
+      ],
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "select   a.* from\n(\nselect tracking_message_header, \nfrom_unixtime(log_time) as \"LogTime\",\nsubstring_index(substring_index(value,\"profileSwitchState:\",-1),\",\",1) as \"ProfileSwitchState\",\nsubstring_index(substring_index(message,\"Imsi is:[\",-1),\"]\",1) as \"IMSI\",\nmessage as \"Message\"\nfrom gmonstar_orchestration_1_8.audit_log\n where is_successful = 1 and\nmessage like \"%/profileSwitch%\" -- orderExpired\nand tracking_message_header in \n(\nselect tracking_message_header \n from gmonstar_orchestration_1_8.audit_log where parent_api_name = \"UpdateSimProfile\"\n and  $__unixEpochFilter(log_time)))a\n \ninner join\n(\nselect tracking_message_header, d.imsi from \n(\nselect tracking_message_header , substring_index(substring_index(value,'|#@|',1),'|#@|',1) as imsi\n from gmonstar_orchestration_1_8.audit_log where parent_api_name = \"UpdateSimProfile\"\n and   $__unixEpochFilter(log_time) )d\nwhere d.imsi = \"KW\")b\nON a.tracking_message_header = b.tracking_message_header\n-- group by a.tracking_message_header ",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Kuwait Profile Switch Success",
+      "transform": "table",
+      "type": "table"
+    }
+  ],
+  "refresh": false,
+  "schemaVersion": 18,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-30d",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ],
+    "time_options": [
+      "5m",
+      "15m",
+      "1h",
+      "6h",
+      "12h",
+      "24h",
+      "2d",
+      "7d",
+      "30d"
+    ]
+  },
+  "timezone": "",
+  "title": "profileSwitch Notification",
+  "uid": "raRpCo24z",
+  "version": 57
+}
