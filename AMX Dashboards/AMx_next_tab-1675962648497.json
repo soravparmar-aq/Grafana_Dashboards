@@ -1,0 +1,478 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": 11,
+  "iteration": 1675962608574,
+  "links": [],
+  "panels": [
+    {
+      "datasource": "MP_AMX_OL_DB",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": null,
+            "filterable": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Code"
+            },
+            "properties": [
+              {
+                "id": "custom.displayMode",
+                "value": "color-background"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "thresholds"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "semi-dark-red",
+                      "value": null
+                    },
+                    {
+                      "color": "dark-green",
+                      "value": 1
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "from": "",
+                    "id": 1,
+                    "text": "Success",
+                    "to": "",
+                    "type": 1,
+                    "value": "1"
+                  },
+                  {
+                    "from": "",
+                    "id": 2,
+                    "text": "Fail",
+                    "to": "",
+                    "type": 1,
+                    "value": "0"
+                  }
+                ]
+              },
+              {
+                "id": "custom.width",
+                "value": 115
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Status"
+            },
+            "properties": [
+              {
+                "id": "custom.filterable",
+                "value": false
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Code"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 50
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "tracking_message_header"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 189
+              },
+              {
+                "id": "displayName",
+                "value": "Transaction ID"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "api_name"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "API"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "parent_api_name"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "API Name Alias"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "logtime"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Log Time"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "module"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Module"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 21,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "7.4.2",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "select \"NB\" as module,is_successful as \"Code\", if(is_successful = '1',\"Success\",\"Fail\") as \"Status\",logtime,api_name, parent_api_name, tracking_message_header,message,\nreplace(name,\"|#@|\",\"\\n\") as name,replace(value,\"|#@|\",\"\\n\") as value\nfrom\n(select from_unixtime(a.log_time) as logtime, \"OL\" as Module , \"On\" as filter, \"True\" as nb,\napi.name as api_name, a.tracking_message_header, a.is_successful,a.message,a.name,a.value, b.parent_api_name\nfrom  (select * from audit_log \nwhere  tracking_message_header in  (select tracking_message_header from  audit_log where (\n'$Value' != '' and value like  \"%$Value%\"))\n) a\n -- left join gmonstar_orchestration_1_8.api_group\n-- on api_group.id = api_group_id\nleft join api\non api.id = api_id\nleft join \n(select * from audit_log \nwhere parent_api_name is not NULL\nand tracking_message_header in  (select tracking_message_header from  audit_log where \n('$Value' != '' and value like  \"%$Value%\") )\n)b\non a.tracking_message_header = b.tracking_message_header\n) ol_log  where filter =  '$Filter' and nb = \"$Northbound\"\n-- and $__timeFilter(logtime)",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "ID"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "account_bss_mappings",
+          "timeColumn": "CREATE_DATE",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "OL_logs",
+      "type": "table"
+    }
+  ],
+  "schemaVersion": 27,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "On",
+          "value": "On"
+        },
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "Filter",
+        "options": [
+          {
+            "selected": false,
+            "text": "Off",
+            "value": "Off"
+          },
+          {
+            "selected": true,
+            "text": "On",
+            "value": "On"
+          }
+        ],
+        "query": "Off,On",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "GC20220317063106042",
+          "value": "GC20220317063106042"
+        },
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "label": "Value",
+        "name": "Value",
+        "options": [
+          {
+            "selected": false,
+            "text": "GC20220317064753561",
+            "value": "GC20220317064753561"
+          }
+        ],
+        "query": "GC20220317063106042",
+        "skipUrlSync": false,
+        "type": "textbox"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "",
+          "value": ""
+        },
+        "datasource": "MP_AMX_OL_DB",
+        "definition": "Select  if('$Filter' =  'Off',\"Failure\",\"\")",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": false,
+        "label": "State",
+        "multi": false,
+        "name": "State",
+        "options": [
+          {
+            "selected": true,
+            "text": "",
+            "value": ""
+          }
+        ],
+        "query": "Select  if('$Filter' =  'Off',\"Failure\",\"\")",
+        "refresh": 0,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "True",
+          "value": "True"
+        },
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "Northbound",
+        "options": [
+          {
+            "selected": true,
+            "text": "True",
+            "value": "True"
+          },
+          {
+            "selected": false,
+            "text": "False",
+            "value": "False"
+          }
+        ],
+        "query": "True,False",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "False",
+          "value": "False"
+        },
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "Southbound",
+        "options": [
+          {
+            "selected": true,
+            "text": "False",
+            "value": "False"
+          },
+          {
+            "selected": false,
+            "text": "True",
+            "value": "True"
+          }
+        ],
+        "query": "False,True",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "False",
+          "value": "False"
+        },
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "Goup",
+        "options": [
+          {
+            "selected": true,
+            "text": "False",
+            "value": "False"
+          },
+          {
+            "selected": false,
+            "text": "True",
+            "value": "True"
+          }
+        ],
+        "query": "False,True",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "None",
+          "value": ""
+        },
+        "datasource": null,
+        "definition": "select donor_imsi from assets where imsi = '$Value'",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "BS_IMSI",
+        "options": [
+          {
+            "isNone": true,
+            "selected": true,
+            "text": "None",
+            "value": ""
+          }
+        ],
+        "query": "select donor_imsi from assets where imsi = '$Value'",
+        "refresh": 0,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "AMx_next_tab",
+  "uid": "lB9Dnsanz",
+  "version": 14
+}

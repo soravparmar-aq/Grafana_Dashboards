@@ -1,0 +1,348 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": 27,
+  "links": [],
+  "panels": [
+    {
+      "aliasColors": {},
+      "bars": true,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "OL-STC",
+      "fieldConfig": {
+        "defaults": {
+          "color": {},
+          "custom": {},
+          "thresholds": {
+            "mode": "absolute",
+            "steps": []
+          }
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 7,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "hiddenSeries": false,
+      "id": 2,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": false,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.4.2",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT  \n        count(distinct tracking_message_header) ,\n        log_time DIV (30* 60)  * (30*60) time_sec\n       FROM audit_log  \n       WHERE log_time BETWEEN $__unixEpochFrom() and $__unixEpochTo()\n       group by log_time DIV (30* 60)",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "ID"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "account_bss_mappings",
+          "timeColumn": "CREATE_DATE",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "STC Traffic",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:125",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:126",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "datasource": "OL-STC",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": null,
+            "filterable": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "totalCount"
+            },
+            "properties": [
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "displayName",
+                "value": "Total "
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Success_Count"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Success"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Fail_Count"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Failure"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Total_Count"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Total"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "API Name"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "API Name Alias"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "API"
+            },
+            "properties": [
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "",
+                    "url": "http://192.168.1.99:3000/d/fZn_O0unk/stc?orgId=1&var-API=${__data.fields[\"API\"]}\n"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 26,
+        "w": 24,
+        "x": 0,
+        "y": 7
+      },
+      "id": 4,
+      "options": {
+        "showHeader": true
+      },
+      "pluginVersion": "7.4.2",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "hide": true,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "call `sp_mnd_get_api_success_failure_count`(\n$__unixEpochFrom(),$__unixEpochTo());",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "ID"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "account_bss_mappings",
+          "timeColumn": "CREATE_DATE",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        },
+        {
+          "format": "table",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "select \r\napi_name.API as \"API\",\r\napi_name.API as \"API Name\",\r\n\r\naudit_log_name.success_count as \"Success_Count\",\r\naudit_log_name.fail_count as \"Fail_Count\",\r\naudit_log_name.total_count as \"Total_Count\"\r\nfrom\r\n(select  \r\naudit_log.API_ID as API_ID,\r\nSUM(audit_log.is_successful) AS success_count,\r\n(Count(audit_log.is_successful) - SUM(audit_log.is_successful)) AS fail_count,\r\nCount(audit_log.is_successful) AS total_count\r\n\r\nfrom audit_log\r\n\r\nwhere  $__unixEpochFilter(log_time)\r\ngroup by API_ID) as audit_log_name\r\n\r\ninner join\r\n\r\n(select distinct name as API, api.ID  as ID  from api) as api_name \r\n\r\non audit_log_name.API_ID = api_name.ID\r\n\r\n;",
+          "refId": "B",
+          "select": [
+            [
+              {
+                "params": [
+                  "ID"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "account_bss_mappings",
+          "timeColumn": "CREATE_DATE",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "STC API Stats",
+      "type": "table"
+    }
+  ],
+  "refresh": false,
+  "schemaVersion": 27,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "2021-09-30T18:30:00.000Z",
+    "to": "2022-12-01T18:29:59.000Z"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "STC API Stats",
+  "uid": "sOzScAX7z",
+  "version": 11
+}

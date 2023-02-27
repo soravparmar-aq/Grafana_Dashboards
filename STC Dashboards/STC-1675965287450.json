@@ -1,0 +1,403 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": 26,
+  "iteration": 1675965223574,
+  "links": [],
+  "panels": [
+    {
+      "datasource": "OL-STC",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": null,
+            "filterable": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Error Detail"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 326
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Transanction ID"
+            },
+            "properties": [
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "",
+                    "url": "http://192.168.1.99:3000/d/BSqDerunz/stc_next_tab?orgId=1&var-Filter=On&var-Value=${__data.fields[\"Transanction ID\"]}&var-State=&var-Northbound=True&var-Southbound=False&var-Goup=False&var-BS_IMSI=&var-EID="
+                  }
+                ]
+              },
+              {
+                "id": "custom.width",
+                "value": 190
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "API"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 200
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "API Alias"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 200
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Timestamp"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 180
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Updated Transanction ID"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 217
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 12,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "7.4.2",
+      "repeat": "API",
+      "repeatDirection": "v",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "hide": true,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n$API as \"API\",\n$API as \"API Alias\",\nif(value like \"%esponseDescription%\",\nsubstring_index(substring_index(replace(value,'\"',''),'esponseDescription:',-1),',',1),\nsubstring_index(substring_index(value,'Response Message:[',-1),'],RequestBody: ',1))  as \"Error Detail\",\nif(value like \"%responseDescription%\",\n substring_index(substring_index(value,',\"targetIMSI\":\"',-1),'\",',1),\n substring_index(substring_index(value,'imsi:',-1),',',1))  as \"Error IMSI\", \n \nif(value like \"%responseDescription%\",\n substring_index(substring_index(value,',\"targetMSISDN\":\"',-1),'\",',1),\n substring_index(substring_index(value,',msisdn:',-1),',',1))  as \"Error MSISDN\",  \n-- substring_index(substring_index(value,'Response Message:[',-1),'],RequestBody: ',1) as \"ERROR\",\ntracking_message_header as \"Transanction ID\",\nfrom_unixtime(log_time) as \"Timestamp\"\nFROM audit_log\nwhere  $__unixEpochFilter(log_time)\nand tracking_message_header in \n(select tracking_message_header from audit_log where parent_api_name =  replace($API,\" \",\"\")\nand $__unixEpochFilter(log_time)) \nand audit_log.name like \"%End Node API%\"\nand (audit_log.is_successful= 0)\ngroup by tracking_message_header;",
+          "refId": "B",
+          "select": [
+            [
+              {
+                "params": [
+                  "ID"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "account_bss_mappings",
+          "timeColumn": "CREATE_DATE",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        },
+        {
+          "format": "table",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n$API as \"API\",\n$API as \"API Alias\",\nif(value like \"%esponseDescription%\",\nsubstring_index(substring_index(replace(value,'\"',''),'esponseDescription:',-1),',',1),\nsubstring_index(substring_index(value,'Response Message:[',-1),'],RequestBody: ',1))  as \"Error Detail\",\nif(value like \"%responseDescription%\",\n substring_index(substring_index(value,',\"targetIMSI\":\"',-1),'\",',1),\n SUBSTRING_INDEX(SUBSTRING_INDEX(value, 'imsi:', -1), \"}]\", 1))  as \"Error IMSI\", \n \nif(value like \"%responseDescription%\",\n substring_index(substring_index(value,',\"targetMSISDN\":\"',-1),'\",',1),\n substring_index(substring_index(value,'msisdn:',-1),\",\",1))  as \"Error MSISDN\", \n \nif(value like \"%responseDescription%\",\n substring_index(substring_index(value,',\"RequestBody\":\"',-1),'\",',1),\n substring_index(substring_index(value,'requestId:',-1),\",\",1))  as \"Transanction ID\", \n-- substring_index(substring_index(value,'Response Message:[',-1),'],RequestBody: ',1) as \"ERROR\",\n-- tracking_message_header as \"Transanction ID\",\nfrom_unixtime(log_time) as \"Timestamp\"\nFROM audit_log\nwhere  $__unixEpochFilter(log_time)\nand value like '%imsi:%' and  value like '%msisdn:%' and value like '%requestId%' and\ntracking_message_header in \n(select tracking_message_header from audit_log where\n$__unixEpochFilter(log_time)) \nand audit_log.name like \"%End Node API%\"\nand (audit_log.is_successful= 0 ) \ngroup by tracking_message_header;",
+          "refId": "C",
+          "select": [
+            [
+              {
+                "params": [
+                  "ID"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "account_bss_mappings",
+          "timeColumn": "CREATE_DATE",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Panel Title",
+      "type": "table"
+    }
+  ],
+  "refresh": false,
+  "schemaVersion": 27,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": [
+            "Create Account"
+          ],
+          "value": [
+            "Create Account"
+          ]
+        },
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "API",
+        "options": [
+          {
+            "selected": false,
+            "text": "All",
+            "value": "$__all"
+          },
+          {
+            "selected": false,
+            "text": "Add APN",
+            "value": "Add APN"
+          },
+          {
+            "selected": false,
+            "text": "Remove APN",
+            "value": "Remove APN"
+          },
+          {
+            "selected": false,
+            "text": "Deactivate External Extra Passes Batch API",
+            "value": "Deactivate External Extra Passes Batch API"
+          },
+          {
+            "selected": false,
+            "text": "Activate External Shared Passes Batch API",
+            "value": "Activate External Shared Passes Batch API"
+          },
+          {
+            "selected": false,
+            "text": "Change Service Plan",
+            "value": "Change Service Plan"
+          },
+          {
+            "selected": false,
+            "text": "Update Order Status",
+            "value": "Update Order Status"
+          },
+          {
+            "selected": false,
+            "text": "Device Fingerprint Verification",
+            "value": "Device Fingerprint Verification"
+          },
+          {
+            "selected": false,
+            "text": "Device FPMS Verification",
+            "value": "Device FPMS Verification"
+          },
+          {
+            "selected": false,
+            "text": "Insert Service Plan",
+            "value": "Insert Service Plan"
+          },
+          {
+            "selected": false,
+            "text": "Get Sim Order Details",
+            "value": "Get Sim Order Details"
+          },
+          {
+            "selected": false,
+            "text": "Activate Sim",
+            "value": "Activate Sim"
+          },
+          {
+            "selected": false,
+            "text": "Deactivate Sim",
+            "value": "Deactivate Sim"
+          },
+          {
+            "selected": false,
+            "text": "Suspend Sim",
+            "value": "Suspend Sim"
+          },
+          {
+            "selected": false,
+            "text": "Reactivate Sim",
+            "value": "Reactivate Sim"
+          },
+          {
+            "selected": false,
+            "text": "Add order",
+            "value": "Add order"
+          },
+          {
+            "selected": false,
+            "text": "Attach Service Plan",
+            "value": "Attach Service Plan"
+          },
+          {
+            "selected": false,
+            "text": "Get Data Usage",
+            "value": "Get Data Usage"
+          },
+          {
+            "selected": false,
+            "text": "Get Rate Plans",
+            "value": "Get Rate Plans"
+          },
+          {
+            "selected": false,
+            "text": "Get Sim Details",
+            "value": "Get Sim Details"
+          },
+          {
+            "selected": false,
+            "text": "User Retrieval",
+            "value": "User Retrieval"
+          },
+          {
+            "selected": false,
+            "text": "Retrieve Purchases",
+            "value": "Retrieve Purchases"
+          },
+          {
+            "selected": false,
+            "text": "Get Service Coverage List",
+            "value": "Get Service Coverage List"
+          },
+          {
+            "selected": false,
+            "text": "Get Sim Usage",
+            "value": "Get Sim Usage"
+          },
+          {
+            "selected": false,
+            "text": "Sim Session Info",
+            "value": "Sim Session Info"
+          },
+          {
+            "selected": false,
+            "text": "Get Available Offer",
+            "value": "Get Available Offer"
+          },
+          {
+            "selected": false,
+            "text": "API Transaction-Comulative",
+            "value": "API Transaction-Comulative"
+          },
+          {
+            "selected": false,
+            "text": "Update External Extra Passes Batch API",
+            "value": "Update External Extra Passes Batch API"
+          },
+          {
+            "selected": false,
+            "text": "Activate External Extra Passes Batch API",
+            "value": "Activate External Extra Passes Batch API"
+          },
+          {
+            "selected": false,
+            "text": "Update External Shared Passes Batch API",
+            "value": "Update External Shared Passes Batch API"
+          }
+        ],
+        "query": "Add APN, Remove APN,Deactivate External Extra Passes Batch API,Activate External Shared Passes Batch API,Change Service Plan,Update Order Status,Device Fingerprint Verification,Device FPMS Verification,Insert Service Plan,Get Sim Order Details,Activate Sim, Deactivate Sim,Suspend Sim,Reactivate Sim,Add order, Attach Service Plan,Get Data Usage,Get Rate Plans,Get Sim Details,User Retrieval,Retrieve Purchases,Get Service Coverage List,Get Sim Usage,Sim Session Info,Get Available Offer,API Transaction-Comulative,Update External Extra Passes Batch API,Activate External Extra Passes Batch API, Update External Shared Passes Batch API",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      }
+    ]
+  },
+  "time": {
+    "from": "2020-12-31T18:30:00.000Z",
+    "to": "2022-12-01T18:29:59.000Z"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "STC",
+  "uid": "fZn_O0unk",
+  "version": 12
+}

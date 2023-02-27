@@ -1,0 +1,370 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": 4,
+  "iteration": 1675962610757,
+  "links": [],
+  "panels": [
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "left",
+            "filterable": true
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "JOB_TYPE"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "from": "",
+                    "id": 1,
+                    "text": "REGISTER",
+                    "to": "",
+                    "type": 1,
+                    "value": "0"
+                  },
+                  {
+                    "from": "",
+                    "id": 2,
+                    "text": "SUSPEND",
+                    "to": "",
+                    "type": 1,
+                    "value": "3"
+                  },
+                  {
+                    "from": "",
+                    "id": 3,
+                    "text": "RESUME",
+                    "to": "",
+                    "type": 1,
+                    "value": "4"
+                  },
+                  {
+                    "from": "",
+                    "id": 4,
+                    "text": "PURCHASE_EXTRA_PASS",
+                    "to": "",
+                    "type": 1,
+                    "value": "7"
+                  },
+                  {
+                    "from": "",
+                    "id": 5,
+                    "text": "REMOVE",
+                    "to": "",
+                    "type": 1,
+                    "value": "5"
+                  }
+                ]
+              },
+              {
+                "id": "displayName",
+                "value": "Job Type"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "CREATE_DATE"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Create Date"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "BATCH_TOKEN"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Batch Token"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "REQUEST_ID"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Request Id"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "DETAIL"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Error Detail"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "IMSI_LIST"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Error IMSI"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "OLD_VALUE"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Old Value"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "NEW_VALUE"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "New Value"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "CREATED_BY"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Created By"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "BSS_ID"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "BSS ID"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "STATUS"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Status"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "COMPLETED_ON"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Completed On"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 17,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "7.4.2",
+      "repeat": "API",
+      "repeatDirection": "v",
+      "scopedVars": {
+        "API": {
+          "selected": true,
+          "text": "4",
+          "value": "4"
+        }
+      },
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT  gc_batch_job_details.CREATE_DATE, gc_batch_job_details.JOB_TYPE, gc_batch_job_details.BATCH_TOKEN, gc_batch_job_details.REQUEST_ID,\ngc_notification_details.DETAIL, gc_batch_job_details.IMSI_LIST,gc_notification_details.OLD_VALUE, gc_notification_details.NEW_VALUE, gc_batch_job_details.CREATED_BY,\ngc_batch_job_details.BSS_ID, gc_batch_job_details.STATUS, gc_batch_job_details.COMPLETED_ON\nfrom gc_batch_job_details\nleft join gc_notification_details\non gc_batch_job_details.REQUEST_ID = gc_notification_details.REQUEST_ID\n where  $__timeFilter(gc_batch_job_details.CREATE_DATE)\n and JOB_TYPE = $API\n and gc_batch_job_details.STATUS='failed'\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "ID"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "account_bss_mappings",
+          "timeColumn": "CREATE_DATE",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "$API Error Detail",
+      "type": "table"
+    }
+  ],
+  "refresh": false,
+  "schemaVersion": 27,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "allValue": null,
+        "current": {
+          "selected": true,
+          "text": [
+            "4"
+          ],
+          "value": [
+            "4"
+          ]
+        },
+        "datasource": null,
+        "definition": "SELECT Job_Type\nfrom iotsmp_staging.gc_batch_job_details group by job_type;",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": true,
+        "name": "API",
+        "options": [
+          {
+            "selected": false,
+            "text": "0",
+            "value": "0"
+          },
+          {
+            "selected": false,
+            "text": "3",
+            "value": "3"
+          },
+          {
+            "selected": false,
+            "text": "7",
+            "value": "7"
+          },
+          {
+            "selected": true,
+            "text": "4",
+            "value": "4"
+          },
+          {
+            "selected": false,
+            "text": "5",
+            "value": "5"
+          }
+        ],
+        "query": "SELECT Job_Type\nfrom iotsmp_staging.gc_batch_job_details group by job_type;",
+        "refresh": 0,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }
+    ]
+  },
+  "time": {
+    "from": "2022-01-03T11:20:50.231Z",
+    "to": "2023-01-03T11:20:50.231Z"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "GC Batch Job Error Details",
+  "uid": "cgrB5e2nz",
+  "version": 18
+}

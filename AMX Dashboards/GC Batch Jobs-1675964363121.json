@@ -1,0 +1,237 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": 3,
+  "links": [],
+  "panels": [
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": null,
+            "filterable": true
+          },
+          "mappings": [
+            {
+              "from": "",
+              "id": 1,
+              "text": "",
+              "to": "",
+              "type": 1,
+              "value": ""
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "JOB TYPE ALIAS"
+            },
+            "properties": [
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "Error Detail",
+                    "url": "http://192.168.1.99:3000/d/cgrB5e2nz/gc-batch-job-error-details?orgId=1&from=$__from&to=$__to&var-API=${__data.fields[\"JOB TYPE ALIAS\"].numeric}"
+                  }
+                ]
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "from": "",
+                    "id": 1,
+                    "text": "SUSPEND",
+                    "to": "",
+                    "type": 1,
+                    "value": "3"
+                  },
+                  {
+                    "from": "",
+                    "id": 2,
+                    "text": "RESUME",
+                    "to": "",
+                    "type": 1,
+                    "value": "4"
+                  },
+                  {
+                    "from": "",
+                    "id": 3,
+                    "text": "REGISTER",
+                    "to": "",
+                    "type": 1,
+                    "value": "0"
+                  },
+                  {
+                    "from": "",
+                    "id": 4,
+                    "text": "PURCHASE_EXTRA_PASS",
+                    "to": "",
+                    "type": 1,
+                    "value": "7"
+                  },
+                  {
+                    "from": "",
+                    "id": 5,
+                    "text": "REMOVE",
+                    "to": "",
+                    "type": 1,
+                    "value": "5"
+                  }
+                ]
+              },
+              {
+                "id": "displayName",
+                "value": "Job Type"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "JOB TYPE"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Status Type"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "success_count"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Success"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "fail_count"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Failure"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "total"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Total"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 16,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "7.4.2",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "select\n           JOB_TYPE as \"JOB TYPE ALIAS\",\n           JOB_TYPE as \"JOB TYPE\",\n       SUM(CASE \n             WHEN STATUS='COMPLETED' THEN 1 --  or value  like '%200%'  \n             ELSE 0\n           END) AS success_count,\n SUM(CASE \n             WHEN  STATUS='Failed' THEN 1\n             ELSE 0\n           END) AS fail_count,\n\n count(*) as total\n from gc_batch_job_details\n where  $__timeFilter(CREATE_DATE)\n group by JOB_TYPE",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "ID"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "account_bss_mappings",
+          "timeColumn": "CREATE_DATE",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Batch Job Stats",
+      "type": "table"
+    }
+  ],
+  "schemaVersion": 27,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-1y",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "GC Batch Jobs",
+  "uid": "Z4jXv6h7z",
+  "version": 12
+}

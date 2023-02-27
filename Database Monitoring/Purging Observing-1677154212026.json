@@ -1,0 +1,853 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 34,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "0zyzXo14z"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "dark-red",
+            "mode": "fixed"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisGridShow": true,
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "axisSoftMax": 1,
+            "axisSoftMin": -1,
+            "barAlignment": 1,
+            "drawStyle": "line",
+            "fillOpacity": 31,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "stepBefore",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 3,
+            "pointSize": 16,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "always",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "dark-red",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 7,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "9.3.6",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "0zyzXo14z"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "hide": false,
+          "rawQuery": true,
+          "rawSql": "select  \n  UNIX_TIMESTAMP(sTime) as time,\n  Notification,\n  table_name as TableName\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select ANSWERING_TIME from `stc_cdr_data`.`cdr_voice_details_yearly` ORDER BY ANSWERING_TIME ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select ANSWERING_TIME from `stc_cdr_data`.`cdr_voice_details_yearly`\nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as sTime\nFROM data_retention_purging WHERE table_name='cdr_voice_details_yearly' ORDER BY id  DESC LIMIT 1)\n as data16\nwhere data16.Notification=0 and data16.sTime IS Not Null and $__timeFilter(data16.sTime) \n\nunion all\n\nselect  \n  UNIX_TIMESTAMP(sTime) as time,\n  Notification,\n  table_name as TableName\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select ANSWERING_TIME from `stc_cdr_data`.`cdr_voice_details_daily` ORDER BY ANSWERING_TIME ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select ANSWERING_TIME from `stc_cdr_data`.`cdr_voice_details_daily`\nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as sTime\nFROM data_retention_purging WHERE table_name='cdr_voice_details_daily' ORDER BY id  DESC LIMIT 1)\nas data14\nwhere data14.Notification=0 and data14.sTime IS Not Null and $__timeFilter(data14.sTime) \nunion all\n\nselect  \n  UNIX_TIMESTAMP(sTime) as time,\n  Notification,\n  table_name as TableName\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select ANSWERING_TIME from `stc_cdr_data`.`cdr_voice_details_weekly` ORDER BY ANSWERING_TIME ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select ANSWERING_TIME from `stc_cdr_data`.`cdr_voice_details_weekly`\nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as sTime\nFROM data_retention_purging WHERE table_name='cdr_voice_details_weekly' ORDER BY id  DESC LIMIT 1)\nas data15\nwhere data15.Notification=0 and data15.sTime IS Not Null and $__timeFilter(data15.sTime) \n\nunion all\n\nselect  \n  UNIX_TIMESTAMP(sTime) as time,\n  Notification,\n  table_name as TableName\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select ANSWERING_TIME from `stc_cdr_data`.`cdr_voice_details_hourly` ORDER BY ANSWERING_TIME ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select ANSWERING_TIME from `stc_cdr_data`.`cdr_voice_details_hourly`\nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as sTime\nFROM data_retention_purging WHERE table_name='cdr_voice_details_hourly' ORDER BY id  DESC LIMIT 1)\nas data13\nwhere data13.Notification=0 and data13.sTime IS Not Null and $__timeFilter(data13.sTime) \n\nunion all\n\nselect  \n  UNIX_TIMESTAMP(sTime) as time,\n  Notification,\n  table_name as TableName\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select ANSWERING_TIME from `stc_dev`.`cdr_voice_details` ORDER BY ANSWERING_TIME ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select ANSWERING_TIME from `stc_dev`.`cdr_voice_details`\nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as sTime \nFROM data_retention_purging WHERE table_name='cdr_voice_details' ORDER BY id  DESC LIMIT 1)\nas data12\nwhere data12.Notification=0 and data12.sTime IS Not Null and $__timeFilter(data12.sTime) \n\nunion all\n\nselect  \n  UNIX_TIMESTAMP(sTime) as time,\n  Notification,\n  table_name as TableName\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select FINAL_TIME from `stc_cdr_data`.`cdr_sms_details_weekly` ORDER BY FINAL_TIME ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select FINAL_TIME from `stc_cdr_data`.`cdr_sms_details_weekly` \nORDER BY FINAL_TIME DESC LIMIT 1 ) as sTime \nFROM data_retention_purging WHERE table_name='cdr_sms_details_weekly' ORDER BY id  DESC LIMIT 1)\nas data10\nwhere data10.Notification=0 and data10.sTime IS Not Null and $__timeFilter(data10.sTime) \n\nunion all\n\nselect  \n  UNIX_TIMESTAMP(sTime) as time,\n  Notification,\n  table_name as TableName\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select FINAL_TIME from `stc_cdr_data`.`cdr_sms_details_daily` ORDER BY FINAL_TIME ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select FINAL_TIME from `stc_cdr_data`.`cdr_sms_details_daily` \nORDER BY FINAL_TIME DESC LIMIT 1 ) as sTime \nFROM data_retention_purging WHERE table_name='cdr_sms_details_daily' ORDER BY id  DESC LIMIT 1)\nas data9\nwhere data9.Notification=0 and data9.sTime IS Not Null and $__timeFilter(data9.sTime) \n\nunion all\nselect  \n  UNIX_TIMESTAMP(sTime) as time,\n  Notification,\n  table_name as TableName\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select FINAL_TIME from `stc_cdr_data`.`cdr_sms_details_hourly` ORDER BY FINAL_TIME ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select FINAL_TIME from `stc_cdr_data`.`cdr_sms_details_hourly` \nORDER BY FINAL_TIME DESC LIMIT 1 ) as sTime \nFROM data_retention_purging WHERE table_name='cdr_sms_details_hourly' ORDER BY id  DESC LIMIT 1)\nas data8\nwhere data8.Notification=0 and data8.sTime IS Not Null and $__timeFilter(data8.sTime) \n\nunion all\nselect  \n  UNIX_TIMESTAMP(sTime) as time,\n  Notification,\n  table_name as TableName\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select FINAL_TIME from `stc_dev`.`cdr_sms_details` ORDER BY FINAL_TIME ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select FINAL_TIME from `stc_dev`.`cdr_sms_details` \nORDER BY FINAL_TIME DESC LIMIT 1 ) as sTime \nFROM data_retention_purging WHERE table_name='cdr_sms_details' ORDER BY id  DESC LIMIT 1)\nas data7\nwhere data7.Notification=0 and data7.sTime IS Not Null and $__timeFilter(data7.sTime)\n\nunion all\n\nselect  \n  UNIX_TIMESTAMP(sTime) as time,\n  Notification,\n  table_name as TableName\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select startTime from `stc_cdr_data`.`cdr_data_details_weekly` ORDER BY startTime ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select startTime from `stc_cdr_data`.`cdr_data_details_weekly` \nORDER BY startTime DESC LIMIT 1 ) as sTime \nFROM data_retention_purging WHERE table_name='cdr_data_details_weekly' ORDER BY id  DESC LIMIT 1)\nas data5\nwhere data5.Notification=0 and data5.sTime IS Not Null and $__timeFilter(data5.sTime)\n\nunion all\nselect  \n  UNIX_TIMESTAMP(sTime) as time,\n  Notification,\n  table_name as TableName\nfrom\n  (SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select startTime from `stc_cdr_data`.`cdr_data_details_hourly` ORDER BY startTime ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select startTime from `stc_cdr_data`.`cdr_data_details_hourly` \nORDER BY startTime DESC LIMIT 1 ) as sTime \nFROM data_retention_purging WHERE table_name='cdr_data_details_hourly' ORDER BY id  DESC LIMIT 1)\nas data3\nwhere data3.Notification=0 and data3.sTime IS Not Null and $__timeFilter(data3.sTime) \n\nunion all\nselect  \n  UNIX_TIMESTAMP(sTime) as time,\n  Notification,\n  table_name as TableName\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select startTime from `stc_dev`.`cdr_details` ORDER BY startTime ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days\n,(select startTime from `stc_dev`.`cdr_details` \nORDER BY startTime DESC LIMIT 1 ) as sTime \nFROM data_retention_purging WHERE table_name='cdr_details' ORDER BY id DESC LIMIT 1 )\nas data1\nwhere data1.Notification=0 and data1.sTime IS Not Null and $__timeFilter(data1.sTime) \n\nunion all\n\nselect \n  UNIX_TIMESTAMP(sTime) as time,\n  Notification,\n  table_name as TableName\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select startTime from `stc_cdr_data`.`cdr_data_details_daily` ORDER BY startTime ASC LIMIT 1 ),NOW())) THEN 1 ELSE 0 END AS Notification,database_name,table_name,days\n,(select startTime from `stc_cdr_data`.`cdr_data_details_daily` \nORDER BY startTime DESC LIMIT 1 ) as sTime \n FROM data_retention_purging WHERE table_name='cdr_data_details_daily' ORDER BY id  DESC LIMIT 1)\nas data2\nwhere data2.Notification=0 and data2.sTime IS Not Null and $__timeFilter(data2.sTime) \n\nunion all\nselect  \n  UNIX_TIMESTAMP(sTime) as time,\n  Notification,\n  table_name as TableName\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select FINAL_TIME from `stc_cdr_data`.`cdr_sms_details_yearly` ORDER BY FINAL_TIME ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select FINAL_TIME from `stc_cdr_data`.`cdr_sms_details_yearly` \nORDER BY FINAL_TIME DESC LIMIT 1 ) as sTime \nFROM data_retention_purging WHERE table_name='cdr_sms_details_yearly' ORDER BY id  DESC LIMIT 1)\nas data11\nwhere data11.Notification=0 and data11.sTime IS Not Null and $__timeFilter(data11.sTime) \nunion all\nselect  \n  UNIX_TIMESTAMP(sTime) as time,\n  Notification,\n  table_name as TableName\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select startTime from `stc_cdr_data`.`cdr_data_details_yearly` ORDER BY startTime ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select startTime from `stc_cdr_data`.`cdr_data_details_yearly` \nORDER BY startTime DESC LIMIT 1 ) as sTime \nFROM data_retention_purging WHERE table_name='cdr_data_details_yearly' ORDER BY id  DESC LIMIT 1)\ndata6\nwhere data6.Notification=0 and data6.sTime IS Not Null and $__timeFilter(data6.sTime)\n\nunion all\n\nselect  \n  UNIX_TIMESTAMP(sTime) as time,\n  Notification,\n  table_name as TableName\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select startTime from `stc_cdr_data`.`cdr_data_details_monthly` ORDER BY startTime ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select startTime from `stc_cdr_data`.`cdr_data_details_monthly` \nORDER BY startTime DESC LIMIT 1 ) as sTime \nFROM data_retention_purging WHERE table_name='cdr_data_details_monthly' ORDER BY id  DESC LIMIT 1)\nas data4\nwhere data4.Notification=0 and data4.sTime IS Not Null and $__timeFilter(data4.sTime)\n",
+          "refId": "B",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Purging Threshold Reached",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "0zyzXo14z"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto",
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "dark-red",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "database_name"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Database"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "table_name"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Table"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "days"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Days"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Notification"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "0": {
+                        "color": "dark-red",
+                        "index": 0,
+                        "text": "Triggered"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              },
+              {
+                "id": "custom.displayMode",
+                "value": "color-background"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Table"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 188
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "time"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Time"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "TableName"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 178
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Time"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": null
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Database"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 100
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 4,
+      "options": {
+        "footer": {
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "9.3.6",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "0zyzXo14z"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "hide": true,
+          "rawQuery": true,
+          "rawSql": "select database_name, table_name, Notification, days\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select startTime from iotsmp_cdr_data.cdr_details ORDER BY startTime ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days FROM data_retention_purging WHERE table_name='cdr_details' ORDER BY id DESC LIMIT 1 )\nas data1\nwhere data1.Notification=1\nunion all\n\nselect database_name, table_name, Notification, days\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select startTime from iotsmp_cdr_data.cdr_data_details_daily ORDER BY startTime ASC LIMIT 1 ),NOW())) THEN 1 ELSE 0 END AS Notification,database_name,table_name,days FROM data_retention_purging WHERE table_name='cdr_data_details_daily' ORDER BY id  DESC LIMIT 1)\nas data2\nwhere data2.Notification=1\nunion all\n\nselect database_name, table_name, Notification, days\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select startTime from iotsmp_cdr_data.cdr_data_details_hourly ORDER BY startTime ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days FROM data_retention_purging WHERE table_name='cdr_data_details_hourly' ORDER BY id  DESC LIMIT 1)\nas data3\nwhere data3.Notification=1\nunion all\n\nselect database_name, table_name, Notification, days\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select startTime from iotsmp_cdr_data.cdr_data_details_monthly ORDER BY startTime ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days FROM data_retention_purging WHERE table_name='cdr_data_details_monthly' ORDER BY id  DESC LIMIT 1)\nas data4\nwhere data4.Notification=1\nunion all\n\nselect database_name, table_name, Notification, days\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select startTime from iotsmp_cdr_data.cdr_data_details_weekly ORDER BY startTime ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days FROM data_retention_purging WHERE table_name='cdr_data_details_weekly' ORDER BY id  DESC LIMIT 1)\nas data5\nwhere data5.Notification=1\nunion all\n\nselect database_name, table_name, Notification, days\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select startTime from iotsmp_cdr_data.cdr_data_details_yearly ORDER BY startTime ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days FROM data_retention_purging WHERE table_name='cdr_data_details_yearly' ORDER BY id  DESC LIMIT 1)\ndata6\nwhere data6.Notification=1\nunion all\n\nselect database_name, table_name, Notification, days\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select FINAL_TIME from iotsmp_cdr_data.cdr_sms_details ORDER BY FINAL_TIME ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days FROM data_retention_purging WHERE table_name='cdr_sms_details' ORDER BY id  DESC LIMIT 1)\nas data7\nwhere data7.Notification=1\nunion all\n\nselect database_name, table_name, Notification, days\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select FINAL_TIME from iotsmp_cdr_data.cdr_sms_details_hourly ORDER BY FINAL_TIME ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days FROM data_retention_purging WHERE table_name='cdr_sms_details_hourly' ORDER BY id  DESC LIMIT 1)\nas data8\nwhere data8.Notification=1\nunion all\n\nselect database_name, table_name, Notification, days\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select FINAL_TIME from iotsmp_cdr_data.cdr_sms_details_daily ORDER BY FINAL_TIME ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days FROM data_retention_purging WHERE table_name='cdr_sms_details_daily' ORDER BY id  DESC LIMIT 1)\nas data9\nwhere data9.Notification=1\nunion all\n\nselect database_name, table_name, Notification, days\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select FINAL_TIME from iotsmp_cdr_data.cdr_sms_details_weekly ORDER BY FINAL_TIME ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days FROM data_retention_purging WHERE table_name='cdr_sms_details_weekly' ORDER BY id  DESC LIMIT 1)\nas data10\nwhere data10.Notification=1\nunion all\n\nselect database_name, table_name, Notification, days\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select FINAL_TIME from iotsmp_cdr_data.cdr_sms_details_yearly ORDER BY FINAL_TIME ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days FROM data_retention_purging WHERE table_name='cdr_sms_details_yearly' ORDER BY id  DESC LIMIT 1)\nas data11\nwhere data11.Notification=1\nunion all\n\nselect database_name, table_name, Notification, days\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select ANSWERING_TIME from iotsmp_cdr_data.cdr_voice_details ORDER BY ANSWERING_TIME ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days FROM data_retention_purging WHERE table_name='cdr_voice_details' ORDER BY id  DESC LIMIT 1)\nas data12\nwhere data12.Notification=1\nunion all\n\nselect database_name, table_name, Notification, days\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select ANSWERING_TIME from iotsmp_cdr_data.cdr_voice_details_hourly ORDER BY ANSWERING_TIME ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days FROM data_retention_purging WHERE table_name='cdr_voice_details_hourly' ORDER BY id  DESC LIMIT 1)\nas data13\nwhere data13.Notification=1\nunion all\n\nselect database_name, table_name, Notification, days\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select ANSWERING_TIME from iotsmp_cdr_data.cdr_voice_details_daily ORDER BY ANSWERING_TIME ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days FROM data_retention_purging WHERE table_name='cdr_voice_details_daily' ORDER BY id  DESC LIMIT 1)\nas data14\nwhere data14.Notification=1\nunion all\n\nselect database_name, table_name, Notification, days\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select ANSWERING_TIME from iotsmp_cdr_data.cdr_voice_details_weekly ORDER BY ANSWERING_TIME ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days FROM data_retention_purging WHERE table_name='cdr_voice_details_weekly' ORDER BY id  DESC LIMIT 1)\nas data15\nwhere data15.Notification=1\nunion all\n\nselect database_name, table_name, Notification, days\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select ANSWERING_TIME from iotsmp_cdr_data.cdr_voice_details_yearly ORDER BY ANSWERING_TIME ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days FROM data_retention_purging WHERE table_name='cdr_voice_details_yearly' ORDER BY id  DESC LIMIT 1)\n as data16\n where data16.Notification=1;",
+          "refId": "B",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        },
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "0zyzXo14z"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "hide": false,
+          "rawQuery": true,
+          "rawSql": "select\n  database_name,  \n  table_name as TableName,\n  UNIX_TIMESTAMP(startTime) as time,\n  Notification,\n  days\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select startTime from `$DB_stc_dev`.`cdr_details` ORDER BY startTime ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days\n,(select startTime from `$DB_stc_dev`.`cdr_details` \nORDER BY startTime DESC LIMIT 1 ) as startTime \nFROM data_retention_purging WHERE table_name='cdr_details' ORDER BY id DESC LIMIT 1 )\nas data1\nwhere data1.Notification=0 and $__timeFilter(data1.startTime) \n\nunion all\n\nselect \n  database_name,  \n  table_name as TableName,\n  UNIX_TIMESTAMP(startTime) as time,\n  Notification,\n  days\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select startTime from `$DB_stc_cdr_data`.`cdr_data_details_daily` ORDER BY startTime ASC LIMIT 1 ),NOW())) THEN 1 ELSE 0 END AS Notification,database_name,table_name,days\n,(select startTime from `$DB_stc_cdr_data`.`cdr_data_details_daily` \nORDER BY startTime DESC LIMIT 1 ) as startTime \n FROM data_retention_purging WHERE table_name='cdr_data_details_daily' ORDER BY id  DESC LIMIT 1)\nas data2\nwhere data2.Notification=0 and $__timeFilter(data2.startTime) \nunion all\n\nselect  \n  database_name,  \n  table_name as TableName,\n  UNIX_TIMESTAMP(startTime) as time,\n  Notification,\n  days\nfrom\n  (SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select startTime from `$DB_stc_cdr_data`.`cdr_data_details_hourly` ORDER BY startTime ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select startTime from `$DB_stc_cdr_data`.`cdr_data_details_hourly` \nORDER BY startTime DESC LIMIT 1 ) as startTime \nFROM data_retention_purging WHERE table_name='cdr_data_details_hourly' ORDER BY id  DESC LIMIT 1)\nas data3\nwhere data3.Notification=0 and $__timeFilter(data3.startTime) \n\nunion all\n\nselect  \n  database_name,  \n  table_name as TableName,\n  UNIX_TIMESTAMP(startTime) as time,\n  Notification,\n  days\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select startTime from `$DB_stc_cdr_data`.`cdr_data_details_monthly` ORDER BY startTime ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select startTime from `$DB_stc_cdr_data`.`cdr_data_details_monthly` \nORDER BY startTime DESC LIMIT 1 ) as startTime \nFROM data_retention_purging WHERE table_name='cdr_data_details_monthly' ORDER BY id  DESC LIMIT 1)\nas data4\nwhere data4.Notification=0 and $__timeFilter(data4.startTime)\nunion all\n\nselect  \n  database_name,  \n  table_name as TableName,\n  UNIX_TIMESTAMP(startTime) as time,\n  Notification,\n  days\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select startTime from `$DB_stc_cdr_data`.`cdr_data_details_weekly` ORDER BY startTime ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select startTime from `$DB_stc_cdr_data`.`cdr_data_details_weekly` \nORDER BY startTime DESC LIMIT 1 ) as startTime \nFROM data_retention_purging WHERE table_name='cdr_data_details_weekly' ORDER BY id  DESC LIMIT 1)\nas data5\nwhere data5.Notification=0 and $__timeFilter(data5.startTime)\nunion all\n\nselect  \n  database_name,  \n  table_name as TableName,\n  UNIX_TIMESTAMP(startTime) as time,\n  Notification,\n  days\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select startTime from `$DB_stc_cdr_data`.`cdr_data_details_yearly` ORDER BY startTime ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select startTime from `$DB_stc_cdr_data`.`cdr_data_details_yearly` \nORDER BY startTime DESC LIMIT 1 ) as startTime \nFROM data_retention_purging WHERE table_name='cdr_data_details_yearly' ORDER BY id  DESC LIMIT 1)\ndata6\nwhere data6.Notification=0 and $__timeFilter(data6.startTime)\n\n\nunion all\nselect  \n  database_name,  \n  table_name as TableName,\n  UNIX_TIMESTAMP(startTime) as time,\n  Notification,\n  days\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select FINAL_TIME from `$DB_stc_dev`.`cdr_sms_details` ORDER BY FINAL_TIME ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select FINAL_TIME from `$DB_stc_dev`.`cdr_sms_details` \nORDER BY FINAL_TIME DESC LIMIT 1 ) as startTime \nFROM data_retention_purging WHERE table_name='cdr_sms_details' ORDER BY id  DESC LIMIT 1)\nas data7\nwhere data7.Notification=0 and $__timeFilter(data7.startTime) \n\nunion all\n\nselect  \n  database_name,  \n  table_name as TableName,\n  UNIX_TIMESTAMP(startTime) as time,\n  Notification,\n  days\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select FINAL_TIME from `$DB_stc_cdr_data`.`cdr_sms_details_hourly` ORDER BY FINAL_TIME ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select FINAL_TIME from `$DB_stc_cdr_data`.`cdr_sms_details_hourly` \nORDER BY FINAL_TIME DESC LIMIT 1 ) as startTime \nFROM data_retention_purging WHERE table_name='cdr_sms_details_hourly' ORDER BY id  DESC LIMIT 1)\nas data8\nwhere data8.Notification=0 and $__timeFilter(data8.startTime) \nunion all\n\nselect  \n  database_name,  \n  table_name as TableName,\n  UNIX_TIMESTAMP(startTime) as time,\n  Notification,\n  days\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select FINAL_TIME from `$DB_stc_cdr_data`.`cdr_sms_details_daily` ORDER BY FINAL_TIME ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select FINAL_TIME from `$DB_stc_cdr_data`.`cdr_sms_details_daily` \nORDER BY FINAL_TIME DESC LIMIT 1 ) as startTime \nFROM data_retention_purging WHERE table_name='cdr_sms_details_daily' ORDER BY id  DESC LIMIT 1)\nas data9\nwhere data9.Notification=0 and $__timeFilter(data9.startTime) \nunion all\n\nselect  \n  database_name,  \n  table_name as TableName,\n  UNIX_TIMESTAMP(startTime) as time,\n  Notification,\n  days\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select FINAL_TIME from `$DB_stc_cdr_data`.`cdr_sms_details_weekly` ORDER BY FINAL_TIME ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select FINAL_TIME from `$DB_stc_cdr_data`.`cdr_sms_details_weekly` \nORDER BY FINAL_TIME DESC LIMIT 1 ) as startTime \nFROM data_retention_purging WHERE table_name='cdr_sms_details_weekly' ORDER BY id  DESC LIMIT 1)\nas data10\nwhere data10.Notification=0 and $__timeFilter(data10.startTime) \nunion all\n\nselect  \n  database_name,  \n  table_name as TableName,\n  UNIX_TIMESTAMP(startTime) as time,\n  Notification,\n  days\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select FINAL_TIME from `$DB_stc_cdr_data`.`cdr_sms_details_yearly` ORDER BY FINAL_TIME ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select FINAL_TIME from `$DB_stc_cdr_data`.`cdr_sms_details_yearly` \nORDER BY FINAL_TIME DESC LIMIT 1 ) as startTime \nFROM data_retention_purging WHERE table_name='cdr_sms_details_yearly' ORDER BY id  DESC LIMIT 1)\nas data11\nwhere data11.Notification=0 and $__timeFilter(data11.startTime) \nunion all\n\nselect  \n  database_name,  \n  table_name as TableName,\n  UNIX_TIMESTAMP(startTime) as time,\n  Notification,\n  days\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select ANSWERING_TIME from `$DB_stc_dev`.`cdr_voice_details` ORDER BY ANSWERING_TIME ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select ANSWERING_TIME from `$DB_stc_dev`.`cdr_voice_details`\nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime \nFROM data_retention_purging WHERE table_name='cdr_voice_details' ORDER BY id  DESC LIMIT 1)\nas data12\nwhere data12.Notification=0 and $__timeFilter(data12.startTime) \nunion all\n\nselect  \n  database_name,  \n  table_name as TableName,\n  UNIX_TIMESTAMP(startTime) as time,\n  Notification,\n  days\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_hourly` ORDER BY ANSWERING_TIME ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_hourly`\nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime\nFROM data_retention_purging WHERE table_name='cdr_voice_details_hourly' ORDER BY id  DESC LIMIT 1)\nas data13\nwhere data13.Notification=0 and $__timeFilter(data13.startTime) \nunion all\n\nselect  \n  database_name,  \n  table_name as TableName,\n  UNIX_TIMESTAMP(startTime) as time,\n  Notification,\n  days\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_daily` ORDER BY ANSWERING_TIME ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_daily`\nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime\nFROM data_retention_purging WHERE table_name='cdr_voice_details_daily' ORDER BY id  DESC LIMIT 1)\nas data14\nwhere data14.Notification=0 and $__timeFilter(data14.startTime) \nunion all\n\nselect  \n  database_name,  \n  table_name as TableName,\n  UNIX_TIMESTAMP(startTime) as time,\n  Notification,\n  days\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_weekly` ORDER BY ANSWERING_TIME ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_weekly`\nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime\nFROM data_retention_purging WHERE table_name='cdr_voice_details_weekly' ORDER BY id  DESC LIMIT 1)\nas data15\nwhere data15.Notification=0 and $__timeFilter(data15.startTime) \nunion all\n\nselect  \n  database_name,  \n  table_name as TableName,\n  UNIX_TIMESTAMP(startTime) as time,\n  Notification,\n  days\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_yearly` ORDER BY ANSWERING_TIME ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_yearly`\nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime\nFROM data_retention_purging WHERE table_name='cdr_voice_details_yearly' ORDER BY id  DESC LIMIT 1)\n as data16\n where data16.Notification=0 and $__timeFilter(data16.startTime) ;\n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Purging Threshold Reached Data",
+      "transparent": true,
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "0zyzXo14z"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "TableName"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "cdr_data_details": {
+                        "color": "#c6ff02",
+                        "index": 5,
+                        "text": "cdr_data_details"
+                      },
+                      "cdr_data_details_daily": {
+                        "color": "semi-dark-green",
+                        "index": 0,
+                        "text": "cdr_data_details_daily"
+                      },
+                      "cdr_data_details_hourly": {
+                        "color": "semi-dark-blue",
+                        "index": 1,
+                        "text": "cdr_data_details_hourly"
+                      },
+                      "cdr_data_details_monthly": {
+                        "color": "light-red",
+                        "index": 6,
+                        "text": "cdr_data_details_monthly"
+                      },
+                      "cdr_data_details_weekly": {
+                        "color": "semi-dark-purple",
+                        "index": 7,
+                        "text": "cdr_data_details_weekly"
+                      },
+                      "cdr_data_details_yearly": {
+                        "color": "light-green",
+                        "index": 8,
+                        "text": "cdr_data_details_yearly"
+                      },
+                      "cdr_details": {
+                        "color": "semi-dark-orange",
+                        "index": 2,
+                        "text": "cdr_details"
+                      },
+                      "cdr_sms_details": {
+                        "color": "#e9dc10",
+                        "index": 9,
+                        "text": "cdr_sms_details"
+                      },
+                      "cdr_sms_details_daily": {
+                        "color": "#06baf2",
+                        "index": 10,
+                        "text": "cdr_sms_details_daily"
+                      },
+                      "cdr_sms_details_hourly": {
+                        "color": "super-light-green",
+                        "index": 11,
+                        "text": "cdr_sms_details_hourly"
+                      },
+                      "cdr_sms_details_monthly": {
+                        "color": "dark-red",
+                        "index": 13,
+                        "text": "cdr_sms_details_monthly"
+                      },
+                      "cdr_sms_details_weekly": {
+                        "color": "super-light-orange",
+                        "index": 12,
+                        "text": "cdr_sms_details_weekly"
+                      },
+                      "cdr_sms_details_yearly": {
+                        "color": "dark-orange",
+                        "index": 14,
+                        "text": "cdr_sms_details_yearly"
+                      },
+                      "cdr_voice_details_daily": {
+                        "color": "semi-dark-yellow",
+                        "index": 3,
+                        "text": "cdr_voice_details_daily"
+                      },
+                      "cdr_voice_details_hourly": {
+                        "color": "dark-yellow",
+                        "index": 15,
+                        "text": "cdr_voice_details_hourly"
+                      },
+                      "cdr_voice_details_monthly": {
+                        "color": "dark-green",
+                        "index": 16,
+                        "text": "cdr_voice_details_monthly"
+                      },
+                      "cdr_voice_details_weekly": {
+                        "color": "#09e9cc",
+                        "index": 4,
+                        "text": "cdr_voice_details_weekly"
+                      },
+                      "cdr_voice_details_yearly": {
+                        "color": "dark-purple",
+                        "index": 17,
+                        "text": "cdr_voice_details_yearly"
+                      },
+                      "rule_engine_auditlog": {
+                        "color": "semi-dark-blue",
+                        "index": 18,
+                        "text": "rule_engine_auditlog"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 10
+      },
+      "id": 3,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "colorByField": "TableName",
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": false
+        },
+        "orientation": "horizontal",
+        "showValue": "never",
+        "stacking": "none",
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "9.3.6",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "0zyzXo14z"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "hide": false,
+          "rawQuery": true,
+          "rawSql": "select\n Notification,\n table_name as TableName\n \nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select startTime from `$DB_stc_dev`.`cdr_details` ORDER BY startTime ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days\n,(select startTime from `$DB_stc_dev`.`cdr_details` \nORDER BY startTime DESC LIMIT 1 ) as startTime \nFROM data_retention_purging WHERE table_name='cdr_details' ORDER BY id DESC LIMIT 1 )\nas data1\nwhere data1.Notification=1 and $__timeFilter(data1.startTime) \n\nunion all\n\nselect \n Notification,\n table_name as TableName\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select startTime from `$DB_stc_cdr_data`.`cdr_data_details_daily` ORDER BY startTime ASC LIMIT 1 ),NOW())) THEN 1 ELSE 0 END AS Notification,database_name,table_name,days\n,(select startTime from `$DB_stc_cdr_data`.`cdr_data_details_daily` \nORDER BY startTime DESC LIMIT 1 ) as startTime \n FROM data_retention_purging WHERE table_name='cdr_data_details_daily' ORDER BY id  DESC LIMIT 1)\nas data2\nwhere data2.Notification=1 and $__timeFilter(data2.startTime) \nunion all\n\nselect \n Notification,\n table_name as TableName\nfrom\n  (SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select startTime from `$DB_stc_cdr_data`.`cdr_data_details_hourly` ORDER BY startTime ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select startTime from `$DB_stc_cdr_data`.`cdr_data_details_hourly` \nORDER BY startTime DESC LIMIT 1 ) as startTime \nFROM data_retention_purging WHERE table_name='cdr_data_details_hourly' ORDER BY id  DESC LIMIT 1)\nas data3\nwhere data3.Notification=1 and $__timeFilter(data3.startTime) \n\nunion all\n\nselect \n Notification,\n table_name as TableName\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select startTime from `$DB_stc_cdr_data`.`cdr_data_details_monthly` ORDER BY startTime ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select startTime from `$DB_stc_cdr_data`.`cdr_data_details_monthly` \nORDER BY startTime DESC LIMIT 1 ) as startTime \nFROM data_retention_purging WHERE table_name='cdr_data_details_monthly' ORDER BY id  DESC LIMIT 1)\nas data4\nwhere data4.Notification=1 and $__timeFilter(data4.startTime)\nunion all\n\nselect \n Notification,\n table_name as TableName\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select startTime from `$DB_stc_cdr_data`.`cdr_data_details_weekly` ORDER BY startTime ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select startTime from `$DB_stc_cdr_data`.`cdr_data_details_weekly` \nORDER BY startTime DESC LIMIT 1 ) as startTime \nFROM data_retention_purging WHERE table_name='cdr_data_details_weekly' ORDER BY id  DESC LIMIT 1)\nas data5\nwhere data5.Notification=1 and $__timeFilter(data5.startTime)\nunion all\n\nselect \n Notification,\n table_name as TableName\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select startTime from `$DB_stc_cdr_data`.`cdr_data_details_yearly` ORDER BY startTime ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select startTime from `$DB_stc_cdr_data`.`cdr_data_details_yearly` \nORDER BY startTime DESC LIMIT 1 ) as startTime \nFROM data_retention_purging WHERE table_name='cdr_data_details_yearly' ORDER BY id  DESC LIMIT 1)\ndata6\nwhere data6.Notification=1 and $__timeFilter(data6.startTime)\n\n\nunion all\nselect \n Notification,\n table_name as TableName\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select FINAL_TIME from `$DB_stc_dev`.`cdr_sms_details` ORDER BY FINAL_TIME ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select FINAL_TIME from `$DB_stc_dev`.`cdr_sms_details` \nORDER BY FINAL_TIME DESC LIMIT 1 ) as startTime \nFROM data_retention_purging WHERE table_name='cdr_sms_details' ORDER BY id  DESC LIMIT 1)\nas data7\nwhere data7.Notification=1 and $__timeFilter(data7.startTime) \n\nunion all\n\nselect \n Notification,\n table_name as TableName\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select FINAL_TIME from `$DB_stc_cdr_data`.`cdr_sms_details_hourly` ORDER BY FINAL_TIME ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select FINAL_TIME from `$DB_stc_cdr_data`.`cdr_sms_details_hourly` \nORDER BY FINAL_TIME DESC LIMIT 1 ) as startTime \nFROM data_retention_purging WHERE table_name='cdr_sms_details_hourly' ORDER BY id  DESC LIMIT 1)\nas data8\nwhere data8.Notification=1 and $__timeFilter(data8.startTime) \nunion all\n\nselect \n Notification,\n table_name as TableName\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select FINAL_TIME from `$DB_stc_cdr_data`.`cdr_sms_details_daily` ORDER BY FINAL_TIME ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select FINAL_TIME from `$DB_stc_cdr_data`.`cdr_sms_details_daily` \nORDER BY FINAL_TIME DESC LIMIT 1 ) as startTime \nFROM data_retention_purging WHERE table_name='cdr_sms_details_daily' ORDER BY id  DESC LIMIT 1)\nas data9\nwhere data9.Notification=1 and $__timeFilter(data9.startTime) \nunion all\n\nselect \n Notification,\n table_name as TableName\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select FINAL_TIME from `$DB_stc_cdr_data`.`cdr_sms_details_weekly` ORDER BY FINAL_TIME ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select FINAL_TIME from `$DB_stc_cdr_data`.`cdr_sms_details_weekly` \nORDER BY FINAL_TIME DESC LIMIT 1 ) as startTime \nFROM data_retention_purging WHERE table_name='cdr_sms_details_weekly' ORDER BY id  DESC LIMIT 1)\nas data10\nwhere data10.Notification=1 and $__timeFilter(data10.startTime) \nunion all\n\nselect \n Notification,\n table_name as TableName\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select FINAL_TIME from `$DB_stc_cdr_data`.`cdr_sms_details_yearly` ORDER BY FINAL_TIME ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select FINAL_TIME from `$DB_stc_cdr_data`.`cdr_sms_details_yearly` \nORDER BY FINAL_TIME DESC LIMIT 1 ) as startTime \nFROM data_retention_purging WHERE table_name='cdr_sms_details_yearly' ORDER BY id  DESC LIMIT 1)\nas data11\nwhere data11.Notification=1 and $__timeFilter(data11.startTime) \nunion all\n\nselect \n Notification,\n table_name as TableName\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select ANSWERING_TIME from `$DB_stc_dev`.`cdr_voice_details` ORDER BY ANSWERING_TIME ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select ANSWERING_TIME from `$DB_stc_dev`.`cdr_voice_details`\nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime \nFROM data_retention_purging WHERE table_name='cdr_voice_details' ORDER BY id  DESC LIMIT 1)\nas data12\nwhere data12.Notification=1 and $__timeFilter(data12.startTime) \nunion all\n\nselect \n Notification,\n table_name as TableName\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_hourly` ORDER BY ANSWERING_TIME ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_hourly`\nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime\nFROM data_retention_purging WHERE table_name='cdr_voice_details_hourly' ORDER BY id  DESC LIMIT 1)\nas data13\nwhere data13.Notification=1 and $__timeFilter(data13.startTime) \nunion all\n\nselect \n Notification,\n table_name as TableName\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_daily` ORDER BY ANSWERING_TIME ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_daily`\nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime\nFROM data_retention_purging WHERE table_name='cdr_voice_details_daily' ORDER BY id  DESC LIMIT 1)\nas data14\nwhere data14.Notification=1 and $__timeFilter(data14.startTime) \nunion all\n\nselect \n Notification,\n table_name as TableName\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_weekly` ORDER BY ANSWERING_TIME ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_weekly`\nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime\nFROM data_retention_purging WHERE table_name='cdr_voice_details_weekly' ORDER BY id  DESC LIMIT 1)\nas data15\nwhere data15.Notification=1 and $__timeFilter(data15.startTime) \nunion all\n\nselect \n Notification,\n table_name as TableName\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_yearly` ORDER BY ANSWERING_TIME ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_yearly`\nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime\nFROM data_retention_purging WHERE table_name='cdr_voice_details_yearly' ORDER BY id  DESC LIMIT 1)\n as data16\n where data16.Notification=1 and $__timeFilter(data16.startTime) ;\n",
+          "refId": "B",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Purging Threshold Not Met",
+      "transparent": true,
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "0zyzXo14z"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto",
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "dark-green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "database_name"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Database"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "table_name"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Table"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "days"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Days"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Notification"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "1": {
+                        "color": "dark-green",
+                        "index": 0,
+                        "text": "Not Triggered"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              },
+              {
+                "id": "custom.displayMode",
+                "value": "color-background"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "time"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Time"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "TableName"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 187
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Database"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 96
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 10
+      },
+      "id": 5,
+      "options": {
+        "footer": {
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "9.3.6",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "0zyzXo14z"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "hide": false,
+          "rawQuery": true,
+          "rawSql": "select\n  database_name,  \n  table_name as TableName,\n  UNIX_TIMESTAMP(startTime) as time,\n  Notification,\n  days\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select startTime from `$DB_stc_dev`.`cdr_details` ORDER BY startTime ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days\n,(select startTime from `$DB_stc_dev`.`cdr_details` \nORDER BY startTime DESC LIMIT 1 ) as startTime \nFROM data_retention_purging WHERE table_name='cdr_details' ORDER BY id DESC LIMIT 1 )\nas data1\nwhere data1.Notification=1 and $__timeFilter(data1.startTime) \n\nunion all\n\nselect \n  database_name,  \n  table_name as TableName,\n  UNIX_TIMESTAMP(startTime) as time,\n  Notification,\n  days\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select startTime from `$DB_stc_cdr_data`.`cdr_data_details_daily` ORDER BY startTime ASC LIMIT 1 ),NOW())) THEN 1 ELSE 0 END AS Notification,database_name,table_name,days\n,(select startTime from `$DB_stc_cdr_data`.`cdr_data_details_daily` \nORDER BY startTime DESC LIMIT 1 ) as startTime \n FROM data_retention_purging WHERE table_name='cdr_data_details_daily' ORDER BY id  DESC LIMIT 1)\nas data2\nwhere data2.Notification=1 and $__timeFilter(data2.startTime) \nunion all\n\nselect  \n  database_name,  \n  table_name as TableName,\n  UNIX_TIMESTAMP(startTime) as time,\n  Notification,\n  days\nfrom\n  (SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select startTime from `$DB_stc_cdr_data`.`cdr_data_details_hourly` ORDER BY startTime ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select startTime from `$DB_stc_cdr_data`.`cdr_data_details_hourly` \nORDER BY startTime DESC LIMIT 1 ) as startTime \nFROM data_retention_purging WHERE table_name='cdr_data_details_hourly' ORDER BY id  DESC LIMIT 1)\nas data3\nwhere data3.Notification=1 and $__timeFilter(data3.startTime) \n\nunion all\n\nselect  \n  database_name,  \n  table_name as TableName,\n  UNIX_TIMESTAMP(startTime) as time,\n  Notification,\n  days\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select startTime from `$DB_stc_cdr_data`.`cdr_data_details_monthly` ORDER BY startTime ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select startTime from `$DB_stc_cdr_data`.`cdr_data_details_monthly` \nORDER BY startTime DESC LIMIT 1 ) as startTime \nFROM data_retention_purging WHERE table_name='cdr_data_details_monthly' ORDER BY id  DESC LIMIT 1)\nas data4\nwhere data4.Notification=1 and $__timeFilter(data4.startTime)\nunion all\n\nselect  \n  database_name,  \n  table_name as TableName,\n  UNIX_TIMESTAMP(startTime) as time,\n  Notification,\n  days\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select startTime from `$DB_stc_cdr_data`.`cdr_data_details_weekly` ORDER BY startTime ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select startTime from `$DB_stc_cdr_data`.`cdr_data_details_weekly` \nORDER BY startTime DESC LIMIT 1 ) as startTime \nFROM data_retention_purging WHERE table_name='cdr_data_details_weekly' ORDER BY id  DESC LIMIT 1)\nas data5\nwhere data5.Notification=1 and $__timeFilter(data5.startTime)\nunion all\n\nselect  \n  database_name,  \n  table_name as TableName,\n  UNIX_TIMESTAMP(startTime) as time,\n  Notification,\n  days\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select startTime from `$DB_stc_cdr_data`.`cdr_data_details_yearly` ORDER BY startTime ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select startTime from `$DB_stc_cdr_data`.`cdr_data_details_yearly` \nORDER BY startTime DESC LIMIT 1 ) as startTime \nFROM data_retention_purging WHERE table_name='cdr_data_details_yearly' ORDER BY id  DESC LIMIT 1)\ndata6\nwhere data6.Notification=1 and $__timeFilter(data6.startTime)\n\n\nunion all\nselect  \n  database_name,  \n  table_name as TableName,\n  UNIX_TIMESTAMP(startTime) as time,\n  Notification,\n  days\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select FINAL_TIME from `$DB_stc_dev`.`cdr_sms_details` ORDER BY FINAL_TIME ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select FINAL_TIME from `$DB_stc_dev`.`cdr_sms_details` \nORDER BY FINAL_TIME DESC LIMIT 1 ) as startTime \nFROM data_retention_purging WHERE table_name='cdr_sms_details' ORDER BY id  DESC LIMIT 1)\nas data7\nwhere data7.Notification=1 and $__timeFilter(data7.startTime) \n\nunion all\n\nselect  \n  database_name,  \n  table_name as TableName,\n  UNIX_TIMESTAMP(startTime) as time,\n  Notification,\n  days\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select FINAL_TIME from `$DB_stc_cdr_data`.`cdr_sms_details_hourly` ORDER BY FINAL_TIME ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select FINAL_TIME from `$DB_stc_cdr_data`.`cdr_sms_details_hourly` \nORDER BY FINAL_TIME DESC LIMIT 1 ) as startTime \nFROM data_retention_purging WHERE table_name='cdr_sms_details_hourly' ORDER BY id  DESC LIMIT 1)\nas data8\nwhere data8.Notification=1 and $__timeFilter(data8.startTime) \nunion all\n\nselect  \n  database_name,  \n  table_name as TableName,\n  UNIX_TIMESTAMP(startTime) as time,\n  Notification,\n  days\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select FINAL_TIME from `$DB_stc_cdr_data`.`cdr_sms_details_daily` ORDER BY FINAL_TIME ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select FINAL_TIME from `$DB_stc_cdr_data`.`cdr_sms_details_daily` \nORDER BY FINAL_TIME DESC LIMIT 1 ) as startTime \nFROM data_retention_purging WHERE table_name='cdr_sms_details_daily' ORDER BY id  DESC LIMIT 1)\nas data9\nwhere data9.Notification=1 and $__timeFilter(data9.startTime) \nunion all\n\nselect  \n  database_name,  \n  table_name as TableName,\n  UNIX_TIMESTAMP(startTime) as time,\n  Notification,\n  days\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select FINAL_TIME from `$DB_stc_cdr_data`.`cdr_sms_details_weekly` ORDER BY FINAL_TIME ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select FINAL_TIME from `$DB_stc_cdr_data`.`cdr_sms_details_weekly` \nORDER BY FINAL_TIME DESC LIMIT 1 ) as startTime \nFROM data_retention_purging WHERE table_name='cdr_sms_details_weekly' ORDER BY id  DESC LIMIT 1)\nas data10\nwhere data10.Notification=1 and $__timeFilter(data10.startTime) \nunion all\n\nselect  \n  database_name,  \n  table_name as TableName,\n  UNIX_TIMESTAMP(startTime) as time,\n  Notification,\n  days\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select FINAL_TIME from `$DB_stc_cdr_data`.`cdr_sms_details_yearly` ORDER BY FINAL_TIME ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select FINAL_TIME from `$DB_stc_cdr_data`.`cdr_sms_details_yearly` \nORDER BY FINAL_TIME DESC LIMIT 1 ) as startTime \nFROM data_retention_purging WHERE table_name='cdr_sms_details_yearly' ORDER BY id  DESC LIMIT 1)\nas data11\nwhere data11.Notification=1 and $__timeFilter(data11.startTime) \nunion all\n\nselect  \n  database_name,  \n  table_name as TableName,\n  UNIX_TIMESTAMP(startTime) as time,\n  Notification,\n  days\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select ANSWERING_TIME from `$DB_stc_dev`.`cdr_voice_details` ORDER BY ANSWERING_TIME ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select ANSWERING_TIME from `$DB_stc_dev`.`cdr_voice_details`\nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime \nFROM data_retention_purging WHERE table_name='cdr_voice_details' ORDER BY id  DESC LIMIT 1)\nas data12\nwhere data12.Notification=1 and $__timeFilter(data12.startTime) \nunion all\n\nselect  \n  database_name,  \n  table_name as TableName,\n  UNIX_TIMESTAMP(startTime) as time,\n  Notification,\n  days\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_hourly` ORDER BY ANSWERING_TIME ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_hourly`\nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime\nFROM data_retention_purging WHERE table_name='cdr_voice_details_hourly' ORDER BY id  DESC LIMIT 1)\nas data13\nwhere data13.Notification=1 and $__timeFilter(data13.startTime) \nunion all\n\nselect  \n  database_name,  \n  table_name as TableName,\n  UNIX_TIMESTAMP(startTime) as time,\n  Notification,\n  days\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_daily` ORDER BY ANSWERING_TIME ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_daily`\nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime\nFROM data_retention_purging WHERE table_name='cdr_voice_details_daily' ORDER BY id  DESC LIMIT 1)\nas data14\nwhere data14.Notification=1 and $__timeFilter(data14.startTime) \nunion all\n\nselect  \n  database_name,  \n  table_name as TableName,\n  UNIX_TIMESTAMP(startTime) as time,\n  Notification,\n  days\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_weekly` ORDER BY ANSWERING_TIME ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_weekly`\nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime\nFROM data_retention_purging WHERE table_name='cdr_voice_details_weekly' ORDER BY id  DESC LIMIT 1)\nas data15\nwhere data15.Notification=1 and $__timeFilter(data15.startTime) \nunion all\n\nselect  \n  database_name,  \n  table_name as TableName,\n  UNIX_TIMESTAMP(startTime) as time,\n  Notification,\n  days\nfrom\n(SELECT CASE WHEN days < DATEDIFF(NOW(),IFNULL((select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_yearly` ORDER BY ANSWERING_TIME ASC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,days \n,(select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_yearly`\nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime\nFROM data_retention_purging WHERE table_name='cdr_voice_details_yearly' ORDER BY id  DESC LIMIT 1)\n as data16\n where data16.Notification=1 and $__timeFilter(data16.startTime) ;\n",
+          "refId": "B",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Purging Threshold Not Met Data",
+      "transparent": true,
+      "type": "table"
+    }
+  ],
+  "refresh": false,
+  "schemaVersion": 37,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "stc_dev",
+          "value": "stc_dev"
+        },
+        "hide": 2,
+        "includeAll": false,
+        "label": "",
+        "multi": false,
+        "name": "DB_stc_dev",
+        "options": [
+          {
+            "selected": true,
+            "text": "stc_dev",
+            "value": "stc_dev"
+          }
+        ],
+        "query": "stc_dev",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "stc_cdr_data",
+          "value": "stc_cdr_data"
+        },
+        "hide": 2,
+        "includeAll": false,
+        "label": "",
+        "multi": false,
+        "name": "DB_stc_cdr_data",
+        "options": [
+          {
+            "selected": true,
+            "text": "stc_cdr_data",
+            "value": "stc_cdr_data"
+          }
+        ],
+        "query": "stc_cdr_data",
+        "skipUrlSync": false,
+        "type": "custom"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-30d",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Purging Observing",
+  "uid": "_1-shQ14z",
+  "version": 18,
+  "weekStart": ""
+}

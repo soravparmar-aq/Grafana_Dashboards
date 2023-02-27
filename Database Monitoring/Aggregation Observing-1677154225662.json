@@ -1,0 +1,786 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 37,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "0zyzXo14z"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "axisSoftMax": 1,
+            "axisSoftMin": -1,
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 40,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "stepBefore",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 2,
+            "pointSize": 12,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "always",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "dark-red",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "time"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Time"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 8,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "9.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "0zyzXo14z"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "hide": false,
+          "rawQuery": true,
+          "rawSql": "Select \n\tstartTime as time,\n\tNotification, \n\tcdr_voice_details_daily as TableName\nfrom\n(SELECT CASE WHEN ANSWERING_TIME>=DATE_SUB(NOW(),INTERVAL 1 DAY) THEN 1 ELSE 0 END AS Notification,\n'stc_cdr_data','cdr_voice_details_daily'\n,(select ANSWERING_TIME from `stc_cdr_data`.`cdr_voice_details_daily`\nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime \n FROM \n`stc_cdr_data`.`cdr_voice_details_daily`  ORDER BY ANSWERING_TIME DESC LIMIT 1 )\nas data1\nwhere data1.Notification = 0 and $__timeFilter(data1.startTime)\n\nunion all\nSelect \n\tstartTime as time,\n\tNotification, \n\tcdr_voice_details_hourly as TableName\nfrom\n(SELECT CASE WHEN ANSWERING_TIME>=DATE_SUB(NOW(), INTERVAL 1 HOUR) THEN 1 ELSE 0 END AS Notification,'stc_cdr_data','cdr_voice_details_hourly'\n,(select ANSWERING_TIME from `stc_cdr_data`.`cdr_voice_details_hourly`\nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime\n FROM `stc_cdr_data`.`cdr_voice_details_hourly`  ORDER BY ANSWERING_TIME DESC LIMIT 1 )\nas data2\nwhere data2.Notification = 0 and $__timeFilter(data2.startTime)\n\nunion all\n\nSelect \n\tstartTime as time,\n\tNotification, \n\tcdr_voice_details_monthly as TableName\nfrom\n(SELECT CASE WHEN ANSWERING_TIME>=DATE_FORMAT(NOW() - INTERVAL 1 MONTH, '%Y/%m/01') THEN 1 ELSE 0 END AS Notification,'stc_cdr_data','cdr_voice_details_monthly'\n,(select ANSWERING_TIME from `stc_cdr_data`.`cdr_voice_details_monthly`\nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime\n FROM `stc_cdr_data`.`cdr_voice_details_monthly`  ORDER BY ANSWERING_TIME DESC LIMIT 1 )\nas data3\nwhere data3.Notification = 0 and $__timeFilter(data3.startTime)\n\nunion all\n\nSelect \n\tstartTime as time,\n\tNotification, \n\tcdr_voice_details_weekly as TableName\nfrom\n(SELECT CASE WHEN ANSWERING_TIME>=(DATE(NOW()) - INTERVAL 7 DAY) THEN 1 ELSE 0 END AS Notification,'stc_cdr_data','cdr_voice_details_weekly' \n,(select ANSWERING_TIME from `stc_cdr_data`.`cdr_voice_details_weekly`\nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime\nFROM `stc_cdr_data`.`cdr_voice_details_weekly`  ORDER BY ANSWERING_TIME DESC LIMIT 1 )\nas data4\nwhere data4.Notification = 0 and $__timeFilter(data4.startTime)\nunion all\n\nSelect \n\tstartTime as time,\n\tNotification, \n\tcdr_voice_details_yearly as TableName\nfrom\n(SELECT CASE WHEN ANSWERING_TIME>=YEAR(DATE_SUB(NOW(), INTERVAL 1 YEAR)) THEN 1 ELSE 0 \nEND AS Notification,'stc_cdr_data','cdr_voice_details_yearly'\n,(select ANSWERING_TIME from `stc_cdr_data`.`cdr_voice_details_yearly`\nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime\nFROM `stc_cdr_data`.`cdr_voice_details_yearly`  ORDER BY ANSWERING_TIME DESC LIMIT 1 )\nas data5\nwhere data5.Notification = 0 and $__timeFilter(data5.startTime)\n\nunion all\n\nSelect \n\tstartTime as time,\n\tNotification, \n\tcdr_data_details_daily as TableName\nfrom\n(SELECT CASE WHEN startTime>=DATE_SUB(NOW(),INTERVAL 1 DAY) THEN 1 ELSE 0 END AS Notification,'stc_cdr_data','cdr_data_details_daily'\n,(select startTime from `stc_cdr_data`.`cdr_data_details_daily`\nORDER BY startTime DESC LIMIT 1 ) as startTime\nFROM `stc_cdr_data`.`cdr_data_details_daily`  ORDER BY startTime DESC LIMIT 1 )\nas data11\nwhere data11.Notification = 0 and $__timeFilter(data11.startTime)\n\nunion all\n\nSelect \n\tsTime as time,\n\tNotification,\n\tcdr_data_details_hourly as TableName\nfrom\n(SELECT CASE WHEN startTime>=DATE_SUB(NOW(), INTERVAL 1 HOUR) THEN 1 ELSE 0 END AS Notification,'stc_cdr_data','cdr_data_details_hourly', \n(select startTime from `stc_cdr_data`.`cdr_data_details_hourly`\nORDER BY startTime DESC LIMIT 1 ) as sTime\nFROM `stc_cdr_data`.`cdr_data_details_hourly`  ORDER BY startTime DESC LIMIT 1 )\nas data12\nwhere data12.Notification = 0 and $__timeFilter(data12.sTime)\n\nunion all\n\nSelect \n\tstartTime as time,\n\tNotification, \n\tcdr_data_details_monthly as TableName\nfrom\n(SELECT CASE WHEN startTime>=DATE_FORMAT(NOW() - INTERVAL 1 MONTH, '%Y/%m/01') THEN 1 ELSE 0 END AS Notification,'stc_cdr_data','cdr_data_details_monthly'\n,(select startTime from `stc_cdr_data`.`cdr_data_details_monthly`\nORDER BY startTime DESC LIMIT 1 ) as startTime\n FROM `stc_cdr_data`.`cdr_data_details_monthly`  ORDER BY startTime DESC LIMIT 1 )\nas data13\nwhere data13.Notification = 0 and $__timeFilter(data13.startTime)\n\nunion all\n\nSelect \n\tstartTime as time,\n\tNotification, \n\tcdr_data_details_weekly as TableName\nfrom\n(SELECT CASE WHEN startTime>=(DATE(NOW()) - INTERVAL 7 DAY) THEN 1 ELSE 0 END AS Notification,'stc_cdr_data','cdr_data_details_weekly'\n,(select startTime from `stc_cdr_data`.`cdr_data_details_weekly`\nORDER BY startTime DESC LIMIT 1 ) as startTime\nFROM `stc_cdr_data`.`cdr_data_details_weekly`  ORDER BY startTime DESC LIMIT 1 )\nas data14\nwhere data14.Notification = 0 and $__timeFilter(data14.startTime)\n\nunion all\n\nSelect \n\tstartTime as time,\n\tNotification, \n\tcdr_data_details_yearly as TableName\nfrom\n(SELECT CASE WHEN startTime>=YEAR(DATE_SUB(NOW(), INTERVAL 1 YEAR)) THEN 1 ELSE 0 END AS Notification,'stc_cdr_data','cdr_data_details_yearly'\n,(select startTime from `stc_cdr_data`.`cdr_data_details_yearly`\nORDER BY startTime DESC LIMIT 1 ) as startTime\n FROM `stc_cdr_data`.`cdr_data_details_yearly`  ORDER BY startTime DESC LIMIT 1) \nas data15\nwhere data15.Notification = 0 and $__timeFilter(data15.startTime)\n\nunion all\n\nSelect \n\tstartTime as time, \n\tNotification, \n\tcdr_sms_details_daily as TableName    \nfrom\n(SELECT CASE WHEN FINAL_TIME>=DATE_SUB(NOW(),INTERVAL 1 DAY) THEN 1 ELSE 0 END AS Notification,\n'stc_cdr_data','cdr_sms_details_daily'\n,(select FINAL_TIME from `stc_cdr_data`.`cdr_sms_details_daily`\nORDER BY FINAL_TIME DESC LIMIT 1 ) as startTime\n FROM \n`stc_cdr_data`.`cdr_sms_details_daily`  ORDER BY FINAL_TIME DESC LIMIT 1 )\nas data6\nwhere data6.Notification = 0 and $__timeFilter(data6.startTime)\n\nunion all\n\nSelect \n\tsTime as time, \n\tNotification,\n\tcdr_sms_details_hourly as TableName\nfrom\n(SELECT CASE WHEN FINAL_TIME>=DATE_SUB(NOW(), INTERVAL 1 HOUR) THEN 1 ELSE 0 END AS Notification,\n'stc_cdr_data','cdr_sms_details_hourly' \n,(select FINAL_TIME from `stc_cdr_data`.`cdr_sms_details_hourly`\nORDER BY FINAL_TIME DESC LIMIT 1 ) as sTime\nFROM `stc_cdr_data`.`cdr_sms_details_hourly`  ORDER BY FINAL_TIME DESC LIMIT 1 )\nas data7\nwhere data7.Notification = 0 and $__timeFilter(data7.sTime)\n\nunion all\n\nSelect \n\tsTime as time, \n\tNotification,\n\tcdr_sms_details_monthly as TableName  \nfrom\n(SELECT CASE WHEN FINAL_TIME>=DATE_FORMAT(NOW() - INTERVAL 1 MONTH, '%Y/%m/01') THEN 1 ELSE 0 END AS Notification,\n'stc_cdr_data','cdr_sms_details_monthly' \n,(select FINAL_TIME from `stc_cdr_data`.`cdr_sms_details_monthly`\nORDER BY FINAL_TIME DESC LIMIT 1 ) as sTime\nFROM `stc_cdr_data`.cdr_sms_details_monthly  ORDER BY FINAL_TIME DESC LIMIT 1 )\nas data8\nwhere data8.Notification = 0 and $__timeFilter(data8.sTime)\n\nunion all\n\nSelect\n\tsTime as time, \n\tNotification, \n\tcdr_sms_details_weekly as TableName   \nfrom\n(SELECT CASE WHEN FINAL_TIME>=(DATE(NOW()) - INTERVAL 7 DAY) THEN 1 ELSE 0 END AS Notification,\n'stc_cdr_data','cdr_sms_details_weekly',FINAL_TIME \n,(select FINAL_TIME from `stc_cdr_data`.`cdr_sms_details_weekly`\nORDER BY FINAL_TIME ASC LIMIT 1 ) as sTime\nFROM `stc_cdr_data`.`cdr_sms_details_weekly`  ORDER BY FINAL_TIME DESC LIMIT 1 )\nas data9\nwhere data9.Notification = 0 and $__timeFilter(data9.sTime)\n\nunion all\n\nSelect\n\tsTime as time, \n\tNotification, \n\tcdr_sms_details_yearly as TableName   \nfrom\n(SELECT CASE WHEN FINAL_TIME>=YEAR(DATE_SUB(NOW(), INTERVAL 1 YEAR)) THEN 1 ELSE 0 END AS Notification,'stc_cdr_data','cdr_sms_details_yearly'\n,(select FINAL_TIME from `stc_cdr_data`.`cdr_sms_details_yearly`\nORDER BY FINAL_TIME ASC LIMIT 1 ) as sTime\nFROM `stc_cdr_data`.`cdr_sms_details_yearly`  ORDER BY FINAL_TIME DESC LIMIT 1 )\nas data10\nwhere data10.Notification = 0 and $__timeFilter(data10.sTime) ;",
+          "refId": "B",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Aggregation Threshold Reached",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "0zyzXo14z"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto",
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "iotsmp_cdr_data"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Database"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "cdr_voice_details_daily"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Table"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "ANSWERING_TIME"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "DateTime"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Notification"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "0": {
+                        "color": "dark-red",
+                        "index": 0,
+                        "text": "Triggered"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "thresholds"
+                }
+              },
+              {
+                "id": "custom.displayMode",
+                "value": "color-background"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "TableName"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 164
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "time"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Time"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "DatabaseName"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 115
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "footer": {
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "9.3.6",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "0zyzXo14z"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "hide": true,
+          "rawQuery": true,
+          "rawSql": "Select \niotsmp_cdr_data,cdr_voice_details_daily, Notification,ANSWERING_TIME from\n(SELECT CASE WHEN ANSWERING_TIME>=DATE_SUB(NOW(),INTERVAL 1 DAY) THEN 1 ELSE 0 END AS Notification,'iotsmp_cdr_data','cdr_voice_details_daily',ANSWERING_TIME FROM iotsmp_cdr_data.cdr_voice_details_daily  ORDER BY ANSWERING_TIME DESC LIMIT 1 )\nas data1\nwhere data1.Notification = 1\nunion all\nSelect \niotsmp_cdr_data,cdr_voice_details_hourly, Notification,ANSWERING_TIME from\n(SELECT CASE WHEN ANSWERING_TIME>=DATE_SUB(NOW(), INTERVAL 1 HOUR) THEN 1 ELSE 0 END AS Notification,'iotsmp_cdr_data','cdr_voice_details_hourly',ANSWERING_TIME FROM iotsmp_cdr_data.cdr_voice_details_hourly  ORDER BY ANSWERING_TIME DESC LIMIT 1 )\nas data2\nwhere data2.Notification = 1\nunion all\nSelect \niotsmp_cdr_data,cdr_voice_details_monthly, Notification,ANSWERING_TIME from\n(SELECT CASE WHEN ANSWERING_TIME>=DATE_FORMAT(NOW() - INTERVAL 1 MONTH, '%Y/%m/01') THEN 1 ELSE 0 END AS Notification,'iotsmp_cdr_data','cdr_voice_details_monthly',ANSWERING_TIME FROM iotsmp_cdr_data.cdr_voice_details_monthly  ORDER BY ANSWERING_TIME DESC LIMIT 1 )\nas data3\nwhere data3.Notification = 1\nunion all\nSelect \niotsmp_cdr_data,cdr_voice_details_weekly, Notification,ANSWERING_TIME from\n(SELECT CASE WHEN ANSWERING_TIME>=(DATE(NOW()) - INTERVAL 7 DAY) THEN 1 ELSE 0 END AS Notification,'iotsmp_cdr_data','cdr_voice_details_weekly',ANSWERING_TIME FROM iotsmp_cdr_data.cdr_voice_details_weekly  ORDER BY ANSWERING_TIME DESC LIMIT 1 )\nas data4\nwhere data4.Notification = 1\nunion all\nSelect \niotsmp_cdr_data,cdr_voice_details_yearly, Notification,ANSWERING_TIME from\n(SELECT CASE WHEN ANSWERING_TIME>=YEAR(DATE_SUB(NOW(), INTERVAL 1 YEAR)) THEN 1 ELSE 0 END AS Notification,'iotsmp_cdr_data','cdr_voice_details_yearly',ANSWERING_TIME FROM iotsmp_cdr_data.cdr_voice_details_yearly  ORDER BY ANSWERING_TIME DESC LIMIT 1 )\nas data5\nwhere data5.Notification = 1\nunion all\nSelect \niotsmp_cdr_data,cdr_sms_details_daily, Notification,FINAL_TIME from\n(SELECT CASE WHEN FINAL_TIME>=DATE_SUB(NOW(),INTERVAL 1 DAY) THEN 1 ELSE 0 END AS Notification,'iotsmp_cdr_data','cdr_sms_details_daily',FINAL_TIME FROM iotsmp_cdr_data.cdr_sms_details_daily  ORDER BY FINAL_TIME DESC LIMIT 1 )\nas data6\nwhere data6.Notification = 1\nunion all\nSelect \niotsmp_cdr_data,cdr_sms_details_hourly, Notification,FINAL_TIME from\n(SELECT CASE WHEN FINAL_TIME>=DATE_SUB(NOW(), INTERVAL 1 HOUR) THEN 1 ELSE 0 END AS Notification,'iotsmp_cdr_data','cdr_sms_details_hourly',FINAL_TIME FROM iotsmp_cdr_data.cdr_sms_details_hourly  ORDER BY FINAL_TIME DESC LIMIT 1 )\nas data7\nwhere data7.Notification = 1\nunion all\nSelect \niotsmp_cdr_data,cdr_sms_details_monthly, Notification,FINAL_TIME from\n(SELECT CASE WHEN FINAL_TIME>=DATE_FORMAT(NOW() - INTERVAL 1 MONTH, '%Y/%m/01') THEN 1 ELSE 0 END AS Notification,'iotsmp_cdr_data','cdr_sms_details_monthly',FINAL_TIME FROM iotsmp_cdr_data.cdr_sms_details_monthly  ORDER BY FINAL_TIME DESC LIMIT 1 )\nas data8\nwhere data8.Notification = 1\nunion all\nSelect \niotsmp_cdr_data,cdr_sms_details_weekly, Notification,FINAL_TIME from\n(SELECT CASE WHEN FINAL_TIME>=(DATE(NOW()) - INTERVAL 7 DAY) THEN 1 ELSE 0 END AS Notification,'iotsmp_cdr_data','cdr_sms_details_weekly',FINAL_TIME FROM iotsmp_cdr_data.cdr_sms_details_weekly  ORDER BY FINAL_TIME DESC LIMIT 1 )\nas data9\nwhere data9.Notification = 1\nunion all\nSelect \niotsmp_cdr_data,cdr_sms_details_yearly, Notification,FINAL_TIME from\n(SELECT CASE WHEN FINAL_TIME>=YEAR(DATE_SUB(NOW(), INTERVAL 1 YEAR)) THEN 1 ELSE 0 END AS Notification,'iotsmp_cdr_data','cdr_sms_details_yearly',FINAL_TIME FROM iotsmp_cdr_data.cdr_sms_details_yearly  ORDER BY FINAL_TIME DESC LIMIT 1 )\nas data10\nwhere data10.Notification = 1\nunion all\nSelect \niotsmp_cdr_data,cdr_data_details_daily, Notification,startTime from\n(SELECT CASE WHEN startTime>=DATE_SUB(NOW(),INTERVAL 1 DAY) THEN 1 ELSE 0 END AS Notification,'iotsmp_cdr_data','cdr_data_details_daily',startTime FROM iotsmp_cdr_data.cdr_data_details_daily  ORDER BY startTime DESC LIMIT 1 )\nas data11\nwhere data11.Notification = 1\nunion all\nSelect \niotsmp_cdr_data,cdr_data_details_hourly, Notification,startTime from\n(SELECT CASE WHEN startTime>=DATE_SUB(NOW(), INTERVAL 1 HOUR) THEN 1 ELSE 0 END AS Notification,'iotsmp_cdr_data','cdr_data_details_hourly',startTime FROM iotsmp_cdr_data.cdr_data_details_hourly  ORDER BY startTime DESC LIMIT 1 )\nas data12\nwhere data12.Notification = 1\nunion all\nSelect \niotsmp_cdr_data,cdr_data_details_monthly, Notification,startTime from\n(SELECT CASE WHEN startTime>=DATE_FORMAT(NOW() - INTERVAL 1 MONTH, '%Y/%m/01') THEN 1 ELSE 0 END AS Notification,'iotsmp_cdr_data','cdr_data_details_monthly',startTime FROM iotsmp_cdr_data.cdr_data_details_monthly  ORDER BY startTime DESC LIMIT 1 )\nas data13\nwhere data13.Notification = 1\nunion all\nSelect \niotsmp_cdr_data,cdr_data_details_weekly, Notification,startTime from\n(SELECT CASE WHEN startTime>=(DATE(NOW()) - INTERVAL 7 DAY) THEN 1 ELSE 0 END AS Notification,'iotsmp_cdr_data','cdr_data_details_weekly',startTime FROM iotsmp_cdr_data.cdr_data_details_weekly  ORDER BY startTime DESC LIMIT 1 )\nas data14\nwhere data14.Notification = 1\nunion all\nSelect \niotsmp_cdr_data,cdr_data_details_yearly, Notification,startTime from\n(SELECT CASE WHEN startTime>=YEAR(DATE_SUB(NOW(), INTERVAL 1 YEAR)) THEN 1 ELSE 0 END AS Notification,'iotsmp_cdr_data','cdr_data_details_yearly',startTime FROM iotsmp_cdr_data.cdr_data_details_yearly  ORDER BY startTime DESC LIMIT 1) \nas data15\nwhere data15.Notification = 1;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        },
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "0zyzXo14z"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "hide": false,
+          "rawQuery": true,
+          "rawSql": "Select \n\tcdr_voice_details_daily as TableName,\n\tdata as DatabaseName,\n\tNotification,\n  startTime as time\nfrom\n(SELECT CASE WHEN ANSWERING_TIME>=DATE_SUB(NOW(),INTERVAL 1 DAY) THEN 1 ELSE 0 END AS Notification,\n'$DB_stc_cdr_data' as data,'cdr_voice_details_daily'\n,(select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_daily`\nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime \n FROM \n`$DB_stc_cdr_data`.`cdr_voice_details_daily`  ORDER BY ANSWERING_TIME DESC LIMIT 1 )\nas data1\nwhere data1.Notification = 0 and $__timeFilter(data1.startTime)\n\nunion all\nSelect \n\tcdr_voice_details_hourly as TableName,\n\tdata as DatabaseName,\n\tNotification,\n  startTime as time\nfrom\n(SELECT CASE WHEN ANSWERING_TIME>=DATE_SUB(NOW(), INTERVAL 1 HOUR) THEN 1 ELSE 0 END AS Notification,'$DB_stc_cdr_data' as data,'cdr_voice_details_hourly'\n,(select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_hourly`\nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime\n FROM `$DB_stc_cdr_data`.`cdr_voice_details_hourly`  ORDER BY ANSWERING_TIME DESC LIMIT 1 )\nas data2\nwhere data2.Notification = 0 and $__timeFilter(data2.startTime)\n\nunion all\n\nSelect \n\tcdr_voice_details_monthly as TableName,\n\tdata as DatabaseName,\n\tNotification,\n  startTime as time\nfrom\n(SELECT CASE WHEN ANSWERING_TIME>=DATE_FORMAT(NOW() - INTERVAL 1 MONTH, '%Y/%m/01') THEN 1 ELSE 0 END AS Notification,'$DB_stc_cdr_data' as data,'cdr_voice_details_monthly'\n,(select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_monthly`\nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime\n FROM `$DB_stc_cdr_data`.`cdr_voice_details_monthly`  ORDER BY ANSWERING_TIME DESC LIMIT 1 )\nas data3\nwhere data3.Notification = 0 and $__timeFilter(data3.startTime)\n\nunion all\n\nSelect \n\tcdr_voice_details_weekly as TableName,\n\tdata as DatabaseName,\n\tNotification,\n  startTime as time\nfrom\n(SELECT CASE WHEN ANSWERING_TIME>=(DATE(NOW()) - INTERVAL 7 DAY) THEN 1 ELSE 0 END AS Notification,'$DB_stc_cdr_data' as data,'cdr_voice_details_weekly' \n,(select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_weekly`\nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime\nFROM `$DB_stc_cdr_data`.`cdr_voice_details_weekly`  ORDER BY ANSWERING_TIME DESC LIMIT 1 )\nas data4\nwhere data4.Notification = 0 and $__timeFilter(data4.startTime)\nunion all\n\nSelect \n\tcdr_voice_details_yearly as TableName,\n\tdata as DatabaseName,\n\tNotification,\n  startTime as time\nfrom\n(SELECT CASE WHEN ANSWERING_TIME>=YEAR(DATE_SUB(NOW(), INTERVAL 1 YEAR)) THEN 1 ELSE 0 \nEND AS Notification,'$DB_stc_cdr_data' as data,'cdr_voice_details_yearly'\n,(select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_yearly`\nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime\nFROM `$DB_stc_cdr_data`.`cdr_voice_details_yearly`  ORDER BY ANSWERING_TIME DESC LIMIT 1 )\nas data5\nwhere data5.Notification = 0 and $__timeFilter(data5.startTime)\n\nunion all\n\nSelect \n\tcdr_data_details_daily as TableName,\n\tdata as DatabaseName,\n\tNotification,\n  sTime as time\nfrom\n(SELECT CASE WHEN startTime>=DATE_SUB(NOW(),INTERVAL 1 DAY) THEN 1 ELSE 0 END AS Notification,'$DB_stc_cdr_data' as data,'cdr_data_details_daily'\n,(select startTime from `$DB_stc_cdr_data`.`cdr_data_details_daily`\nORDER BY startTime DESC LIMIT 1 ) as sTime\nFROM `$DB_stc_cdr_data`.`cdr_data_details_daily`  ORDER BY startTime DESC LIMIT 1 )\nas data11\nwhere data11.Notification = 0 and $__timeFilter(data11.sTime)\n\nunion all\n\nSelect \n\tcdr_data_details_hourly as TableName,\n\tdata as DatabaseName,\n\tNotification,\n  sTime as time\nfrom\n(SELECT CASE WHEN startTime>=DATE_SUB(NOW(), INTERVAL 1 HOUR) THEN 1 ELSE 0 END AS Notification,'$DB_stc_cdr_data' as data,'cdr_data_details_hourly', \n(select startTime from `$DB_stc_cdr_data`.`cdr_data_details_hourly`\nORDER BY startTime DESC LIMIT 1 ) as sTime\nFROM `$DB_stc_cdr_data`.`cdr_data_details_hourly`  ORDER BY startTime DESC LIMIT 1 )\nas data12\nwhere data12.Notification = 0 and $__timeFilter(data12.sTime)\n\nunion all\n\nSelect \n\tcdr_data_details_monthly as TableName,\n\tdata as DatabaseName,\n\tNotification,\n  sTime as time\nfrom\n(SELECT CASE WHEN startTime>=DATE_FORMAT(NOW() - INTERVAL 1 MONTH, '%Y/%m/01') THEN 1 ELSE 0 END AS Notification,'$DB_stc_cdr_data' as data,'cdr_data_details_monthly'\n,(select startTime from `$DB_stc_cdr_data`.`cdr_data_details_monthly`\nORDER BY startTime DESC LIMIT 1 ) as sTime\n FROM `$DB_stc_cdr_data`.`cdr_data_details_monthly`  ORDER BY startTime DESC LIMIT 1 )\nas data13\nwhere data13.Notification = 0 and $__timeFilter(data13.sTime)\n\nunion all\n\nSelect \n\tcdr_data_details_weekly as TableName,\n\tdata as DatabaseName,\n\tNotification,\n  sTime as time\nfrom\n(SELECT CASE WHEN startTime>=(DATE(NOW()) - INTERVAL 7 DAY) THEN 1 ELSE 0 END AS Notification,'$DB_stc_cdr_data' as data,'cdr_data_details_weekly'\n,(select startTime from `$DB_stc_cdr_data`.`cdr_data_details_weekly`\nORDER BY startTime DESC LIMIT 1 ) as sTime\nFROM `$DB_stc_cdr_data`.`cdr_data_details_weekly`  ORDER BY startTime DESC LIMIT 1 )\nas data14\nwhere data14.Notification = 0 and $__timeFilter(data14.sTime)\n\nunion all\n\nSelect \n\tcdr_data_details_yearly as TableName,\n\tdata as DatabaseName,\n\tNotification,\n  sTime as time\nfrom\n(SELECT CASE WHEN startTime>=YEAR(DATE_SUB(NOW(), INTERVAL 1 YEAR)) THEN 1 ELSE 0 END AS Notification,'$DB_stc_cdr_data' as data,'cdr_data_details_yearly'\n,(select startTime from `$DB_stc_cdr_data`.`cdr_data_details_yearly`\nORDER BY startTime DESC LIMIT 1 ) as sTime\n FROM `$DB_stc_cdr_data`.`cdr_data_details_yearly`  ORDER BY startTime DESC LIMIT 1) \nas data15\nwhere data15.Notification = 0 and $__timeFilter(data15.sTime)\n\nunion all\n\nSelect \n\tcdr_sms_details_daily as TableName,\n\tdata as DatabaseName,\n\tNotification,\n  startTime as time\nfrom\n(SELECT CASE WHEN FINAL_TIME>=DATE_SUB(NOW(),INTERVAL 1 DAY) THEN 1 ELSE 0 END AS Notification,\n'$DB_stc_cdr_data' as data,'cdr_sms_details_daily'\n,(select FINAL_TIME from `$DB_stc_cdr_data`.`cdr_sms_details_daily`\nORDER BY FINAL_TIME DESC LIMIT 1 ) as startTime\n FROM \n`$DB_stc_cdr_data`.`cdr_sms_details_daily`  ORDER BY FINAL_TIME DESC LIMIT 1 )\nas data6\nwhere data6.Notification = 0 and $__timeFilter(data6.startTime)\n\nunion all\n\nSelect \n\tcdr_sms_details_hourly as TableName,\n\tdata as DatabaseName,\n\tNotification,\n  sTime as time\nfrom\n(SELECT CASE WHEN FINAL_TIME>=DATE_SUB(NOW(), INTERVAL 1 HOUR) THEN 1 ELSE 0 END AS Notification,\n'$DB_stc_cdr_data' as data,'cdr_sms_details_hourly' \n,(select FINAL_TIME from `$DB_stc_cdr_data`.`cdr_sms_details_hourly`\nORDER BY FINAL_TIME DESC LIMIT 1 ) as sTime\nFROM `$DB_stc_cdr_data`.`cdr_sms_details_hourly`  ORDER BY FINAL_TIME DESC LIMIT 1 )\nas data7\nwhere data7.Notification = 0 and $__timeFilter(data7.sTime)\n\nunion all\n\nSelect \n\tcdr_sms_details_monthly as TableName,\n\tdata as DatabaseName,\n\tNotification,\n  sTime as time\nfrom\n(SELECT CASE WHEN FINAL_TIME>=DATE_FORMAT(NOW() - INTERVAL 1 MONTH, '%Y/%m/01') THEN 1 ELSE 0 END AS Notification,\n'$DB_stc_cdr_data' as data,'cdr_sms_details_monthly' \n,(select FINAL_TIME from `$DB_stc_cdr_data`.`cdr_sms_details_monthly`\nORDER BY FINAL_TIME DESC LIMIT 1 ) as sTime\nFROM `$DB_stc_cdr_data`.cdr_sms_details_monthly  ORDER BY FINAL_TIME DESC LIMIT 1 )\nas data8\nwhere data8.Notification = 0 and $__timeFilter(data8.sTime)\n\nunion all\n\nSelect \n\tcdr_sms_details_weekly as TableName,\n\tdata as DatabaseName,\n\tNotification,\n    sTime as time\nfrom\n(SELECT CASE WHEN FINAL_TIME>=(DATE(NOW()) - INTERVAL 7 DAY) THEN 1 ELSE 0 END AS Notification,\n'$DB_stc_cdr_data' as data,'cdr_sms_details_weekly',FINAL_TIME \n,(select FINAL_TIME from `$DB_stc_cdr_data`.`cdr_sms_details_weekly`\nORDER BY FINAL_TIME ASC LIMIT 1 ) as sTime\nFROM `$DB_stc_cdr_data`.`cdr_sms_details_weekly`  ORDER BY FINAL_TIME DESC LIMIT 1 )\nas data9\nwhere data9.Notification = 0 and $__timeFilter(data9.sTime)\n\nunion all\n\nSelect \n\tcdr_sms_details_yearly as TableName,\n\tdata as DatabaseName,\n\tNotification,\n  sTime as time\nfrom\n(SELECT CASE WHEN FINAL_TIME>=YEAR(DATE_SUB(NOW(), INTERVAL 1 YEAR)) THEN 1 ELSE 0 END AS Notification,'$DB_stc_cdr_data' as data,'cdr_sms_details_yearly'\n,(select FINAL_TIME from `$DB_stc_cdr_data`.`cdr_sms_details_yearly`\nORDER BY FINAL_TIME ASC LIMIT 1 ) as sTime\nFROM `$DB_stc_cdr_data`.`cdr_sms_details_yearly`  ORDER BY FINAL_TIME DESC LIMIT 1 )\nas data10\nwhere data10.Notification = 0 and $__timeFilter(data10.sTime) ;",
+          "refId": "B",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Aggregation Threshold Data",
+      "transparent": true,
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "0zyzXo14z"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto",
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Notification"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "1": {
+                        "color": "dark-green",
+                        "index": 0,
+                        "text": "Not Triggered"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "thresholds"
+                }
+              },
+              {
+                "id": "custom.displayMode",
+                "value": "color-background"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "time"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Time"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "TableName"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 182
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "DatabaseName"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 117
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 11,
+        "w": 12,
+        "x": 12,
+        "y": 9
+      },
+      "id": 3,
+      "options": {
+        "footer": {
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "9.3.6",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "0zyzXo14z"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "Select \n\tcdr_voice_details_daily as TableName,\n\tdata as DatabaseName,\n\tNotification,\n  startTime as time\nfrom\n(SELECT CASE WHEN ANSWERING_TIME>=DATE_SUB(NOW(),INTERVAL 1 DAY) THEN 1 ELSE 0 END AS Notification,\n'$DB_stc_cdr_data' as data,'cdr_voice_details_daily'\n,(select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_daily`\nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime \n FROM \n`$DB_stc_cdr_data`.`cdr_voice_details_daily`  ORDER BY ANSWERING_TIME DESC LIMIT 1 )\nas data1\nwhere data1.Notification = 1 and $__timeFilter(data1.startTime)\n\nunion all\nSelect \n\tcdr_voice_details_hourly as TableName,\n\tdata as DatabaseName,\n\tNotification,\n  startTime as time\nfrom\n(SELECT CASE WHEN ANSWERING_TIME>=DATE_SUB(NOW(), INTERVAL 1 HOUR) THEN 1 ELSE 0 END AS Notification,'$DB_stc_cdr_data' as data,'cdr_voice_details_hourly'\n,(select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_hourly`\nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime\n FROM `$DB_stc_cdr_data`.`cdr_voice_details_hourly`  ORDER BY ANSWERING_TIME DESC LIMIT 1 )\nas data2\nwhere data2.Notification = 1 and $__timeFilter(data2.startTime)\n\nunion all\n\nSelect \n\tcdr_voice_details_monthly as TableName,\n\tdata as DatabaseName,\n\tNotification,\n  startTime as time\nfrom\n(SELECT CASE WHEN ANSWERING_TIME>=DATE_FORMAT(NOW() - INTERVAL 1 MONTH, '%Y/%m/01') THEN 1 ELSE 0 END AS Notification,'$DB_stc_cdr_data' as data,'cdr_voice_details_monthly'\n,(select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_monthly`\nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime\n FROM `$DB_stc_cdr_data`.`cdr_voice_details_monthly`  ORDER BY ANSWERING_TIME DESC LIMIT 1 )\nas data3\nwhere data3.Notification = 1 and $__timeFilter(data3.startTime)\n\nunion all\n\nSelect \n\tcdr_voice_details_weekly as TableName,\n\tdata as DatabaseName,\n\tNotification,\n  startTime as time\nfrom\n(SELECT CASE WHEN ANSWERING_TIME>=(DATE(NOW()) - INTERVAL 7 DAY) THEN 1 ELSE 0 END AS Notification,'$DB_stc_cdr_data' as data,'cdr_voice_details_weekly' \n,(select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_weekly`\nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime\nFROM `$DB_stc_cdr_data`.`cdr_voice_details_weekly`  ORDER BY ANSWERING_TIME DESC LIMIT 1 )\nas data4\nwhere data4.Notification = 1 and $__timeFilter(data4.startTime)\nunion all\n\nSelect \n\tcdr_voice_details_yearly as TableName,\n\tdata as DatabaseName,\n\tNotification,\n  startTime as time\nfrom\n(SELECT CASE WHEN ANSWERING_TIME>=YEAR(DATE_SUB(NOW(), INTERVAL 1 YEAR)) THEN 1 ELSE 0 \nEND AS Notification,'$DB_stc_cdr_data' as data,'cdr_voice_details_yearly'\n,(select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_yearly`\nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime\nFROM `$DB_stc_cdr_data`.`cdr_voice_details_yearly`  ORDER BY ANSWERING_TIME DESC LIMIT 1 )\nas data5\nwhere data5.Notification = 1 and $__timeFilter(data5.startTime)\n\nunion all\n\nSelect \n\tcdr_data_details_daily as TableName,\n\tdata as DatabaseName,\n\tNotification,\n  sTime as time\nfrom\n(SELECT CASE WHEN startTime>=DATE_SUB(NOW(),INTERVAL 1 DAY) THEN 1 ELSE 0 END AS Notification,'$DB_stc_cdr_data' as data,'cdr_data_details_daily'\n,(select startTime from `$DB_stc_cdr_data`.`cdr_data_details_daily`\nORDER BY startTime DESC LIMIT 1 ) as sTime\nFROM `$DB_stc_cdr_data`.`cdr_data_details_daily`  ORDER BY startTime DESC LIMIT 1 )\nas data11\nwhere data11.Notification = 1 and $__timeFilter(data11.sTime)\n\nunion all\n\nSelect \n\tcdr_data_details_hourly as TableName,\n\tdata as DatabaseName,\n\tNotification,\n  sTime as time\nfrom\n(SELECT CASE WHEN startTime>=DATE_SUB(NOW(), INTERVAL 1 HOUR) THEN 1 ELSE 0 END AS Notification,'$DB_stc_cdr_data' as data,'cdr_data_details_hourly', \n(select startTime from `$DB_stc_cdr_data`.`cdr_data_details_hourly`\nORDER BY startTime DESC LIMIT 1 ) as sTime\nFROM `$DB_stc_cdr_data`.`cdr_data_details_hourly`  ORDER BY startTime DESC LIMIT 1 )\nas data12\nwhere data12.Notification = 1 and $__timeFilter(data12.sTime)\n\nunion all\n\nSelect \n\tcdr_data_details_monthly as TableName,\n\tdata as DatabaseName,\n\tNotification,\n  sTime as time\nfrom\n(SELECT CASE WHEN startTime>=DATE_FORMAT(NOW() - INTERVAL 1 MONTH, '%Y/%m/01') THEN 1 ELSE 0 END AS Notification,'$DB_stc_cdr_data' as data,'cdr_data_details_monthly'\n,(select startTime from `$DB_stc_cdr_data`.`cdr_data_details_monthly`\nORDER BY startTime DESC LIMIT 1 ) as sTime\n FROM `$DB_stc_cdr_data`.`cdr_data_details_monthly`  ORDER BY startTime DESC LIMIT 1 )\nas data13\nwhere data13.Notification = 1 and $__timeFilter(data13.sTime)\n\nunion all\n\nSelect \n\tcdr_data_details_weekly as TableName,\n\tdata as DatabaseName,\n\tNotification,\n  sTime as time\nfrom\n(SELECT CASE WHEN startTime>=(DATE(NOW()) - INTERVAL 7 DAY) THEN 1 ELSE 0 END AS Notification,'$DB_stc_cdr_data' as data,'cdr_data_details_weekly'\n,(select startTime from `$DB_stc_cdr_data`.`cdr_data_details_weekly`\nORDER BY startTime DESC LIMIT 1 ) as sTime\nFROM `$DB_stc_cdr_data`.`cdr_data_details_weekly`  ORDER BY startTime DESC LIMIT 1 )\nas data14\nwhere data14.Notification = 1 and $__timeFilter(data14.sTime)\n\nunion all\n\nSelect \n\tcdr_data_details_yearly as TableName,\n\tdata as DatabaseName,\n\tNotification,\n  sTime as time\nfrom\n(SELECT CASE WHEN startTime>=YEAR(DATE_SUB(NOW(), INTERVAL 1 YEAR)) THEN 1 ELSE 0 END AS Notification,'$DB_stc_cdr_data' as data,'cdr_data_details_yearly'\n,(select startTime from `$DB_stc_cdr_data`.`cdr_data_details_yearly`\nORDER BY startTime DESC LIMIT 1 ) as sTime\n FROM `$DB_stc_cdr_data`.`cdr_data_details_yearly`  ORDER BY startTime DESC LIMIT 1) \nas data15\nwhere data15.Notification = 1 and $__timeFilter(data15.sTime)\n\nunion all\n\nSelect \n\tcdr_sms_details_daily as TableName,\n\tdata as DatabaseName,\n\tNotification,\n  startTime as time\nfrom\n(SELECT CASE WHEN FINAL_TIME>=DATE_SUB(NOW(),INTERVAL 1 DAY) THEN 1 ELSE 0 END AS Notification,\n'$DB_stc_cdr_data' as data,'cdr_sms_details_daily'\n,(select FINAL_TIME from `$DB_stc_cdr_data`.`cdr_sms_details_daily`\nORDER BY FINAL_TIME DESC LIMIT 1 ) as startTime\n FROM \n`$DB_stc_cdr_data`.`cdr_sms_details_daily`  ORDER BY FINAL_TIME DESC LIMIT 1 )\nas data6\nwhere data6.Notification = 1 and $__timeFilter(data6.startTime)\n\nunion all\n\nSelect \n\tcdr_sms_details_hourly as TableName,\n\tdata as DatabaseName,\n\tNotification,\n  sTime as time\nfrom\n(SELECT CASE WHEN FINAL_TIME>=DATE_SUB(NOW(), INTERVAL 1 HOUR) THEN 1 ELSE 0 END AS Notification,\n'$DB_stc_cdr_data' as data,'cdr_sms_details_hourly' \n,(select FINAL_TIME from `$DB_stc_cdr_data`.`cdr_sms_details_hourly`\nORDER BY FINAL_TIME DESC LIMIT 1 ) as sTime\nFROM `$DB_stc_cdr_data`.`cdr_sms_details_hourly`  ORDER BY FINAL_TIME DESC LIMIT 1 )\nas data7\nwhere data7.Notification = 1 and $__timeFilter(data7.sTime)\n\nunion all\n\nSelect \n\tcdr_sms_details_monthly as TableName,\n\tdata as DatabaseName,\n\tNotification,\n  sTime as time\nfrom\n(SELECT CASE WHEN FINAL_TIME>=DATE_FORMAT(NOW() - INTERVAL 1 MONTH, '%Y/%m/01') THEN 1 ELSE 0 END AS Notification,\n'$DB_stc_cdr_data' as data,'cdr_sms_details_monthly' \n,(select FINAL_TIME from `$DB_stc_cdr_data`.`cdr_sms_details_monthly`\nORDER BY FINAL_TIME DESC LIMIT 1 ) as sTime\nFROM `$DB_stc_cdr_data`.cdr_sms_details_monthly  ORDER BY FINAL_TIME DESC LIMIT 1 )\nas data8\nwhere data8.Notification = 1 and $__timeFilter(data8.sTime)\n\nunion all\n\nSelect \n\tcdr_sms_details_weekly as TableName,\n\tdata as DatabaseName,\n\tNotification,\n    sTime as time\nfrom\n(SELECT CASE WHEN FINAL_TIME>=(DATE(NOW()) - INTERVAL 7 DAY) THEN 1 ELSE 0 END AS Notification,\n'$DB_stc_cdr_data' as data,'cdr_sms_details_weekly',FINAL_TIME \n,(select FINAL_TIME from `$DB_stc_cdr_data`.`cdr_sms_details_weekly`\nORDER BY FINAL_TIME ASC LIMIT 1 ) as sTime\nFROM `$DB_stc_cdr_data`.`cdr_sms_details_weekly`  ORDER BY FINAL_TIME DESC LIMIT 1 )\nas data9\nwhere data9.Notification = 1 and $__timeFilter(data9.sTime)\n\nunion all\n\nSelect \n\tcdr_sms_details_yearly as TableName,\n\tdata as DatabaseName,\n\tNotification,\n  sTime as time\nfrom\n(SELECT CASE WHEN FINAL_TIME>=YEAR(DATE_SUB(NOW(), INTERVAL 1 YEAR)) THEN 1 ELSE 0 END AS Notification,'$DB_stc_cdr_data' as data,'cdr_sms_details_yearly'\n,(select FINAL_TIME from `$DB_stc_cdr_data`.`cdr_sms_details_yearly`\nORDER BY FINAL_TIME ASC LIMIT 1 ) as sTime\nFROM `$DB_stc_cdr_data`.`cdr_sms_details_yearly`  ORDER BY FINAL_TIME DESC LIMIT 1 )\nas data10\nwhere data10.Notification = 1 and $__timeFilter(data10.sTime) ;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Aggregation Threshold Not Reached Data",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "0zyzXo14z"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+            {
+              "options": {
+                "cdr_data_details": {
+                  "color": "dark-orange",
+                  "index": 8,
+                  "text": "cdr_data_details"
+                },
+                "cdr_data_details_daily": {
+                  "color": "dark-purple",
+                  "index": 9,
+                  "text": "cdr_data_details_daily"
+                },
+                "cdr_data_details_yearly": {
+                  "color": "semi-dark-red",
+                  "index": 4,
+                  "text": "cdr_data_details_yearly"
+                },
+                "cdr_sms_details_daily": {
+                  "color": "#01fae6",
+                  "index": 5,
+                  "text": "cdr_sms_details_daily"
+                },
+                "cdr_sms_details_weekly": {
+                  "color": "super-light-red",
+                  "index": 6,
+                  "text": "cdr_sms_details_weekly"
+                },
+                "cdr_sms_details_yearly": {
+                  "color": "semi-dark-green",
+                  "index": 7,
+                  "text": "cdr_sms_details_yearly"
+                },
+                "cdr_voice_details_daily": {
+                  "color": "dark-orange",
+                  "index": 0,
+                  "text": "cdr_voice_details_daily"
+                },
+                "cdr_voice_details_monthly": {
+                  "color": "semi-dark-yellow",
+                  "index": 1,
+                  "text": "cdr_voice_details_monthly"
+                },
+                "cdr_voice_details_weekly": {
+                  "color": "semi-dark-blue",
+                  "index": 2,
+                  "text": "cdr_voice_details_monthly"
+                },
+                "cdr_voice_details_yearly": {
+                  "color": "green",
+                  "index": 3,
+                  "text": "cdr_voice_details_yearly"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 10
+      },
+      "id": 10,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "colorByField": "TableName",
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": false
+        },
+        "orientation": "horizontal",
+        "showValue": "never",
+        "stacking": "none",
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "9.3.6",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "0zyzXo14z"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "hide": false,
+          "rawQuery": true,
+          "rawSql": "Select \n\tcdr_voice_details_daily as TableName,\n\tNotification\nfrom\n(SELECT CASE WHEN ANSWERING_TIME>=DATE_SUB(NOW(),INTERVAL 1 DAY) THEN 1 ELSE 0 END AS Notification,\n'$DB_stc_cdr_data' as data,'cdr_voice_details_daily'\n,(select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_daily`\nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime \n FROM \n`$DB_stc_cdr_data`.`cdr_voice_details_daily`  ORDER BY ANSWERING_TIME DESC LIMIT 1 )\nas data1\nwhere data1.Notification = 1 and $__timeFilter(data1.startTime)\n\nunion all\nSelect \n\tcdr_voice_details_hourly as TableName,\n\tNotification\nfrom\n(SELECT CASE WHEN ANSWERING_TIME>=DATE_SUB(NOW(), INTERVAL 1 HOUR) THEN 1 ELSE 0 END AS Notification,'$DB_stc_cdr_data' as data,'cdr_voice_details_hourly'\n,(select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_hourly`\nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime\n FROM `$DB_stc_cdr_data`.`cdr_voice_details_hourly`  ORDER BY ANSWERING_TIME DESC LIMIT 1 )\nas data2\nwhere data2.Notification = 1 and $__timeFilter(data2.startTime)\n\nunion all\n\nSelect \n\tcdr_voice_details_monthly as TableName,\n\tNotification\nfrom\n(SELECT CASE WHEN ANSWERING_TIME>=DATE_FORMAT(NOW() - INTERVAL 1 MONTH, '%Y/%m/01') THEN 1 ELSE 0 END AS Notification,'$DB_stc_cdr_data' as data,'cdr_voice_details_monthly'\n,(select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_monthly`\nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime\n FROM `$DB_stc_cdr_data`.`cdr_voice_details_monthly`  ORDER BY ANSWERING_TIME DESC LIMIT 1 )\nas data3\nwhere data3.Notification = 1 and $__timeFilter(data3.startTime)\n\nunion all\n\nSelect \n\tcdr_voice_details_weekly as TableName,\n\tNotification\nfrom\n(SELECT CASE WHEN ANSWERING_TIME>=(DATE(NOW()) - INTERVAL 7 DAY) THEN 1 ELSE 0 END AS Notification,'$DB_stc_cdr_data' as data,'cdr_voice_details_weekly' \n,(select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_weekly`\nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime\nFROM `$DB_stc_cdr_data`.`cdr_voice_details_weekly`  ORDER BY ANSWERING_TIME DESC LIMIT 1 )\nas data4\nwhere data4.Notification = 1 and $__timeFilter(data4.startTime)\nunion all\n\nSelect \n\tcdr_voice_details_yearly as TableName,\n\tNotification\nfrom\n(SELECT CASE WHEN ANSWERING_TIME>=YEAR(DATE_SUB(NOW(), INTERVAL 1 YEAR)) THEN 1 ELSE 0 \nEND AS Notification,'$DB_stc_cdr_data' as data,'cdr_voice_details_yearly'\n,(select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_yearly`\nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime\nFROM `$DB_stc_cdr_data`.`cdr_voice_details_yearly`  ORDER BY ANSWERING_TIME DESC LIMIT 1 )\nas data5\nwhere data5.Notification = 1 and $__timeFilter(data5.startTime)\n\nunion all\n\nSelect \n\tcdr_data_details_daily as TableName,\n\tNotification\nfrom\n(SELECT CASE WHEN startTime>=DATE_SUB(NOW(),INTERVAL 1 DAY) THEN 1 ELSE 0 END AS Notification,'$DB_stc_cdr_data' as data,'cdr_data_details_daily'\n,(select startTime from `$DB_stc_cdr_data`.`cdr_data_details_daily`\nORDER BY startTime DESC LIMIT 1 ) as sTime\nFROM `$DB_stc_cdr_data`.`cdr_data_details_daily`  ORDER BY startTime DESC LIMIT 1 )\nas data11\nwhere data11.Notification = 1 and $__timeFilter(data11.sTime)\n\nunion all\n\nSelect \n\tcdr_data_details_hourly as TableName,\n\tNotification\nfrom\n(SELECT CASE WHEN startTime>=DATE_SUB(NOW(), INTERVAL 1 HOUR) THEN 1 ELSE 0 END AS Notification,'$DB_stc_cdr_data' as data,'cdr_data_details_hourly', \n(select startTime from `$DB_stc_cdr_data`.`cdr_data_details_hourly`\nORDER BY startTime DESC LIMIT 1 ) as sTime\nFROM `$DB_stc_cdr_data`.`cdr_data_details_hourly`  ORDER BY startTime DESC LIMIT 1 )\nas data12\nwhere data12.Notification = 1 and $__timeFilter(data12.sTime)\n\nunion all\n\nSelect \n\tcdr_data_details_monthly as TableName,\n\tNotification\nfrom\n(SELECT CASE WHEN startTime>=DATE_FORMAT(NOW() - INTERVAL 1 MONTH, '%Y/%m/01') THEN 1 ELSE 0 END AS Notification,'$DB_stc_cdr_data' as data,'cdr_data_details_monthly'\n,(select startTime from `$DB_stc_cdr_data`.`cdr_data_details_monthly`\nORDER BY startTime DESC LIMIT 1 ) as sTime\n FROM `$DB_stc_cdr_data`.`cdr_data_details_monthly`  ORDER BY startTime DESC LIMIT 1 )\nas data13\nwhere data13.Notification = 1 and $__timeFilter(data13.sTime)\n\nunion all\n\nSelect \n\tcdr_data_details_weekly as TableName,\t\n\tNotification\nfrom\n(SELECT CASE WHEN startTime>=(DATE(NOW()) - INTERVAL 7 DAY) THEN 1 ELSE 0 END AS Notification,'$DB_stc_cdr_data' as data,'cdr_data_details_weekly'\n,(select startTime from `$DB_stc_cdr_data`.`cdr_data_details_weekly`\nORDER BY startTime DESC LIMIT 1 ) as sTime\nFROM `$DB_stc_cdr_data`.`cdr_data_details_weekly`  ORDER BY startTime DESC LIMIT 1 )\nas data14\nwhere data14.Notification = 1 and $__timeFilter(data14.sTime)\n\nunion all\n\nSelect \n\tcdr_data_details_yearly as TableName,\n\tNotification\nfrom\n(SELECT CASE WHEN startTime>=YEAR(DATE_SUB(NOW(), INTERVAL 1 YEAR)) THEN 1 ELSE 0 END AS Notification,'$DB_stc_cdr_data' as data,'cdr_data_details_yearly'\n,(select startTime from `$DB_stc_cdr_data`.`cdr_data_details_yearly`\nORDER BY startTime DESC LIMIT 1 ) as sTime\n FROM `$DB_stc_cdr_data`.`cdr_data_details_yearly`  ORDER BY startTime DESC LIMIT 1) \nas data15\nwhere data15.Notification = 1 and $__timeFilter(data15.sTime)\n\nunion all\n\nSelect \n\tcdr_sms_details_daily as TableName,\n\tNotification\nfrom\n(SELECT CASE WHEN FINAL_TIME>=DATE_SUB(NOW(),INTERVAL 1 DAY) THEN 1 ELSE 0 END AS Notification,\n'$DB_stc_cdr_data' as data,'cdr_sms_details_daily'\n,(select FINAL_TIME from `$DB_stc_cdr_data`.`cdr_sms_details_daily`\nORDER BY FINAL_TIME DESC LIMIT 1 ) as startTime\n FROM \n`$DB_stc_cdr_data`.`cdr_sms_details_daily`  ORDER BY FINAL_TIME DESC LIMIT 1 )\nas data6\nwhere data6.Notification = 1 and $__timeFilter(data6.startTime)\n\nunion all\n\nSelect \n\tcdr_sms_details_hourly as TableName,\n\tNotification\nfrom\n(SELECT CASE WHEN FINAL_TIME>=DATE_SUB(NOW(), INTERVAL 1 HOUR) THEN 1 ELSE 0 END AS Notification,\n'$DB_stc_cdr_data' as data,'cdr_sms_details_hourly' \n,(select FINAL_TIME from `$DB_stc_cdr_data`.`cdr_sms_details_hourly`\nORDER BY FINAL_TIME DESC LIMIT 1 ) as sTime\nFROM `$DB_stc_cdr_data`.`cdr_sms_details_hourly`  ORDER BY FINAL_TIME DESC LIMIT 1 )\nas data7\nwhere data7.Notification = 1 and $__timeFilter(data7.sTime)\n\nunion all\n\nSelect \n\tcdr_sms_details_monthly as TableName,\n\tNotification\nfrom\n(SELECT CASE WHEN FINAL_TIME>=DATE_FORMAT(NOW() - INTERVAL 1 MONTH, '%Y/%m/01') THEN 1 ELSE 0 END AS Notification,\n'$DB_stc_cdr_data' as data,'cdr_sms_details_monthly' \n,(select FINAL_TIME from `$DB_stc_cdr_data`.`cdr_sms_details_monthly`\nORDER BY FINAL_TIME DESC LIMIT 1 ) as sTime\nFROM `$DB_stc_cdr_data`.cdr_sms_details_monthly  ORDER BY FINAL_TIME DESC LIMIT 1 )\nas data8\nwhere data8.Notification = 1 and $__timeFilter(data8.sTime)\n\nunion all\n\nSelect \n\tcdr_sms_details_weekly as TableName,\n    Notification\nfrom\n(SELECT CASE WHEN FINAL_TIME>=(DATE(NOW()) - INTERVAL 7 DAY) THEN 1 ELSE 0 END AS Notification,\n'$DB_stc_cdr_data' as data,'cdr_sms_details_weekly',FINAL_TIME \n,(select FINAL_TIME from `$DB_stc_cdr_data`.`cdr_sms_details_weekly`\nORDER BY FINAL_TIME ASC LIMIT 1 ) as sTime\nFROM `$DB_stc_cdr_data`.`cdr_sms_details_weekly`  ORDER BY FINAL_TIME DESC LIMIT 1 )\nas data9\nwhere data9.Notification = 1 and $__timeFilter(data9.sTime)\n\nunion all\n\nSelect \n\tcdr_sms_details_yearly as TableName,\n\tNotification\nfrom\n(SELECT CASE WHEN FINAL_TIME>=YEAR(DATE_SUB(NOW(), INTERVAL 1 YEAR)) THEN 1 ELSE 0 END AS Notification,'$DB_stc_cdr_data' as data,'cdr_sms_details_yearly'\n,(select FINAL_TIME from `$DB_stc_cdr_data`.`cdr_sms_details_yearly`\nORDER BY FINAL_TIME ASC LIMIT 1 ) as sTime\nFROM `$DB_stc_cdr_data`.`cdr_sms_details_yearly`  ORDER BY FINAL_TIME DESC LIMIT 1 )\nas data10\nwhere data10.Notification = 1 and $__timeFilter(data10.sTime) ;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        },
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "0zyzXo14z"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "hide": true,
+          "rawQuery": true,
+          "rawSql": "Select \n\tcdr_voice_details_daily as TableName,\n  Notification\nfrom\n(SELECT CASE WHEN ANSWERING_TIME>=DATE_SUB(NOW(),INTERVAL 1 DAY) THEN 1 ELSE 0 END AS Notification,\n'$DB_stc_cdr_data' as data,'cdr_voice_details_daily'\n,(select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_daily`\nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime \n FROM \n`$DB_stc_cdr_data`.`cdr_voice_details_daily`  ORDER BY ANSWERING_TIME DESC LIMIT 1 )\nas data1",
+          "refId": "B",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Aggregation Threshold Not Reached",
+      "transparent": true,
+      "type": "barchart"
+    }
+  ],
+  "refresh": false,
+  "schemaVersion": 37,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "stc_dev",
+          "value": "stc_dev"
+        },
+        "hide": 2,
+        "includeAll": false,
+        "multi": false,
+        "name": "DB_stc_dev",
+        "options": [
+          {
+            "selected": true,
+            "text": "stc_dev",
+            "value": "stc_dev"
+          }
+        ],
+        "query": "stc_dev",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "stc_cdr_data",
+          "value": "stc_cdr_data"
+        },
+        "hide": 2,
+        "includeAll": false,
+        "multi": false,
+        "name": "DB_stc_cdr_data",
+        "options": [
+          {
+            "selected": true,
+            "text": "stc_cdr_data",
+            "value": "stc_cdr_data"
+          }
+        ],
+        "query": "stc_cdr_data",
+        "skipUrlSync": false,
+        "type": "custom"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-90d",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Aggregation Observing",
+  "uid": "05eQhwJVz",
+  "version": 16,
+  "weekStart": ""
+}

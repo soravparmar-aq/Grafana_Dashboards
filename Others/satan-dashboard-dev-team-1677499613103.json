@@ -1,0 +1,978 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 26,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "eH06dq04k"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#F2495C",
+                "value": null
+              },
+              {
+                "color": "rgba(237, 129, 40, 0.89)",
+                "value": 1000000
+              },
+              {
+                "color": "#d44a3a"
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 5,
+        "x": 0,
+        "y": 0
+      },
+      "id": 4,
+      "links": [],
+      "maxDataPoints": 100,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.3.6",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "eH06dq04k"
+          },
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT  count(1) from error\ninner join api_error\non error.id = api_error.error\ninner join api\non api_error.api = api.id\ninner join error_category\non api_error.category = error_category.id\ninner join process_api_m2m\non process_api_m2m.api = api.id\ninner join process\non process.id = process_api_m2m.process\nwhere api_name in ($api) and error_category in ('http_errors')\nand process.process in ($process)\n-- order by error desc;",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "ID"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "bootstrap_profile",
+          "timeColumn": "CREATE_DATE",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "HTTP Error",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "eH06dq04k"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#E02F44",
+                "value": null
+              },
+              {
+                "color": "rgba(237, 129, 40, 0.89)",
+                "value": 1000000
+              },
+              {
+                "color": "#E02F44"
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 5,
+        "x": 5,
+        "y": 0
+      },
+      "id": 5,
+      "links": [],
+      "maxDataPoints": 100,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.3.6",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "eH06dq04k"
+          },
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT  count(1) from error\ninner join api_error\non error.id = api_error.error\ninner join api\non api_error.api = api.id\ninner join error_category\non api_error.category = error_category.id\ninner join process_api_m2m\non process_api_m2m.api = api.id\ninner join process\non process.id = process_api_m2m.process\nwhere api_name in ($api) and error_category in ('critical_errors')\nand process.process in ($process)\n-- order by error desc;",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "ID"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "bootstrap_profile",
+          "timeColumn": "CREATE_DATE",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Critical Error",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "eH06dq04k"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 14,
+        "x": 10,
+        "y": 0
+      },
+      "id": 9,
+      "links": [],
+      "maxDataPoints": 3,
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "eH06dq04k"
+          },
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT \nnow() as \"time\",\napi_name as metric,\ncount(1) as count\nfrom error\ninner join api_error\non error.id = api_error.error\ninner join api\non api_error.api = api.id\ninner join error_category\non api_error.category = error_category.id\ninner join process_api_m2m\non process_api_m2m.api = api.id\ninner join process\non process.id = process_api_m2m.process\nwhere\n api_error.id in ( select error_history_log.api_error from error_history_log where $__timeFilter(error_history_log.date_time))\n and\n\n-- api_name in ($api) and\n error_category in ('unknown_errors')\nand process.process in ($process)\ngroup by api_name\n-- order by error desc;",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "ID"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "bootstrap_profile",
+          "timeColumn": "CREATE_DATE",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "API Wise Distinct Unknown Error  [In Selected Time Range]",
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "eH06dq04k"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#E0B400",
+                "value": null
+              },
+              {
+                "color": "rgba(237, 129, 40, 0.89)",
+                "value": 1000000
+              },
+              {
+                "color": "#d44a3a"
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 5,
+        "x": 0,
+        "y": 2
+      },
+      "id": 6,
+      "links": [],
+      "maxDataPoints": 100,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.3.6",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "eH06dq04k"
+          },
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT  count(1) from error\ninner join api_error\non error.id = api_error.error\ninner join api\non api_error.api = api.id\ninner join error_category\non api_error.category = error_category.id\ninner join process_api_m2m\non process_api_m2m.api = api.id\ninner join process\non process.id = process_api_m2m.process\nwhere api_name in ($api) and error_category in ('Warnings')\nand process.process in ($process)\n-- order by error desc;",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "ID"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "bootstrap_profile",
+          "timeColumn": "CREATE_DATE",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Warnings",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "eH06dq04k"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#FF9830",
+                "value": null
+              },
+              {
+                "color": "rgba(237, 129, 40, 0.89)",
+                "value": 10000000
+              },
+              {
+                "color": "#d44a3a"
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 5,
+        "x": 5,
+        "y": 2
+      },
+      "id": 7,
+      "links": [],
+      "maxDataPoints": 100,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.3.6",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "eH06dq04k"
+          },
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT  count(1) from error\ninner join api_error\non error.id = api_error.error\ninner join api\non api_error.api = api.id\ninner join error_category\non api_error.category = error_category.id\ninner join process_api_m2m\non process_api_m2m.api = api.id\ninner join process\non process.id = process_api_m2m.process\nwhere api_name in ($api) and error_category in ('unknown_errors')\nand process.process in ($process)\n-- order by error desc;",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "ID"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "bootstrap_profile",
+          "timeColumn": "CREATE_DATE",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Total Unknown Error",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "eH06dq04k"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 24,
+        "x": 0,
+        "y": 4
+      },
+      "id": 10,
+      "links": [],
+      "maxDataPoints": 3,
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "eH06dq04k"
+          },
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "select now() as time_sec, error.error as metric, sum(error_history_log.error_count) as count from api_error\ninner join error on error.id = api_error.error\ninner join error_history_log on api_error.id = error_history_log.api_error\ninner join api on api_error.api = api.id\ninner join process_api_m2m on process_api_m2m.api = api.id\ninner join process on process.id = process_api_m2m.process\nwhere api_error.category = (select error_category.id from error_category where error_category.error_category = 'unknown_errors')\nand\n  process.process in ($process)\nand \n\n$__timeFilter(error_history_log.date_time)\ngroup by error.error;",
+          "refId": "D",
+          "select": [
+            [
+              {
+                "params": [
+                  "id"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "time",
+          "timeColumn": "create_time",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Unknown Errors Occurrence Count  [In Selected Time Range]",
+      "type": "piechart"
+    },
+    {
+      "columns": [],
+      "datasource": {
+        "type": "mysql",
+        "uid": "eH06dq04k"
+      },
+      "fontSize": "100%",
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 9
+      },
+      "id": 12,
+      "links": [],
+      "pageSize": 5,
+      "scroll": true,
+      "showHeader": true,
+      "sort": {
+        "col": 0,
+        "desc": true
+      },
+      "styles": [
+        {
+          "alias": "Time",
+          "align": "auto",
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "pattern": "Time",
+          "type": "date"
+        },
+        {
+          "alias": "",
+          "align": "auto",
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "decimals": 2,
+          "pattern": "/.*/",
+          "thresholds": [],
+          "type": "number",
+          "unit": "short"
+        }
+      ],
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "eH06dq04k"
+          },
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "select error.error as \"Unknown Error\", error.id as e_id, api.api_name as \"API\", api.id as api_id,  max(error_history_log.date_time) as \"Latest Occurrence\" from api_error\ninner join error on error.id = api_error.error\ninner join error_history_log on api_error.id = error_history_log.api_error\ninner join api on api_error.api = api.id\ninner join process_api_m2m on process_api_m2m.api = api.id\ninner join process on process.id = process_api_m2m.process\nwhere api_error.category = (select error_category.id from error_category where error_category.error_category = 'unknown_errors')\nand\n  process.process in ($process)\nand\n$__timeFilter(error_history_log.date_time)\n \ngroup by api_error.error, api_error.api\norder by error_history_log.date_time;",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "ID"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "bootstrap_profile",
+          "timeColumn": "CREATE_DATE",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Unknown Errors Latest Occurrence",
+      "transform": "table",
+      "type": "table-old"
+    },
+    {
+      "columns": [],
+      "datasource": {
+        "type": "mysql",
+        "uid": "eH06dq04k"
+      },
+      "fontSize": "100%",
+      "gridPos": {
+        "h": 18,
+        "w": 24,
+        "x": 0,
+        "y": 19
+      },
+      "id": 2,
+      "links": [],
+      "pageSize": 10,
+      "scroll": false,
+      "showHeader": true,
+      "sort": {
+        "col": 3,
+        "desc": true
+      },
+      "styles": [
+        {
+          "alias": "Time",
+          "align": "auto",
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "pattern": "Time",
+          "type": "date"
+        },
+        {
+          "alias": "",
+          "align": "auto",
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "decimals": 2,
+          "pattern": "/.*/",
+          "thresholds": [],
+          "type": "number",
+          "unit": "short"
+        }
+      ],
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "eH06dq04k"
+          },
+          "format": "table",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT  process.process as Process, api_name as \"API\", error_category as \"Category\",error.error as Error, process.id as p_id, api.id as api_id, error_category.id as cat_id, error.id as e_id  from error\ninner join api_error\non error.id = api_error.error\ninner join api\non api_error.api = api.id\ninner join error_category\non api_error.category = error_category.id\ninner join process_api_m2m\non process_api_m2m.api = api.id\ninner join process\non process.id = process_api_m2m.process\nwhere api_name in ($api) and error_category in ($category)\nand process.process in ($process)\n\norder by error.error asc;",
+          "refId": "B",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Categorized Errors",
+      "transform": "table",
+      "type": "table-old"
+    },
+    {
+      "columns": [],
+      "datasource": {
+        "type": "mysql",
+        "uid": "eH06dq04k"
+      },
+      "fontSize": "100%",
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 37
+      },
+      "id": 14,
+      "links": [],
+      "scroll": true,
+      "showHeader": true,
+      "sort": {
+        "col": 0,
+        "desc": true
+      },
+      "styles": [
+        {
+          "alias": "Time",
+          "align": "auto",
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "pattern": "Time",
+          "type": "date"
+        },
+        {
+          "alias": "",
+          "align": "auto",
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "decimals": 2,
+          "pattern": "/.*/",
+          "thresholds": [],
+          "type": "number",
+          "unit": "short"
+        }
+      ],
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "eH06dq04k"
+          },
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "select * from error_category;",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "All Error Category",
+      "transform": "table",
+      "transparent": true,
+      "type": "table-old"
+    }
+  ],
+  "refresh": false,
+  "schemaVersion": 37,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "mysql",
+          "uid": "eH06dq04k"
+        },
+        "definition": "select process from process where process != \"\";",
+        "hide": 0,
+        "includeAll": true,
+        "multi": true,
+        "name": "process",
+        "options": [],
+        "query": "select process from process where process != \"\";",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "mysql",
+          "uid": "eH06dq04k"
+        },
+        "definition": "select api_name from api where id in    (select api from process_api_m2m where      process in (select id from process where process in ($process))   )",
+        "hide": 0,
+        "includeAll": true,
+        "multi": true,
+        "name": "api",
+        "options": [],
+        "query": "select api_name from api where id in    (select api from process_api_m2m where      process in (select id from process where process in ($process))   )",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "mysql",
+          "uid": "eH06dq04k"
+        },
+        "definition": "select error_category from error_category where error_category not in ('unknown_errors');",
+        "hide": 0,
+        "includeAll": true,
+        "multi": true,
+        "name": "category",
+        "options": [],
+        "query": "select error_category from error_category where error_category not in ('unknown_errors');",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }
+    ]
+  },
+  "time": {
+    "from": "now-2d",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ],
+    "time_options": [
+      "5m",
+      "15m",
+      "1h",
+      "6h",
+      "12h",
+      "24h",
+      "2d",
+      "7d",
+      "30d"
+    ]
+  },
+  "timezone": "",
+  "title": "satan-dashboard-dev-team",
+  "uid": "dev-team",
+  "version": 2,
+  "weekStart": ""
+}

@@ -1,0 +1,917 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 36,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "0zyzXo14z"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-RdYlGr"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "axisSoftMax": 1,
+            "axisSoftMin": -1,
+            "barAlignment": 1,
+            "drawStyle": "line",
+            "fillOpacity": 13,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 9,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "always",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "dark-red",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 8,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "9.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "0zyzXo14z"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "hide": false,
+          "rawQuery": true,
+          "rawSql": "Select\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n\ttable_name as TableName\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='stc_cdr_data' AND TABLE_NAME='rule_engine_auditlog' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select CREATE_DATE from `stc_cdr_data`.`rule_engine_auditlog` \nORDER BY CREATE_DATE DESC LIMIT 1 ) as startTime \nFROM table_partition_policy WHERE table_name='rule_engine_auditlog' ORDER BY id DESC LIMIT 1 )\nas data1\nwhere data1.Notification=0 and data1.startTime IS Not Null\nand $__timeFilter(data1.startTime) \n\nunion all\nSelect\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n\ttable_name as TableName\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='stc_cdr_data' AND  TABLE_NAME='cdr_data_details_daily' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select startTime from `stc_cdr_data`.`cdr_data_details_daily` \nORDER BY startTime DESC LIMIT 1 ) as startTime\nFROM table_partition_policy WHERE table_name='cdr_data_details_daily' ORDER BY id DESC LIMIT 1 )\nas data8\nwhere data8.Notification=0 and data8.startTime IS Not Null\nand $__timeFilter(data8.startTime)\n\nunion all\nSelect\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n\ttable_name as TableName \nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='stc_cdr_data' AND  TABLE_NAME='cdr_data_details_hourly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select startTime from `stc_cdr_data`.`cdr_data_details_hourly` \nORDER BY startTime DESC LIMIT 1 ) as startTime\nFROM table_partition_policy WHERE table_name='cdr_data_details_hourly' ORDER BY id DESC LIMIT 1 )\nas data9\nwhere data9.Notification=0 and data9.startTime IS Not Null and $__timeFilter(data9.startTime)\n\nunion all\nSelect\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n\ttable_name as TableName\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='stc_cdr_data' AND  TABLE_NAME='cdr_data_details_monthly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select startTime from `stc_cdr_data`.`cdr_data_details_monthly` \nORDER BY startTime DESC LIMIT 1 ) as startTime\nFROM table_partition_policy WHERE table_name='cdr_data_details_monthly' ORDER BY id DESC LIMIT 1 )\nas data10\nwhere data10.Notification=0 and data10.startTime IS Not Null and $__timeFilter(data10.startTime)\n\nunion all\nSelect\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n\ttable_name as TableName\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='stc_cdr_data' AND  TABLE_NAME='cdr_data_details_weekly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select startTime from `stc_cdr_data`.`cdr_data_details_weekly` \nORDER BY startTime DESC LIMIT 1 ) as startTime\n\nFROM table_partition_policy WHERE table_name='cdr_data_details_weekly' ORDER BY id DESC LIMIT 1 )\nas data11\nwhere data11.Notification=0 and data11.startTime IS Not Null and $__timeFilter(data11.startTime)\n\nunion all\nSelect\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n\ttable_name as TableName\nfrom\n(SELECT CASE WHEN in_no_of_partitions < (YEAR(NOW())-IFNULL((select PARTITION_DESCRIPTION from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='stc_cdr_data' AND  TABLE_NAME='cdr_data_details_yearly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select startTime from `stc_cdr_data`.`cdr_data_details_yearly` \nORDER BY startTime DESC LIMIT 1 ) as startTime\nFROM table_partition_policy WHERE table_name='cdr_data_details_yearly' ORDER BY id DESC LIMIT 1 )\nas data12\nwhere data12.Notification=0 and data12.startTime IS Not Null and $__timeFilter(data12.startTime)\n\nunion all\n-- Select\n-- \tUNIX_TIMESTAMP(startTime) as time,\n-- \tNotification, \n-- \ttable_name as TableName\n-- from\n-- (SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA=`$DB_stc_cdr_data` AND  TABLE_NAME='cdr_sms_details' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n-- ,(select FINAL_TIME from cdr_database.cdr_sms_details \n-- ORDER BY FINAL_TIME DESC LIMIT 1 ) as startTime\n\n-- FROM table_partition_policy WHERE table_name='cdr_sms_details' ORDER BY id DESC LIMIT 1 )\n-- as data13\n-- where data13.Notification=1 and data13.startTime IS Not Null and $__timeFilter(data13.startTime)\n\n-- union all\nSelect\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n\ttable_name as TableName\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='stc_cdr_data' AND  TABLE_NAME='cdr_sms_details_daily' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select FINAL_TIME from `stc_cdr_data`.`cdr_sms_details_daily` \nORDER BY FINAL_TIME DESC LIMIT 1 ) as startTime\nFROM table_partition_policy WHERE table_name='cdr_sms_details_daily' ORDER BY id DESC LIMIT 1 )\nas data14\nwhere data14.Notification=0 and data14.startTime IS Not Null and $__timeFilter(data14.startTime)\n\nunion all\nSelect\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n\ttable_name as TableName\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='stc_cdr_data' AND  TABLE_NAME='cdr_sms_details_hourly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select FINAL_TIME from `stc_cdr_data`.`cdr_sms_details_hourly` \nORDER BY FINAL_TIME DESC LIMIT 1 ) as startTime\nFROM table_partition_policy WHERE table_name='cdr_sms_details_hourly' ORDER BY id DESC LIMIT 1 )\nas data15\nwhere data15.Notification=0 and data15.startTime IS Not Null and $__timeFilter(data15.startTime)\n\nunion all\n\nSelect\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n\ttable_name as TableName  \nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='stc_cdr_data' AND  TABLE_NAME='cdr_sms_details_monthly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select FINAL_TIME from `stc_cdr_data`.`cdr_sms_details_monthly` \nORDER BY FINAL_TIME DESC LIMIT 1 ) as startTime\n\nFROM table_partition_policy WHERE table_name='cdr_sms_details_monthly' ORDER BY id DESC LIMIT 1 )\nas data16\nwhere data16.Notification=0 and data16.startTime IS Not Null and $__timeFilter(data16.startTime)\n\nunion all\nSelect\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n\ttable_name as TableName\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='stc_cdr_data' AND  TABLE_NAME='cdr_sms_details_weekly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select FINAL_TIME from `stc_cdr_data`.`cdr_sms_details_weekly` \nORDER BY FINAL_TIME DESC LIMIT 1 ) as startTime\n\nFROM table_partition_policy WHERE table_name='cdr_sms_details_weekly' ORDER BY id DESC LIMIT 1 )\nas data17\nwhere data17.Notification=0 and data17.startTime IS Not Null and $__timeFilter(data17.startTime)\n\nunion all\nSelect\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n\ttable_name as TableName \nfrom\n(SELECT CASE WHEN in_no_of_partitions < (YEAR(NOW())-IFNULL((select PARTITION_DESCRIPTION from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='stc_cdr_data' AND  TABLE_NAME='cdr_sms_details_yearly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select FINAL_TIME from `stc_cdr_data`.`cdr_sms_details_yearly` \nORDER BY FINAL_TIME DESC LIMIT 1 ) as startTime\n\nFROM table_partition_policy WHERE table_name='cdr_sms_details_yearly' ORDER BY id DESC LIMIT 1 )\nas data18\nwhere data18.Notification=0 and data18.startTime IS Not Null and $__timeFilter(data18.startTime)\n\nunion all\nSelect\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n\ttable_name as TableName \nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='stc_cdr_data' AND  TABLE_NAME='cdr_voice_details_daily' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select ANSWERING_TIME from `stc_cdr_data`.`cdr_voice_details_daily`\nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime\nFROM table_partition_policy WHERE table_name='cdr_voice_details_daily' ORDER BY id DESC LIMIT 1 )\nas data19\nwhere data19.Notification=0 and data19.startTime IS Not Null and $__timeFilter(data19.startTime)\n\nunion all\nSelect\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n\ttable_name as TableName\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='stc_cdr_data' AND  TABLE_NAME='cdr_voice_details_hourly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select ANSWERING_TIME from `stc_cdr_data`.`cdr_voice_details_hourly` \nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime\nFROM table_partition_policy WHERE table_name='cdr_voice_details_hourly' ORDER BY id DESC LIMIT 1 )\nas data20\nwhere data20.Notification=0 and data20.startTime IS Not Null and $__timeFilter(data20.startTime)\n\nunion all\nSelect\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n\ttable_name as TableName\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='stc_cdr_data' AND  TABLE_NAME='cdr_voice_details_monthly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select ANSWERING_TIME from `stc_cdr_data`.`cdr_voice_details_monthly`\nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime\nFROM table_partition_policy WHERE table_name='cdr_voice_details_monthly' ORDER BY id DESC LIMIT 1 )\nas data21\nwhere data21.Notification=0 and data21.startTime IS Not Null and $__timeFilter(data21.startTime)\n\nunion all\nSelect\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n\ttable_name as TableName\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='stc_cdr_data' AND  TABLE_NAME='cdr_voice_details_weekly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select ANSWERING_TIME from `stc_cdr_data`.`cdr_voice_details_weekly`\nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime\nFROM table_partition_policy WHERE table_name='cdr_voice_details_weekly' ORDER BY id DESC LIMIT 1 )\nas data22\nwhere data22.Notification=0 and data22.startTime IS Not Null and $__timeFilter(data22.startTime)\n\nunion all\nSelect\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n\ttable_name as TableName\nfrom\n(SELECT CASE WHEN in_no_of_partitions < (YEAR(NOW())-IFNULL((select PARTITION_DESCRIPTION from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='stc_cdr_data' AND  TABLE_NAME='cdr_voice_details_yearly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select ANSWERING_TIME from `stc_cdr_data`.`cdr_voice_details_yearly` \nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime\n\nFROM table_partition_policy WHERE table_name='cdr_voice_details_yearly' ORDER BY id DESC LIMIT 1 )\nas data23\nwhere data23.Notification=0 and data23.startTime IS Not Null and $__timeFilter(data23.startTime)\n\nunion all\nSelect\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n\ttable_name as TableName \nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='stc_cdr_data' AND  TABLE_NAME='rule_engine_alert_history' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select occurence_time from `stc_cdr_data`.`rule_engine_alert_history` \nORDER BY occurence_time DESC LIMIT 1 ) as startTime\n\nFROM table_partition_policy WHERE table_name='rule_engine_alert_history' ORDER BY id DESC LIMIT 1 )\nas data24\nwhere data24.Notification=0 and data24.startTime IS Not Null and $__timeFilter(data24.startTime)\n\nunion all\nSelect\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n\ttable_name as TableName \nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='stc_dev' AND  TABLE_NAME='auditlog_end_points' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select CREATE_DATE from `stc_dev`.`auditlog_end_points` \nORDER BY CREATE_DATE DESC LIMIT 1 ) as startTime\n\nFROM table_partition_policy WHERE table_name='auditlog_end_points' ORDER BY id DESC LIMIT 1 )\nas data4\nwhere data4.Notification=0 and data4.startTime IS Not Null and $__timeFilter(data4.startTime)\n\nunion all\nSelect\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n\ttable_name as TableName\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from   INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='stc_dev' AND  TABLE_NAME='auditlog' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select CREATE_DATE from `stc_dev`.`auditlog` \nORDER BY CREATE_DATE DESC LIMIT 1 ) as startTime\nFROM table_partition_policy WHERE table_name='auditlog' ORDER BY id DESC LIMIT 1 )\nas data2\nwhere data2.Notification=0 and data2.startTime IS Not Null and $__timeFilter(data2.startTime)\n\nunion all\nSelect\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n\ttable_name as TableName\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='stc_dev' AND TABLE_NAME='auditlog_api_transaction' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select CREATE_DATE from `stc_dev`.`auditlog_api_transaction` \nORDER BY CREATE_DATE DESC LIMIT 1 ) as startTime\n\nFROM table_partition_policy WHERE table_name='auditlog_api_transaction' ORDER BY id DESC LIMIT 1 )\nas data3\nwhere data3.Notification=0 and data3.startTime IS Not Null and $__timeFilter(data3.startTime)\n\nunion all\nSelect\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n\ttable_name as TableName \nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE TABLE_SCHEMA='stc_dev' AND  TABLE_NAME='cdr_sms_details' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select FINAL_TIME from `stc_dev`.`cdr_sms_details` \nORDER BY FINAL_TIME DESC LIMIT 1 ) as startTime\n\nFROM table_partition_policy WHERE table_name='cdr_sms_details' ORDER BY id DESC LIMIT 1 )\nas data5\nwhere data5.Notification=0 and data5.startTime IS Not Null and $__timeFilter(data5.startTime)\n\nunion all\nSelect\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n\ttable_name as TableName\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE TABLE_SCHEMA='stc_dev' AND  TABLE_NAME='cdr_details' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select startTime from `stc_dev`.`cdr_details`  \nORDER BY startTime DESC LIMIT 1 ) as startTime\nFROM table_partition_policy WHERE table_name='cdr_details' ORDER BY id DESC LIMIT 1 )\nas data6\nwhere data6.Notification=0 and data6.startTime IS Not Null and $__timeFilter(data6.startTime)\n\nunion all\nSelect\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n\ttable_name as TableName\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='stc_dev' AND TABLE_NAME='cdr_voice_details' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select ANSWERING_TIME from `stc_dev`.`cdr_voice_details` \nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime\nFROM table_partition_policy WHERE table_name='cdr_voice_details' ORDER BY id DESC LIMIT 1 )\nas data7\nwhere data7.Notification=0 and data7.startTime IS Not Null and $__timeFilter(data7.startTime) ;\n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Partitioning Threshold Reached",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "0zyzXo14z"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto",
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "dark-red",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Notification"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "0": {
+                        "color": "dark-red",
+                        "index": 0,
+                        "text": "Triggered"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "thresholds"
+                }
+              },
+              {
+                "id": "custom.displayMode",
+                "value": "color-background"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "database_name"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Database"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "table_name"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Table"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "in_no_of_partitions"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Partitions"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Database"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 97
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "time"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Time"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "TableName"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 187
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 3,
+      "options": {
+        "footer": {
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "9.3.6",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "0zyzXo14z"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "hide": true,
+          "rawQuery": true,
+          "rawSql": "Select \ndatabase_name, Notification, table_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND TABLE_NAME='rule_engine_auditlog' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='rule_engine_auditlog' ORDER BY id DESC LIMIT 1 )\nas data1\nwhere data1.Notification=1\nunion all\n\nSelect \ndatabase_name, Notification, table_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from   INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='auditlog' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='auditlog' ORDER BY id DESC LIMIT 1 )\nas data2\nwhere data2.Notification=1\n\nunion all\nSelect \ndatabase_name, Notification, table_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND TABLE_NAME='auditlog_api_transaction' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='auditlog_api_transaction' ORDER BY id DESC LIMIT 1 )\nas data3\nwhere data3.Notification=1\n\nunion all\nSelect \ndatabase_name, Notification, table_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='auditlog_end_points' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='auditlog_end_points' ORDER BY id DESC LIMIT 1 )\nas data4\nwhere data4.Notification=1\n\nunion all\nSelect \ndatabase_name, Notification, table_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='cdr_sms_details' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_sms_details' ORDER BY id DESC LIMIT 1 )\nas data5\nwhere data5.Notification=1\n\nunion all\nSelect \ndatabase_name, Notification, table_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='cdr_details' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_details' ORDER BY id DESC LIMIT 1 )\nas data6\nwhere data6.Notification=1\n\nunion all\nSelect \ndatabase_name, Notification, table_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND TABLE_NAME='cdr_voice_details' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_voice_details' ORDER BY id DESC LIMIT 1 )\nas data7\nwhere data7.Notification=1\n\nunion all\nSelect \ndatabase_name, Notification, table_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='cdr_data_details_daily' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_data_details_daily' ORDER BY id DESC LIMIT 1 )\nas data8\nwhere data8.Notification=1\n\nunion all\nSelect \ndatabase_name, Notification, table_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='cdr_data_details_hourly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_data_details_hourly' ORDER BY id DESC LIMIT 1 )\nas data9\nwhere data9.Notification=1\n\nunion all\nSelect \ndatabase_name, Notification, table_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='cdr_data_details_monthly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_data_details_monthly' ORDER BY id DESC LIMIT 1 )\nas data10\nwhere data10.Notification=1\n\nunion all\nSelect \ndatabase_name, Notification, table_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='cdr_data_details_weekly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_data_details_weekly' ORDER BY id DESC LIMIT 1 )\nas data11\nwhere data11.Notification=1\n\nunion all\nSelect \ndatabase_name, Notification, table_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < (YEAR(NOW())-IFNULL((select PARTITION_DESCRIPTION from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='cdr_data_details_yearly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_data_details_yearly' ORDER BY id DESC LIMIT 1 )\nas data12\nwhere data12.Notification=1\n\nunion all\nSelect \ndatabase_name, Notification, table_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='cdr_sms_details' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_sms_details' ORDER BY id DESC LIMIT 1 )\nas data13\nwhere data13.Notification=1\n\nunion all\nSelect \ndatabase_name, Notification, table_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='cdr_sms_details_daily' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_sms_details_daily' ORDER BY id DESC LIMIT 1 )\nas data14\nwhere data14.Notification=1\n\nunion all\nSelect \ndatabase_name, Notification, table_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='cdr_sms_details_hourly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_sms_details_hourly' ORDER BY id DESC LIMIT 1 )\nas data15\nwhere data15.Notification=1\nunion all\n\nSelect \ndatabase_name, Notification, table_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='cdr_sms_details_monthly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_sms_details_monthly' ORDER BY id DESC LIMIT 1 )\nas data16\nwhere data16.Notification=1\n\nunion all\nSelect \ndatabase_name, Notification, table_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='cdr_sms_details_weekly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_sms_details_weekly' ORDER BY id DESC LIMIT 1 )\nas data17\nwhere data17.Notification=1\n\nunion all\nSelect \ndatabase_name, Notification, table_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < (YEAR(NOW())-IFNULL((select PARTITION_DESCRIPTION from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='cdr_sms_details_yearly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_sms_details_yearly' ORDER BY id DESC LIMIT 1 )\nas data18\nwhere data18.Notification=1\n\nunion all\nSelect \ndatabase_name, Notification, table_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='cdr_voice_details_daily' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_voice_details_daily' ORDER BY id DESC LIMIT 1 )\nas data19\nwhere data19.Notification=1\n\nunion all\nSelect \ndatabase_name, Notification, table_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='cdr_voice_details_hourly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_voice_details_hourly' ORDER BY id DESC LIMIT 1 )\nas data20\nwhere data20.Notification=1\n\nunion all\nSelect \ndatabase_name, Notification, table_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='cdr_voice_details_monthly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_voice_details_monthly' ORDER BY id DESC LIMIT 1 )\nas data21\nwhere data21.Notification=1\n\nunion all\nSelect \ndatabase_name, Notification, table_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='cdr_voice_details_weekly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_voice_details_weekly' ORDER BY id DESC LIMIT 1 )\nas data22\nwhere data22.Notification=1\n\nunion all\nSelect \ndatabase_name, Notification, table_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < (YEAR(NOW())-IFNULL((select PARTITION_DESCRIPTION from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='cdr_voice_details_yearly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_voice_details_yearly' ORDER BY id DESC LIMIT 1 )\nas data23\nwhere data23.Notification=1\n\nunion all\nSelect \ndatabase_name, Notification, table_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='rule_engine_alert_history' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='rule_engine_alert_history' ORDER BY id DESC LIMIT 1 )\nas data24\nwhere data24.Notification=1;\n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        },
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "0zyzXo14z"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "hide": false,
+          "rawQuery": true,
+          "rawSql": "Select\n\tdatabase_name,\n    table_name as TableName,\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_cdr_data' AND TABLE_NAME='rule_engine_auditlog' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select CREATE_DATE from `$DB_stc_cdr_data`.`rule_engine_auditlog` \nORDER BY CREATE_DATE DESC LIMIT 1 ) as startTime \nFROM table_partition_policy WHERE table_name='rule_engine_auditlog' ORDER BY id DESC LIMIT 1 )\nas data1\nwhere data1.Notification=0 and data1.startTime IS Not Null\nand $__timeFilter(data1.startTime) \n\nunion all\nSelect\n\tdatabase_name,\n    table_name as TableName,\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_cdr_data' AND  TABLE_NAME='cdr_data_details_daily' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select startTime from `$DB_stc_cdr_data`.`cdr_data_details_daily` \nORDER BY startTime DESC LIMIT 1 ) as startTime\nFROM table_partition_policy WHERE table_name='cdr_data_details_daily' ORDER BY id DESC LIMIT 1 )\nas data8\nwhere data8.Notification=0 and data8.startTime IS Not Null\nand $__timeFilter(data8.startTime)\n\nunion all\nSelect\n\tdatabase_name,\n    table_name as TableName,\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_cdr_data' AND  TABLE_NAME='cdr_data_details_hourly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select startTime from `$DB_stc_cdr_data`.`cdr_data_details_hourly` \nORDER BY startTime DESC LIMIT 1 ) as startTime\nFROM table_partition_policy WHERE table_name='cdr_data_details_hourly' ORDER BY id DESC LIMIT 1 )\nas data9\nwhere data9.Notification=0 and data9.startTime IS Not Null and $__timeFilter(data9.startTime)\n\nunion all\nSelect\n\tdatabase_name,\n    table_name as TableName,\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_cdr_data' AND  TABLE_NAME='cdr_data_details_monthly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select startTime from `$DB_stc_cdr_data`.`cdr_data_details_monthly` \nORDER BY startTime DESC LIMIT 1 ) as startTime\nFROM table_partition_policy WHERE table_name='cdr_data_details_monthly' ORDER BY id DESC LIMIT 1 )\nas data10\nwhere data10.Notification=0 and data10.startTime IS Not Null and $__timeFilter(data10.startTime)\n\nunion all\nSelect\n\tdatabase_name,\n    table_name as TableName,\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_cdr_data' AND  TABLE_NAME='cdr_data_details_weekly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select startTime from `$DB_stc_cdr_data`.`cdr_data_details_weekly` \nORDER BY startTime DESC LIMIT 1 ) as startTime\n\nFROM table_partition_policy WHERE table_name='cdr_data_details_weekly' ORDER BY id DESC LIMIT 1 )\nas data11\nwhere data11.Notification=0 and data11.startTime IS Not Null and $__timeFilter(data11.startTime)\n\nunion all\nSelect\n\tdatabase_name,\n    table_name as TableName,\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < (YEAR(NOW())-IFNULL((select PARTITION_DESCRIPTION from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_cdr_data' AND  TABLE_NAME='cdr_data_details_yearly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select startTime from `$DB_stc_cdr_data`.`cdr_data_details_yearly` \nORDER BY startTime DESC LIMIT 1 ) as startTime\nFROM table_partition_policy WHERE table_name='cdr_data_details_yearly' ORDER BY id DESC LIMIT 1 )\nas data12\nwhere data12.Notification=0 and data12.startTime IS Not Null and $__timeFilter(data12.startTime)\n\nunion all\n-- Select\n-- \tUNIX_TIMESTAMP(startTime) as time,\n-- \tNotification, \n-- \ttable_name as TableName\n-- from\n-- (SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA=`$DB_stc_cdr_data` AND  TABLE_NAME='cdr_sms_details' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n-- ,(select FINAL_TIME from cdr_database.cdr_sms_details \n-- ORDER BY FINAL_TIME DESC LIMIT 1 ) as startTime\n\n-- FROM table_partition_policy WHERE table_name='cdr_sms_details' ORDER BY id DESC LIMIT 1 )\n-- as data13\n-- where data13.Notification=1 and data13.startTime IS Not Null and $__timeFilter(data13.startTime)\n\n-- union all\nSelect\n\tdatabase_name,\n    table_name as TableName,\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_cdr_data' AND  TABLE_NAME='cdr_sms_details_daily' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select FINAL_TIME from `$DB_stc_cdr_data`.`cdr_sms_details_daily` \nORDER BY FINAL_TIME DESC LIMIT 1 ) as startTime\nFROM table_partition_policy WHERE table_name='cdr_sms_details_daily' ORDER BY id DESC LIMIT 1 )\nas data14\nwhere data14.Notification=0 and data14.startTime IS Not Null and $__timeFilter(data14.startTime)\n\nunion all\nSelect\n\tdatabase_name,\n    table_name as TableName,\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_cdr_data' AND  TABLE_NAME='cdr_sms_details_hourly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select FINAL_TIME from `$DB_stc_cdr_data`.`cdr_sms_details_hourly` \nORDER BY FINAL_TIME DESC LIMIT 1 ) as startTime\nFROM table_partition_policy WHERE table_name='cdr_sms_details_hourly' ORDER BY id DESC LIMIT 1 )\nas data15\nwhere data15.Notification=0 and data15.startTime IS Not Null and $__timeFilter(data15.startTime)\n\nunion all\n\nSelect\n\tdatabase_name,\n    table_name as TableName,\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_cdr_data' AND  TABLE_NAME='cdr_sms_details_monthly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select FINAL_TIME from `$DB_stc_cdr_data`.`cdr_sms_details_monthly` \nORDER BY FINAL_TIME DESC LIMIT 1 ) as startTime\n\nFROM table_partition_policy WHERE table_name='cdr_sms_details_monthly' ORDER BY id DESC LIMIT 1 )\nas data16\nwhere data16.Notification=0 and data16.startTime IS Not Null and $__timeFilter(data16.startTime)\n\nunion all\nSelect\n\tdatabase_name,\n    table_name as TableName,\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_cdr_data' AND  TABLE_NAME='cdr_sms_details_weekly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select FINAL_TIME from `$DB_stc_cdr_data`.`cdr_sms_details_weekly` \nORDER BY FINAL_TIME DESC LIMIT 1 ) as startTime\n\nFROM table_partition_policy WHERE table_name='cdr_sms_details_weekly' ORDER BY id DESC LIMIT 1 )\nas data17\nwhere data17.Notification=0 and data17.startTime IS Not Null and $__timeFilter(data17.startTime)\n\nunion all\nSelect\n\tdatabase_name,\n    table_name as TableName,\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < (YEAR(NOW())-IFNULL((select PARTITION_DESCRIPTION from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_cdr_data' AND  TABLE_NAME='cdr_sms_details_yearly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select FINAL_TIME from `$DB_stc_cdr_data`.`cdr_sms_details_yearly` \nORDER BY FINAL_TIME DESC LIMIT 1 ) as startTime\n\nFROM table_partition_policy WHERE table_name='cdr_sms_details_yearly' ORDER BY id DESC LIMIT 1 )\nas data18\nwhere data18.Notification=0 and data18.startTime IS Not Null and $__timeFilter(data18.startTime)\n\nunion all\nSelect\n\tdatabase_name,\n    table_name as TableName,\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_cdr_data' AND  TABLE_NAME='cdr_voice_details_daily' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_daily`\nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime\nFROM table_partition_policy WHERE table_name='cdr_voice_details_daily' ORDER BY id DESC LIMIT 1 )\nas data19\nwhere data19.Notification=0 and data19.startTime IS Not Null and $__timeFilter(data19.startTime)\n\nunion all\nSelect\n\tdatabase_name,\n    table_name as TableName,\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_cdr_data' AND  TABLE_NAME='cdr_voice_details_hourly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_hourly` \nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime\nFROM table_partition_policy WHERE table_name='cdr_voice_details_hourly' ORDER BY id DESC LIMIT 1 )\nas data20\nwhere data20.Notification=0 and data20.startTime IS Not Null and $__timeFilter(data20.startTime)\n\nunion all\nSelect\n\tdatabase_name,\n    table_name as TableName,\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_cdr_data' AND  TABLE_NAME='cdr_voice_details_monthly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_monthly`\nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime\nFROM table_partition_policy WHERE table_name='cdr_voice_details_monthly' ORDER BY id DESC LIMIT 1 )\nas data21\nwhere data21.Notification=0 and data21.startTime IS Not Null and $__timeFilter(data21.startTime)\n\nunion all\nSelect\n\tdatabase_name,\n    table_name as TableName,\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_cdr_data' AND  TABLE_NAME='cdr_voice_details_weekly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_weekly`\nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime\nFROM table_partition_policy WHERE table_name='cdr_voice_details_weekly' ORDER BY id DESC LIMIT 1 )\nas data22\nwhere data22.Notification=0 and data22.startTime IS Not Null and $__timeFilter(data22.startTime)\n\nunion all\nSelect\n\tdatabase_name,\n    table_name as TableName,\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < (YEAR(NOW())-IFNULL((select PARTITION_DESCRIPTION from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_cdr_data' AND  TABLE_NAME='cdr_voice_details_yearly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_yearly` \nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime\n\nFROM table_partition_policy WHERE table_name='cdr_voice_details_yearly' ORDER BY id DESC LIMIT 1 )\nas data23\nwhere data23.Notification=0 and data23.startTime IS Not Null and $__timeFilter(data23.startTime)\n\nunion all\nSelect\n\tdatabase_name,\n    table_name as TableName,\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_cdr_data' AND  TABLE_NAME='rule_engine_alert_history' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select occurence_time from `$DB_stc_cdr_data`.`rule_engine_alert_history` \nORDER BY occurence_time DESC LIMIT 1 ) as startTime\n\nFROM table_partition_policy WHERE table_name='rule_engine_alert_history' ORDER BY id DESC LIMIT 1 )\nas data24\nwhere data24.Notification=0 and data24.startTime IS Not Null and $__timeFilter(data24.startTime)\n\nunion all\nSelect\n\tdatabase_name,\n    table_name as TableName,\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_dev' AND  TABLE_NAME='auditlog_end_points' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select CREATE_DATE from `$DB_stc_dev`.`auditlog_end_points` \nORDER BY CREATE_DATE DESC LIMIT 1 ) as startTime\n\nFROM table_partition_policy WHERE table_name='auditlog_end_points' ORDER BY id DESC LIMIT 1 )\nas data4\nwhere data4.Notification=0 and data4.startTime IS Not Null and $__timeFilter(data4.startTime)\n\nunion all\nSelect\n\tdatabase_name,\n    table_name as TableName,\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from   INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_dev' AND  TABLE_NAME='auditlog' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select CREATE_DATE from `$DB_stc_dev`.`auditlog` \nORDER BY CREATE_DATE DESC LIMIT 1 ) as startTime\nFROM table_partition_policy WHERE table_name='auditlog' ORDER BY id DESC LIMIT 1 )\nas data2\nwhere data2.Notification=0 and data2.startTime IS Not Null and $__timeFilter(data2.startTime)\n\nunion all\nSelect\n\tdatabase_name,\n    table_name as TableName,\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_dev' AND TABLE_NAME='auditlog_api_transaction' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select CREATE_DATE from `$DB_stc_dev`.`auditlog_api_transaction` \nORDER BY CREATE_DATE DESC LIMIT 1 ) as startTime\n\nFROM table_partition_policy WHERE table_name='auditlog_api_transaction' ORDER BY id DESC LIMIT 1 )\nas data3\nwhere data3.Notification=0 and data3.startTime IS Not Null and $__timeFilter(data3.startTime)\n\nunion all\nSelect\n\tdatabase_name,\n    table_name as TableName,\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE TABLE_SCHEMA='$DB_stc_dev' AND  TABLE_NAME='cdr_sms_details' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select FINAL_TIME from `$DB_stc_dev`.`cdr_sms_details` \nORDER BY FINAL_TIME DESC LIMIT 1 ) as startTime\n\nFROM table_partition_policy WHERE table_name='cdr_sms_details' ORDER BY id DESC LIMIT 1 )\nas data5\nwhere data5.Notification=0 and data5.startTime IS Not Null and $__timeFilter(data5.startTime)\n\nunion all\nSelect\n\tdatabase_name,\n    table_name as TableName,\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE TABLE_SCHEMA='$DB_stc_dev' AND  TABLE_NAME='cdr_details' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select startTime from `$DB_stc_dev`.`cdr_details`  \nORDER BY startTime DESC LIMIT 1 ) as startTime\nFROM table_partition_policy WHERE table_name='cdr_details' ORDER BY id DESC LIMIT 1 )\nas data6\nwhere data6.Notification=0 and data6.startTime IS Not Null and $__timeFilter(data6.startTime)\n\nunion all\nSelect\n\tdatabase_name,\n    table_name as TableName,\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_dev' AND TABLE_NAME='cdr_voice_details' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select ANSWERING_TIME from `$DB_stc_dev`.`cdr_voice_details` \nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime\nFROM table_partition_policy WHERE table_name='cdr_voice_details' ORDER BY id DESC LIMIT 1 )\nas data7\nwhere data7.Notification=0 and data7.startTime IS Not Null and $__timeFilter(data7.startTime) ;\n",
+          "refId": "B",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Partitioning Threshold Reached Data",
+      "transparent": true,
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "0zyzXo14z"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "dark-blue",
+            "mode": "fixed"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+            {
+              "options": {
+                "auditlog": {
+                  "color": "semi-dark-yellow",
+                  "index": 22,
+                  "text": "auditlog"
+                },
+                "auditlog_api_transaction": {
+                  "color": "semi-dark-green",
+                  "index": 3,
+                  "text": "auditlog_api_transaction"
+                },
+                "auditlog_end_points": {
+                  "color": "semi-dark-purple",
+                  "index": 23,
+                  "text": "auditlog_end_points"
+                },
+                "cdr_data_details": {
+                  "color": "semi-dark-red",
+                  "index": 6,
+                  "text": "cdr_data_details"
+                },
+                "cdr_data_details_daily": {
+                  "color": "semi-dark-orange",
+                  "index": 1,
+                  "text": "cdr_data_details_daily"
+                },
+                "cdr_data_details_hourly": {
+                  "color": "semi-dark-orange",
+                  "index": 7,
+                  "text": "cdr_data_details_hourly"
+                },
+                "cdr_data_details_monthly": {
+                  "color": "semi-dark-yellow",
+                  "index": 8,
+                  "text": "cdr_data_details_monthly"
+                },
+                "cdr_data_details_weekly": {
+                  "color": "semi-dark-green",
+                  "index": 9,
+                  "text": "cdr_data_details_weekly"
+                },
+                "cdr_data_details_yearly": {
+                  "color": "semi-dark-blue",
+                  "index": 10,
+                  "text": "cdr_data_details_yearly"
+                },
+                "cdr_details": {
+                  "color": "light-orange",
+                  "index": 4,
+                  "text": "cdr_details"
+                },
+                "cdr_sms_details": {
+                  "color": "semi-dark-purple",
+                  "index": 11,
+                  "text": "cdr_sms_details"
+                },
+                "cdr_sms_details_daily": {
+                  "color": "semi-dark-blue",
+                  "index": 2,
+                  "text": "cdr_sms_details_daily"
+                },
+                "cdr_sms_details_hourly": {
+                  "color": "#03f7b1",
+                  "index": 12,
+                  "text": "cdr_sms_details_hourly"
+                },
+                "cdr_sms_details_monthly": {
+                  "color": "super-light-purple",
+                  "index": 14,
+                  "text": "cdr_sms_details_monthly"
+                },
+                "cdr_sms_details_weekly": {
+                  "color": "super-light-orange",
+                  "index": 13,
+                  "text": "cdr_sms_details_weekly"
+                },
+                "cdr_sms_details_yearly": {
+                  "color": "light-red",
+                  "index": 15,
+                  "text": "cdr_sms_details_yearly"
+                },
+                "cdr_voice_details": {
+                  "color": "light-orange",
+                  "index": 16,
+                  "text": "cdr_voice_details"
+                },
+                "cdr_voice_details_daily": {
+                  "color": "#96fd00",
+                  "index": 17,
+                  "text": "cdr_voice_details_daily"
+                },
+                "cdr_voice_details_hourly": {
+                  "color": "#686509",
+                  "index": 18,
+                  "text": "cdr_voice_details_hourly"
+                },
+                "cdr_voice_details_monthly": {
+                  "color": "#00f3e0",
+                  "index": 19,
+                  "text": "cdr_voice_details_monthly"
+                },
+                "cdr_voice_details_weekly": {
+                  "color": "semi-dark-red",
+                  "index": 20,
+                  "text": "cdr_voice_details_weekly"
+                },
+                "cdr_voice_details_yearly": {
+                  "color": "semi-dark-orange",
+                  "index": 21,
+                  "text": "cdr_voice_details_yearly"
+                },
+                "rule_engine_alert_history": {
+                  "color": "light-red",
+                  "index": 5,
+                  "text": "rule_engine_alert_history"
+                },
+                "rule_engine_auditlog": {
+                  "color": "yellow",
+                  "index": 0,
+                  "text": "rule_engine_auditlog"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "dark-orange",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "in_no_of_partitions"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "No. of Partitions"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 10
+      },
+      "id": 6,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "colorByField": "TableName",
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": false
+        },
+        "orientation": "horizontal",
+        "showValue": "never",
+        "stacking": "none",
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "9.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "0zyzXo14z"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "hide": true,
+          "rawQuery": true,
+          "rawSql": "Select \ntable_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND TABLE_NAME='rule_engine_auditlog' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='rule_engine_auditlog' ORDER BY id DESC LIMIT 1 )\nas data1\nwhere data1.Notification=0\nunion all\n\nSelect \ntable_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from   INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='auditlog' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='auditlog' ORDER BY id DESC LIMIT 1 )\nas data2\nwhere data2.Notification=0\n\nunion all\nSelect \ntable_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND TABLE_NAME='auditlog_api_transaction' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='auditlog_api_transaction' ORDER BY id DESC LIMIT 1 )\nas data3\nwhere data3.Notification=0\n\nunion all\nSelect \ntable_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='auditlog_end_points' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='auditlog_end_points' ORDER BY id DESC LIMIT 1 )\nas data4\nwhere data4.Notification=0\n\nunion all\nSelect \ntable_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='cdr_sms_details' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_sms_details' ORDER BY id DESC LIMIT 1 )\nas data5\nwhere data5.Notification=0\n\nunion all\nSelect \ntable_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='cdr_details' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_details' ORDER BY id DESC LIMIT 1 )\nas data6\nwhere data6.Notification=0\n\nunion all\nSelect \ntable_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND TABLE_NAME='cdr_voice_details' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_voice_details' ORDER BY id DESC LIMIT 1 )\nas data7\nwhere data7.Notification=0\n\nunion all\nSelect \ntable_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='cdr_data_details_daily' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_data_details_daily' ORDER BY id DESC LIMIT 1 )\nas data8\nwhere data8.Notification=0\n\nunion all\nSelect \ntable_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='cdr_data_details_hourly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_data_details_hourly' ORDER BY id DESC LIMIT 1 )\nas data9\nwhere data9.Notification=0\n\nunion all\nSelect \ntable_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='cdr_data_details_monthly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_data_details_monthly' ORDER BY id DESC LIMIT 1 )\nas data10\nwhere data10.Notification=0\n\nunion all\nSelect \ntable_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='cdr_data_details_weekly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_data_details_weekly' ORDER BY id DESC LIMIT 1 )\nas data11\nwhere data11.Notification=0\n\nunion all\nSelect \ntable_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < (YEAR(NOW())-IFNULL((select PARTITION_DESCRIPTION from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='cdr_data_details_yearly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_data_details_yearly' ORDER BY id DESC LIMIT 1 )\nas data12\nwhere data12.Notification=0\n\nunion all\nSelect \ntable_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='cdr_sms_details' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_sms_details' ORDER BY id DESC LIMIT 1 )\nas data13\nwhere data13.Notification=0\n\nunion all\nSelect \ntable_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='cdr_sms_details_daily' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_sms_details_daily' ORDER BY id DESC LIMIT 1 )\nas data14\nwhere data14.Notification=0\n\nunion all\nSelect \ntable_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='cdr_sms_details_hourly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_sms_details_hourly' ORDER BY id DESC LIMIT 1 )\nas data15\nwhere data15.Notification=0\nunion all\n\nSelect \ntable_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='cdr_sms_details_monthly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_sms_details_monthly' ORDER BY id DESC LIMIT 1 )\nas data16\nwhere data16.Notification=0\n\nunion all\nSelect \ntable_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='cdr_sms_details_weekly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_sms_details_weekly' ORDER BY id DESC LIMIT 1 )\nas data17\nwhere data17.Notification=0\n\nunion all\nSelect \ntable_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < (YEAR(NOW())-IFNULL((select PARTITION_DESCRIPTION from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='cdr_sms_details_yearly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_sms_details_yearly' ORDER BY id DESC LIMIT 1 )\nas data18\nwhere data18.Notification=0\n\nunion all\nSelect \ntable_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='cdr_voice_details_daily' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_voice_details_daily' ORDER BY id DESC LIMIT 1 )\nas data19\nwhere data19.Notification=0\n\nunion all\nSelect \ntable_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='cdr_voice_details_hourly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_voice_details_hourly' ORDER BY id DESC LIMIT 1 )\nas data20\nwhere data20.Notification=0\n\nunion all\nSelect \ntable_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='cdr_voice_details_monthly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_voice_details_monthly' ORDER BY id DESC LIMIT 1 )\nas data21\nwhere data21.Notification=0\n\nunion all\nSelect \ntable_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='cdr_voice_details_weekly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_voice_details_weekly' ORDER BY id DESC LIMIT 1 )\nas data22\nwhere data22.Notification=0\n\nunion all\nSelect \ntable_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < (YEAR(NOW())-IFNULL((select PARTITION_DESCRIPTION from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='cdr_voice_details_yearly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_voice_details_yearly' ORDER BY id DESC LIMIT 1 )\nas data23\nwhere data23.Notification=0\n\nunion all\nSelect \ntable_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='rule_engine_alert_history' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='rule_engine_alert_history' ORDER BY id DESC LIMIT 1 )\nas data24\nwhere data24.Notification=0;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        },
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "0zyzXo14z"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "hide": false,
+          "rawQuery": true,
+          "rawSql": "Select\n    table_name as TableName,\n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_cdr_data' AND TABLE_NAME='rule_engine_auditlog' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select CREATE_DATE from `$DB_stc_cdr_data`.`rule_engine_auditlog` \nORDER BY CREATE_DATE DESC LIMIT 1 ) as startTime \nFROM table_partition_policy WHERE table_name='rule_engine_auditlog' ORDER BY id DESC LIMIT 1 )\nas data1\nwhere data1.Notification=1 and data1.startTime IS Not Null\nand $__timeFilter(data1.startTime) \n\nunion all\nSelect\n    table_name as TableName,\n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_cdr_data' AND  TABLE_NAME='cdr_data_details_daily' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select startTime from `$DB_stc_cdr_data`.`cdr_data_details_daily` \nORDER BY startTime DESC LIMIT 1 ) as startTime\nFROM table_partition_policy WHERE table_name='cdr_data_details_daily' ORDER BY id DESC LIMIT 1 )\nas data8\nwhere data8.Notification=1 and data8.startTime IS Not Null\nand $__timeFilter(data8.startTime)\n\nunion all\nSelect\n    table_name as TableName,\n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_cdr_data' AND  TABLE_NAME='cdr_data_details_hourly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select startTime from `$DB_stc_cdr_data`.`cdr_data_details_hourly` \nORDER BY startTime DESC LIMIT 1 ) as startTime\nFROM table_partition_policy WHERE table_name='cdr_data_details_hourly' ORDER BY id DESC LIMIT 1 )\nas data9\nwhere data9.Notification=1 and data9.startTime IS Not Null and $__timeFilter(data9.startTime)\n\nunion all\nSelect\n    table_name as TableName,\n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_cdr_data' AND  TABLE_NAME='cdr_data_details_monthly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select startTime from `$DB_stc_cdr_data`.`cdr_data_details_monthly` \nORDER BY startTime DESC LIMIT 1 ) as startTime\nFROM table_partition_policy WHERE table_name='cdr_data_details_monthly' ORDER BY id DESC LIMIT 1 )\nas data10\nwhere data10.Notification=1 and data10.startTime IS Not Null and $__timeFilter(data10.startTime)\n\nunion all\nSelect\n    table_name as TableName,\n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_cdr_data' AND  TABLE_NAME='cdr_data_details_weekly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select startTime from `$DB_stc_cdr_data`.`cdr_data_details_weekly` \nORDER BY startTime DESC LIMIT 1 ) as startTime\n\nFROM table_partition_policy WHERE table_name='cdr_data_details_weekly' ORDER BY id DESC LIMIT 1 )\nas data11\nwhere data11.Notification=1 and data11.startTime IS Not Null and $__timeFilter(data11.startTime)\n\nunion all\nSelect\n    table_name as TableName,\n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < (YEAR(NOW())-IFNULL((select PARTITION_DESCRIPTION from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_cdr_data' AND  TABLE_NAME='cdr_data_details_yearly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select startTime from `$DB_stc_cdr_data`.`cdr_data_details_yearly` \nORDER BY startTime DESC LIMIT 1 ) as startTime\nFROM table_partition_policy WHERE table_name='cdr_data_details_yearly' ORDER BY id DESC LIMIT 1 )\nas data12\nwhere data12.Notification=1 and data12.startTime IS Not Null and $__timeFilter(data12.startTime)\n\nunion all\n-- Select\n-- \tUNIX_TIMESTAMP(startTime) as time,\n-- \tNotification, \n-- \ttable_name as TableName\n-- from\n-- (SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA=`$DB_stc_cdr_data` AND  TABLE_NAME='cdr_sms_details' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n-- ,(select FINAL_TIME from cdr_database.cdr_sms_details \n-- ORDER BY FINAL_TIME DESC LIMIT 1 ) as startTime\n\n-- FROM table_partition_policy WHERE table_name='cdr_sms_details' ORDER BY id DESC LIMIT 1 )\n-- as data13\n-- where data13.Notification=1 and data13.startTime IS Not Null and $__timeFilter(data13.startTime)\n\n-- union all\nSelect\n    table_name as TableName,\n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_cdr_data' AND  TABLE_NAME='cdr_sms_details_daily' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select FINAL_TIME from `$DB_stc_cdr_data`.`cdr_sms_details_daily` \nORDER BY FINAL_TIME DESC LIMIT 1 ) as startTime\nFROM table_partition_policy WHERE table_name='cdr_sms_details_daily' ORDER BY id DESC LIMIT 1 )\nas data14\nwhere data14.Notification=1 and data14.startTime IS Not Null and $__timeFilter(data14.startTime)\n\nunion all\nSelect\n    table_name as TableName,\n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_cdr_data' AND  TABLE_NAME='cdr_sms_details_hourly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select FINAL_TIME from `$DB_stc_cdr_data`.`cdr_sms_details_hourly` \nORDER BY FINAL_TIME DESC LIMIT 1 ) as startTime\nFROM table_partition_policy WHERE table_name='cdr_sms_details_hourly' ORDER BY id DESC LIMIT 1 )\nas data15\nwhere data15.Notification=1 and data15.startTime IS Not Null and $__timeFilter(data15.startTime)\n\nunion all\n\nSelect\n    table_name as TableName,\n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_cdr_data' AND  TABLE_NAME='cdr_sms_details_monthly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select FINAL_TIME from `$DB_stc_cdr_data`.`cdr_sms_details_monthly` \nORDER BY FINAL_TIME DESC LIMIT 1 ) as startTime\n\nFROM table_partition_policy WHERE table_name='cdr_sms_details_monthly' ORDER BY id DESC LIMIT 1 )\nas data16\nwhere data16.Notification=1 and data16.startTime IS Not Null and $__timeFilter(data16.startTime)\n\nunion all\nSelect\n    table_name as TableName,\n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_cdr_data' AND  TABLE_NAME='cdr_sms_details_weekly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select FINAL_TIME from `$DB_stc_cdr_data`.`cdr_sms_details_weekly` \nORDER BY FINAL_TIME DESC LIMIT 1 ) as startTime\n\nFROM table_partition_policy WHERE table_name='cdr_sms_details_weekly' ORDER BY id DESC LIMIT 1 )\nas data17\nwhere data17.Notification=1 and data17.startTime IS Not Null and $__timeFilter(data17.startTime)\n\nunion all\nSelect\n    table_name as TableName,\n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < (YEAR(NOW())-IFNULL((select PARTITION_DESCRIPTION from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_cdr_data' AND  TABLE_NAME='cdr_sms_details_yearly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select FINAL_TIME from `$DB_stc_cdr_data`.`cdr_sms_details_yearly` \nORDER BY FINAL_TIME DESC LIMIT 1 ) as startTime\n\nFROM table_partition_policy WHERE table_name='cdr_sms_details_yearly' ORDER BY id DESC LIMIT 1 )\nas data18\nwhere data18.Notification=1 and data18.startTime IS Not Null and $__timeFilter(data18.startTime)\n\nunion all\nSelect\n    table_name as TableName,\n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_cdr_data' AND  TABLE_NAME='cdr_voice_details_daily' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_daily`\nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime\nFROM table_partition_policy WHERE table_name='cdr_voice_details_daily' ORDER BY id DESC LIMIT 1 )\nas data19\nwhere data19.Notification=1 and data19.startTime IS Not Null and $__timeFilter(data19.startTime)\n\nunion all\nSelect\n    table_name as TableName,\n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_cdr_data' AND  TABLE_NAME='cdr_voice_details_hourly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_hourly` \nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime\nFROM table_partition_policy WHERE table_name='cdr_voice_details_hourly' ORDER BY id DESC LIMIT 1 )\nas data20\nwhere data20.Notification=1 and data20.startTime IS Not Null and $__timeFilter(data20.startTime)\n\nunion all\nSelect\n    table_name as TableName,\n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_cdr_data' AND  TABLE_NAME='cdr_voice_details_monthly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_monthly`\nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime\nFROM table_partition_policy WHERE table_name='cdr_voice_details_monthly' ORDER BY id DESC LIMIT 1 )\nas data21\nwhere data21.Notification=1 and data21.startTime IS Not Null and $__timeFilter(data21.startTime)\n\nunion all\nSelect\n    table_name as TableName,\n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_cdr_data' AND  TABLE_NAME='cdr_voice_details_weekly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_weekly`\nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime\nFROM table_partition_policy WHERE table_name='cdr_voice_details_weekly' ORDER BY id DESC LIMIT 1 )\nas data22\nwhere data22.Notification=1 and data22.startTime IS Not Null and $__timeFilter(data22.startTime)\n\nunion all\nSelect\n    table_name as TableName,\n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < (YEAR(NOW())-IFNULL((select PARTITION_DESCRIPTION from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_cdr_data' AND  TABLE_NAME='cdr_voice_details_yearly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_yearly` \nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime\n\nFROM table_partition_policy WHERE table_name='cdr_voice_details_yearly' ORDER BY id DESC LIMIT 1 )\nas data23\nwhere data23.Notification=1 and data23.startTime IS Not Null and $__timeFilter(data23.startTime)\n\nunion all\nSelect\n    table_name as TableName,\n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_cdr_data' AND  TABLE_NAME='rule_engine_alert_history' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select occurence_time from `$DB_stc_cdr_data`.`rule_engine_alert_history` \nORDER BY occurence_time DESC LIMIT 1 ) as startTime\n\nFROM table_partition_policy WHERE table_name='rule_engine_alert_history' ORDER BY id DESC LIMIT 1 )\nas data24\nwhere data24.Notification=1 and data24.startTime IS Not Null and $__timeFilter(data24.startTime)\n\nunion all\nSelect\n    table_name as TableName,\n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_dev' AND  TABLE_NAME='auditlog_end_points' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select CREATE_DATE from `$DB_stc_dev`.`auditlog_end_points` \nORDER BY CREATE_DATE DESC LIMIT 1 ) as startTime\n\nFROM table_partition_policy WHERE table_name='auditlog_end_points' ORDER BY id DESC LIMIT 1 )\nas data4\nwhere data4.Notification=1 and data4.startTime IS Not Null and $__timeFilter(data4.startTime)\n\nunion all\nSelect\n    table_name as TableName,\n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from   INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_dev' AND  TABLE_NAME='auditlog' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select CREATE_DATE from `$DB_stc_dev`.`auditlog` \nORDER BY CREATE_DATE DESC LIMIT 1 ) as startTime\nFROM table_partition_policy WHERE table_name='auditlog' ORDER BY id DESC LIMIT 1 )\nas data2\nwhere data2.Notification=1 and data2.startTime IS Not Null and $__timeFilter(data2.startTime)\n\nunion all\nSelect\n    table_name as TableName,\n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_dev' AND TABLE_NAME='auditlog_api_transaction' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select CREATE_DATE from `$DB_stc_dev`.`auditlog_api_transaction` \nORDER BY CREATE_DATE DESC LIMIT 1 ) as startTime\n\nFROM table_partition_policy WHERE table_name='auditlog_api_transaction' ORDER BY id DESC LIMIT 1 )\nas data3\nwhere data3.Notification=1 and data3.startTime IS Not Null and $__timeFilter(data3.startTime)\n\nunion all\nSelect\n    table_name as TableName,\n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE TABLE_SCHEMA='$DB_stc_dev' AND  TABLE_NAME='cdr_sms_details' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select FINAL_TIME from `$DB_stc_dev`.`cdr_sms_details` \nORDER BY FINAL_TIME DESC LIMIT 1 ) as startTime\n\nFROM table_partition_policy WHERE table_name='cdr_sms_details' ORDER BY id DESC LIMIT 1 )\nas data5\nwhere data5.Notification=1 and data5.startTime IS Not Null and $__timeFilter(data5.startTime)\n\nunion all\nSelect\n    table_name as TableName,\n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE TABLE_SCHEMA='$DB_stc_dev' AND  TABLE_NAME='cdr_details' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select startTime from `$DB_stc_dev`.`cdr_details`  \nORDER BY startTime DESC LIMIT 1 ) as startTime\nFROM table_partition_policy WHERE table_name='cdr_details' ORDER BY id DESC LIMIT 1 )\nas data6\nwhere data6.Notification=1 and data6.startTime IS Not Null and $__timeFilter(data6.startTime)\n\nunion all\nSelect\n    table_name as TableName,\n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_dev' AND TABLE_NAME='cdr_voice_details' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select ANSWERING_TIME from `$DB_stc_dev`.`cdr_voice_details` \nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime\nFROM table_partition_policy WHERE table_name='cdr_voice_details' ORDER BY id DESC LIMIT 1 )\nas data7\nwhere data7.Notification=1 and data7.startTime IS Not Null and $__timeFilter(data7.startTime) ;\n",
+          "refId": "B",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Partitioning Threshold not Reached",
+      "transparent": true,
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "0zyzXo14z"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto",
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Notification"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "1": {
+                        "color": "dark-green",
+                        "index": 0,
+                        "text": "Not Triggered"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "thresholds"
+                }
+              },
+              {
+                "id": "custom.displayMode",
+                "value": "color-background"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "database_name"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Database"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "table_name"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Table"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "in_no_of_partitions"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Partitions"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "time"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Time"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Database"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 97
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "TableName"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 185
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 10
+      },
+      "id": 2,
+      "options": {
+        "footer": {
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "9.3.6",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "0zyzXo14z"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "hide": true,
+          "rawQuery": true,
+          "rawSql": "Select \ndatabase_name, Notification, table_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND TABLE_NAME='rule_engine_auditlog' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='rule_engine_auditlog' ORDER BY id DESC LIMIT 1 )\nas data1\nwhere data1.Notification=0\nunion all\n\nSelect \ndatabase_name, Notification, table_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from   INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='auditlog' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='auditlog' ORDER BY id DESC LIMIT 1 )\nas data2\nwhere data2.Notification=0\n\nunion all\nSelect \ndatabase_name, Notification, table_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND TABLE_NAME='auditlog_api_transaction' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='auditlog_api_transaction' ORDER BY id DESC LIMIT 1 )\nas data3\nwhere data3.Notification=0\n\nunion all\nSelect \ndatabase_name, Notification, table_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='auditlog_end_points' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='auditlog_end_points' ORDER BY id DESC LIMIT 1 )\nas data4\nwhere data4.Notification=0\n\nunion all\nSelect \ndatabase_name, Notification, table_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='cdr_sms_details' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_sms_details' ORDER BY id DESC LIMIT 1 )\nas data5\nwhere data5.Notification=0\n\nunion all\nSelect \ndatabase_name, Notification, table_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='cdr_details' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_details' ORDER BY id DESC LIMIT 1 )\nas data6\nwhere data6.Notification=0\n\nunion all\nSelect \ndatabase_name, Notification, table_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND TABLE_NAME='cdr_voice_details' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_voice_details' ORDER BY id DESC LIMIT 1 )\nas data7\nwhere data7.Notification=0\n\nunion all\nSelect \ndatabase_name, Notification, table_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='cdr_data_details_daily' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_data_details_daily' ORDER BY id DESC LIMIT 1 )\nas data8\nwhere data8.Notification=0\n\nunion all\nSelect \ndatabase_name, Notification, table_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='cdr_data_details_hourly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_data_details_hourly' ORDER BY id DESC LIMIT 1 )\nas data9\nwhere data9.Notification=0\n\nunion all\nSelect \ndatabase_name, Notification, table_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='cdr_data_details_monthly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_data_details_monthly' ORDER BY id DESC LIMIT 1 )\nas data10\nwhere data10.Notification=0\n\nunion all\nSelect \ndatabase_name, Notification, table_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='cdr_data_details_weekly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_data_details_weekly' ORDER BY id DESC LIMIT 1 )\nas data11\nwhere data11.Notification=0\n\nunion all\nSelect \ndatabase_name, Notification, table_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < (YEAR(NOW())-IFNULL((select PARTITION_DESCRIPTION from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='cdr_data_details_yearly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_data_details_yearly' ORDER BY id DESC LIMIT 1 )\nas data12\nwhere data12.Notification=0\n\nunion all\nSelect \ndatabase_name, Notification, table_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='cdr_sms_details' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_sms_details' ORDER BY id DESC LIMIT 1 )\nas data13\nwhere data13.Notification=0\n\nunion all\nSelect \ndatabase_name, Notification, table_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='cdr_sms_details_daily' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_sms_details_daily' ORDER BY id DESC LIMIT 1 )\nas data14\nwhere data14.Notification=0\n\nunion all\nSelect \ndatabase_name, Notification, table_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='cdr_sms_details_hourly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_sms_details_hourly' ORDER BY id DESC LIMIT 1 )\nas data15\nwhere data15.Notification=0\nunion all\n\nSelect \ndatabase_name, Notification, table_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='cdr_sms_details_monthly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_sms_details_monthly' ORDER BY id DESC LIMIT 1 )\nas data16\nwhere data16.Notification=0\n\nunion all\nSelect \ndatabase_name, Notification, table_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='cdr_sms_details_weekly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_sms_details_weekly' ORDER BY id DESC LIMIT 1 )\nas data17\nwhere data17.Notification=0\n\nunion all\nSelect \ndatabase_name, Notification, table_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < (YEAR(NOW())-IFNULL((select PARTITION_DESCRIPTION from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='cdr_sms_details_yearly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_sms_details_yearly' ORDER BY id DESC LIMIT 1 )\nas data18\nwhere data18.Notification=0\n\nunion all\nSelect \ndatabase_name, Notification, table_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='cdr_voice_details_daily' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_voice_details_daily' ORDER BY id DESC LIMIT 1 )\nas data19\nwhere data19.Notification=0\n\nunion all\nSelect \ndatabase_name, Notification, table_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='cdr_voice_details_hourly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_voice_details_hourly' ORDER BY id DESC LIMIT 1 )\nas data20\nwhere data20.Notification=0\n\nunion all\nSelect \ndatabase_name, Notification, table_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='cdr_voice_details_monthly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_voice_details_monthly' ORDER BY id DESC LIMIT 1 )\nas data21\nwhere data21.Notification=0\n\nunion all\nSelect \ndatabase_name, Notification, table_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='cdr_voice_details_weekly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_voice_details_weekly' ORDER BY id DESC LIMIT 1 )\nas data22\nwhere data22.Notification=0\n\nunion all\nSelect \ndatabase_name, Notification, table_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < (YEAR(NOW())-IFNULL((select PARTITION_DESCRIPTION from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='cdr_voice_details_yearly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='cdr_voice_details_yearly' ORDER BY id DESC LIMIT 1 )\nas data23\nwhere data23.Notification=0\n\nunion all\nSelect \ndatabase_name, Notification, table_name, in_no_of_partitions  from\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='cdr_database' AND  TABLE_NAME='rule_engine_alert_history' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions FROM table_partition_policy WHERE table_name='rule_engine_alert_history' ORDER BY id DESC LIMIT 1 )\nas data24\nwhere data24.Notification=0;\n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        },
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "0zyzXo14z"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "hide": false,
+          "rawQuery": true,
+          "rawSql": "Select\n\tdatabase_name,\n    table_name as TableName,\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_cdr_data' AND TABLE_NAME='rule_engine_auditlog' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select CREATE_DATE from `$DB_stc_cdr_data`.`rule_engine_auditlog` \nORDER BY CREATE_DATE DESC LIMIT 1 ) as startTime \nFROM table_partition_policy WHERE table_name='rule_engine_auditlog' ORDER BY id DESC LIMIT 1 )\nas data1\nwhere data1.Notification=1 and data1.startTime IS Not Null\nand $__timeFilter(data1.startTime) \n\nunion all\nSelect\n\tdatabase_name,\n    table_name as TableName,\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_cdr_data' AND  TABLE_NAME='cdr_data_details_daily' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select startTime from `$DB_stc_cdr_data`.`cdr_data_details_daily` \nORDER BY startTime DESC LIMIT 1 ) as startTime\nFROM table_partition_policy WHERE table_name='cdr_data_details_daily' ORDER BY id DESC LIMIT 1 )\nas data8\nwhere data8.Notification=1 and data8.startTime IS Not Null\nand $__timeFilter(data8.startTime)\n\nunion all\nSelect\n\tdatabase_name,\n    table_name as TableName,\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_cdr_data' AND  TABLE_NAME='cdr_data_details_hourly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select startTime from `$DB_stc_cdr_data`.`cdr_data_details_hourly` \nORDER BY startTime DESC LIMIT 1 ) as startTime\nFROM table_partition_policy WHERE table_name='cdr_data_details_hourly' ORDER BY id DESC LIMIT 1 )\nas data9\nwhere data9.Notification=1 and data9.startTime IS Not Null and $__timeFilter(data9.startTime)\n\nunion all\nSelect\n\tdatabase_name,\n    table_name as TableName,\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_cdr_data' AND  TABLE_NAME='cdr_data_details_monthly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select startTime from `$DB_stc_cdr_data`.`cdr_data_details_monthly` \nORDER BY startTime DESC LIMIT 1 ) as startTime\nFROM table_partition_policy WHERE table_name='cdr_data_details_monthly' ORDER BY id DESC LIMIT 1 )\nas data10\nwhere data10.Notification=1 and data10.startTime IS Not Null and $__timeFilter(data10.startTime)\n\nunion all\nSelect\n\tdatabase_name,\n    table_name as TableName,\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_cdr_data' AND  TABLE_NAME='cdr_data_details_weekly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select startTime from `$DB_stc_cdr_data`.`cdr_data_details_weekly` \nORDER BY startTime DESC LIMIT 1 ) as startTime\n\nFROM table_partition_policy WHERE table_name='cdr_data_details_weekly' ORDER BY id DESC LIMIT 1 )\nas data11\nwhere data11.Notification=1 and data11.startTime IS Not Null and $__timeFilter(data11.startTime)\n\nunion all\nSelect\n\tdatabase_name,\n    table_name as TableName,\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < (YEAR(NOW())-IFNULL((select PARTITION_DESCRIPTION from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_cdr_data' AND  TABLE_NAME='cdr_data_details_yearly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select startTime from `$DB_stc_cdr_data`.`cdr_data_details_yearly` \nORDER BY startTime DESC LIMIT 1 ) as startTime\nFROM table_partition_policy WHERE table_name='cdr_data_details_yearly' ORDER BY id DESC LIMIT 1 )\nas data12\nwhere data12.Notification=1 and data12.startTime IS Not Null and $__timeFilter(data12.startTime)\n\nunion all\n-- Select\n-- \tUNIX_TIMESTAMP(startTime) as time,\n-- \tNotification, \n-- \ttable_name as TableName\n-- from\n-- (SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA=`$DB_stc_cdr_data` AND  TABLE_NAME='cdr_sms_details' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n-- ,(select FINAL_TIME from cdr_database.cdr_sms_details \n-- ORDER BY FINAL_TIME DESC LIMIT 1 ) as startTime\n\n-- FROM table_partition_policy WHERE table_name='cdr_sms_details' ORDER BY id DESC LIMIT 1 )\n-- as data13\n-- where data13.Notification=1 and data13.startTime IS Not Null and $__timeFilter(data13.startTime)\n\n-- union all\nSelect\n\tdatabase_name,\n    table_name as TableName,\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_cdr_data' AND  TABLE_NAME='cdr_sms_details_daily' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select FINAL_TIME from `$DB_stc_cdr_data`.`cdr_sms_details_daily` \nORDER BY FINAL_TIME DESC LIMIT 1 ) as startTime\nFROM table_partition_policy WHERE table_name='cdr_sms_details_daily' ORDER BY id DESC LIMIT 1 )\nas data14\nwhere data14.Notification=1 and data14.startTime IS Not Null and $__timeFilter(data14.startTime)\n\nunion all\nSelect\n\tdatabase_name,\n    table_name as TableName,\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_cdr_data' AND  TABLE_NAME='cdr_sms_details_hourly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select FINAL_TIME from `$DB_stc_cdr_data`.`cdr_sms_details_hourly` \nORDER BY FINAL_TIME DESC LIMIT 1 ) as startTime\nFROM table_partition_policy WHERE table_name='cdr_sms_details_hourly' ORDER BY id DESC LIMIT 1 )\nas data15\nwhere data15.Notification=1 and data15.startTime IS Not Null and $__timeFilter(data15.startTime)\n\nunion all\n\nSelect\n\tdatabase_name,\n    table_name as TableName,\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_cdr_data' AND  TABLE_NAME='cdr_sms_details_monthly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select FINAL_TIME from `$DB_stc_cdr_data`.`cdr_sms_details_monthly` \nORDER BY FINAL_TIME DESC LIMIT 1 ) as startTime\n\nFROM table_partition_policy WHERE table_name='cdr_sms_details_monthly' ORDER BY id DESC LIMIT 1 )\nas data16\nwhere data16.Notification=1 and data16.startTime IS Not Null and $__timeFilter(data16.startTime)\n\nunion all\nSelect\n\tdatabase_name,\n    table_name as TableName,\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_cdr_data' AND  TABLE_NAME='cdr_sms_details_weekly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select FINAL_TIME from `$DB_stc_cdr_data`.`cdr_sms_details_weekly` \nORDER BY FINAL_TIME DESC LIMIT 1 ) as startTime\n\nFROM table_partition_policy WHERE table_name='cdr_sms_details_weekly' ORDER BY id DESC LIMIT 1 )\nas data17\nwhere data17.Notification=1 and data17.startTime IS Not Null and $__timeFilter(data17.startTime)\n\nunion all\nSelect\n\tdatabase_name,\n    table_name as TableName,\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < (YEAR(NOW())-IFNULL((select PARTITION_DESCRIPTION from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_cdr_data' AND  TABLE_NAME='cdr_sms_details_yearly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select FINAL_TIME from `$DB_stc_cdr_data`.`cdr_sms_details_yearly` \nORDER BY FINAL_TIME DESC LIMIT 1 ) as startTime\n\nFROM table_partition_policy WHERE table_name='cdr_sms_details_yearly' ORDER BY id DESC LIMIT 1 )\nas data18\nwhere data18.Notification=1 and data18.startTime IS Not Null and $__timeFilter(data18.startTime)\n\nunion all\nSelect\n\tdatabase_name,\n    table_name as TableName,\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_cdr_data' AND  TABLE_NAME='cdr_voice_details_daily' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_daily`\nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime\nFROM table_partition_policy WHERE table_name='cdr_voice_details_daily' ORDER BY id DESC LIMIT 1 )\nas data19\nwhere data19.Notification=1 and data19.startTime IS Not Null and $__timeFilter(data19.startTime)\n\nunion all\nSelect\n\tdatabase_name,\n    table_name as TableName,\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_cdr_data' AND  TABLE_NAME='cdr_voice_details_hourly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_hourly` \nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime\nFROM table_partition_policy WHERE table_name='cdr_voice_details_hourly' ORDER BY id DESC LIMIT 1 )\nas data20\nwhere data20.Notification=1 and data20.startTime IS Not Null and $__timeFilter(data20.startTime)\n\nunion all\nSelect\n\tdatabase_name,\n    table_name as TableName,\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_cdr_data' AND  TABLE_NAME='cdr_voice_details_monthly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_monthly`\nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime\nFROM table_partition_policy WHERE table_name='cdr_voice_details_monthly' ORDER BY id DESC LIMIT 1 )\nas data21\nwhere data21.Notification=1 and data21.startTime IS Not Null and $__timeFilter(data21.startTime)\n\nunion all\nSelect\n\tdatabase_name,\n    table_name as TableName,\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_cdr_data' AND  TABLE_NAME='cdr_voice_details_weekly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_weekly`\nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime\nFROM table_partition_policy WHERE table_name='cdr_voice_details_weekly' ORDER BY id DESC LIMIT 1 )\nas data22\nwhere data22.Notification=1 and data22.startTime IS Not Null and $__timeFilter(data22.startTime)\n\nunion all\nSelect\n\tdatabase_name,\n    table_name as TableName,\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < (YEAR(NOW())-IFNULL((select PARTITION_DESCRIPTION from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_cdr_data' AND  TABLE_NAME='cdr_voice_details_yearly' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select ANSWERING_TIME from `$DB_stc_cdr_data`.`cdr_voice_details_yearly` \nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime\n\nFROM table_partition_policy WHERE table_name='cdr_voice_details_yearly' ORDER BY id DESC LIMIT 1 )\nas data23\nwhere data23.Notification=1 and data23.startTime IS Not Null and $__timeFilter(data23.startTime)\n\nunion all\nSelect\n\tdatabase_name,\n    table_name as TableName,\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_cdr_data' AND  TABLE_NAME='rule_engine_alert_history' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select occurence_time from `$DB_stc_cdr_data`.`rule_engine_alert_history` \nORDER BY occurence_time DESC LIMIT 1 ) as startTime\n\nFROM table_partition_policy WHERE table_name='rule_engine_alert_history' ORDER BY id DESC LIMIT 1 )\nas data24\nwhere data24.Notification=1 and data24.startTime IS Not Null and $__timeFilter(data24.startTime)\n\nunion all\nSelect\n\tdatabase_name,\n    table_name as TableName,\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_dev' AND  TABLE_NAME='auditlog_end_points' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select CREATE_DATE from `$DB_stc_dev`.`auditlog_end_points` \nORDER BY CREATE_DATE DESC LIMIT 1 ) as startTime\n\nFROM table_partition_policy WHERE table_name='auditlog_end_points' ORDER BY id DESC LIMIT 1 )\nas data4\nwhere data4.Notification=1 and data4.startTime IS Not Null and $__timeFilter(data4.startTime)\n\nunion all\nSelect\n\tdatabase_name,\n    table_name as TableName,\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from   INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_dev' AND  TABLE_NAME='auditlog' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select CREATE_DATE from `$DB_stc_dev`.`auditlog` \nORDER BY CREATE_DATE DESC LIMIT 1 ) as startTime\nFROM table_partition_policy WHERE table_name='auditlog' ORDER BY id DESC LIMIT 1 )\nas data2\nwhere data2.Notification=1 and data2.startTime IS Not Null and $__timeFilter(data2.startTime)\n\nunion all\nSelect\n\tdatabase_name,\n    table_name as TableName,\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_dev' AND TABLE_NAME='auditlog_api_transaction' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select CREATE_DATE from `$DB_stc_dev`.`auditlog_api_transaction` \nORDER BY CREATE_DATE DESC LIMIT 1 ) as startTime\n\nFROM table_partition_policy WHERE table_name='auditlog_api_transaction' ORDER BY id DESC LIMIT 1 )\nas data3\nwhere data3.Notification=1 and data3.startTime IS Not Null and $__timeFilter(data3.startTime)\n\nunion all\nSelect\n\tdatabase_name,\n    table_name as TableName,\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE TABLE_SCHEMA='$DB_stc_dev' AND  TABLE_NAME='cdr_sms_details' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select FINAL_TIME from `$DB_stc_dev`.`cdr_sms_details` \nORDER BY FINAL_TIME DESC LIMIT 1 ) as startTime\n\nFROM table_partition_policy WHERE table_name='cdr_sms_details' ORDER BY id DESC LIMIT 1 )\nas data5\nwhere data5.Notification=1 and data5.startTime IS Not Null and $__timeFilter(data5.startTime)\n\nunion all\nSelect\n\tdatabase_name,\n    table_name as TableName,\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE TABLE_SCHEMA='$DB_stc_dev' AND  TABLE_NAME='cdr_details' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select startTime from `$DB_stc_dev`.`cdr_details`  \nORDER BY startTime DESC LIMIT 1 ) as startTime\nFROM table_partition_policy WHERE table_name='cdr_details' ORDER BY id DESC LIMIT 1 )\nas data6\nwhere data6.Notification=1 and data6.startTime IS Not Null and $__timeFilter(data6.startTime)\n\nunion all\nSelect\n\tdatabase_name,\n    table_name as TableName,\n\tUNIX_TIMESTAMP(startTime) as time,\n\tNotification, \n    in_no_of_partitions\nfrom\n(SELECT CASE WHEN in_no_of_partitions < DATEDIFF(NOW(),IFNULL((select FROM_DAYS(PARTITION_DESCRIPTION) from  INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA='$DB_stc_dev' AND TABLE_NAME='cdr_voice_details' ORDER BY FROM_DAYS(PARTITION_DESCRIPTION) DESC  LIMIT 1 ),NOW())) THEN  1 ELSE 0 END AS Notification,database_name,table_name,in_no_of_partitions \n,(select ANSWERING_TIME from `$DB_stc_dev`.`cdr_voice_details` \nORDER BY ANSWERING_TIME DESC LIMIT 1 ) as startTime\nFROM table_partition_policy WHERE table_name='cdr_voice_details' ORDER BY id DESC LIMIT 1 )\nas data7\nwhere data7.Notification=1 and data7.startTime IS Not Null and $__timeFilter(data7.startTime) ;\n",
+          "refId": "B",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Partitioning Threshold Not Reached Data",
+      "transparent": true,
+      "type": "table"
+    }
+  ],
+  "refresh": false,
+  "schemaVersion": 37,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "stc_dev",
+          "value": "stc_dev"
+        },
+        "hide": 2,
+        "includeAll": false,
+        "multi": false,
+        "name": "DB_stc_dev",
+        "options": [
+          {
+            "selected": true,
+            "text": "stc_dev",
+            "value": "stc_dev"
+          }
+        ],
+        "query": "stc_dev",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "stc_cdr_data",
+          "value": "stc_cdr_data"
+        },
+        "hide": 2,
+        "includeAll": false,
+        "multi": false,
+        "name": "DB_stc_cdr_data",
+        "options": [
+          {
+            "selected": true,
+            "text": "stc_cdr_data",
+            "value": "stc_cdr_data"
+          }
+        ],
+        "query": "stc_cdr_data",
+        "skipUrlSync": false,
+        "type": "custom"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-30d",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Partitioning Observing",
+  "uid": "I2_U2QJ4k",
+  "version": 15,
+  "weekStart": ""
+}

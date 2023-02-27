@@ -1,0 +1,386 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 29,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "LD3CKNT4k"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto",
+            "filterable": false,
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "dark-red",
+                "value": null
+              },
+              {
+                "color": "dark-green",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Is Successful"
+            },
+            "properties": [
+              {
+                "id": "custom.displayMode",
+                "value": "color-background"
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "0": {
+                        "text": "Failure"
+                      },
+                      "1": {
+                        "text": "Success"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Request CorrelatorId"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 288
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Transanction ID"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 216
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "RequestCorrelatorId"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 269
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "ResponseCorrelatorId"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 263
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "TransanctionID"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 223
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "TransactionID"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 233
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 21,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "footer": {
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "9.3.6",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "LD3CKNT4k"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "group": [],
+          "hide": true,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT distinct(tracking_message_header) as \"Transanction ID\",\napi.name as \"API\", api.alias as \"API Alias\",audit_log.is_successful as \"Is Successful\",\n\nif(value like \"%responseDescription%\",\n substring_index(substring_index(value,'RequestBody:',-1),\",\",1),\n substring_index(substring_index(value,'correlatorId:',-1),\",\",1))  as RequestCorrelatorId,  \nSUBSTRING(if(value like \"%responseDescription%\",\n substring_index(substring_index(value,'Response Message: ',-2),\",\",1),\n substring_index(substring_index(value,'correlatorId:',-2),\",\",1)),1, LENGTH(if(value like \"%responseDescription%\",\n substring_index(substring_index(value,'Response Message: ',-2),\",\",1),\n substring_index(substring_index(value,'correlatorId:',-2),\",\",1)))-4) as \"Response CorrelatorId\",\n\n\naudit_log.message as \"Message\",\naudit_log.value as \"Value\",\n\nfrom_unixtime(log_time) as \"Timestamp\"\n\nFROM audit_log\nleft join api\non api.id = api_id\nwhere $__unixEpochFilter(log_time) and\n\nvalue like '%correlatorId:%'  and api.name Is NOT NULL ;",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "ID"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "table": "account_bss_mappings",
+          "timeColumn": "CREATE_DATE",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        },
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "LD3CKNT4k"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT * FROM\n(SELECT DISTINCT(tracking_message_header) as \"TransactionID\",\napi.name as \"API\", api.alias as \"API Alias\", audit_log.is_successful as \"Is Successful\",\n\nIF(value LIKE \"%responseDescription%\",\nSUBSTRING_INDEX(SUBSTRING_INDEX(value,'RequestBody:',-1),\",\",1),\nSUBSTRING_INDEX(SUBSTRING_INDEX(value,'correlatorId:',-1),\",\",1))  as \"RequestCorrelatorId\",  \nSUBSTRING(IF(value LIKE \"%responseDescription%\",\nSUBSTRING_INDEX(SUBSTRING_INDEX(value,'Response Message: ',-2),\",\",1),\nSUBSTRING_INDEX(SUBSTRING_INDEX(value,'correlatorId:',-2),\",\",1)),1, LENGTH(IF(value LIKE \"%responseDescription%\",\nSUBSTRING_INDEX(SUBSTRING_INDEX(value,'Response Message: ',-2),\",\",1),\nSUBSTRING_INDEX(SUBSTRING_INDEX(value,'correlatorId:',-2),\",\",1)))-4) as \"ResponseCorrelatorId\",\n\naudit_log.message as \"Message\",\naudit_log.value as \"Value\",\nFROM_UNIXTIME(log_time) as \"Timestamp\"\n\nFROM audit_log\nLEFT JOIN api\nON api.id = api_id\nWHERE $__unixEpochFilter(log_time) AND\nvalue LIKE '%correlatorId:%' AND api.name IS NOT NULL\n) a\nWHERE '$Value' != '' AND\n(\n  ('$filter' = 'RequestCorrelatorId' AND a.RequestCorrelatorId LIKE \"%$Value%\") OR\n  ('$filter' = 'ResponseCorrelatorId' AND a.ResponseCorrelatorId LIKE \"%$Value%\") OR\n  ('$filter' = 'TransactionId' AND a.TransactionId LIKE \"%$Value%\")\n);\n\n",
+          "refId": "B",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "CorrelatorRequest",
+      "type": "table"
+    }
+  ],
+  "schemaVersion": 37,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": true,
+          "text": "RequestCorrelatorId",
+          "value": "RequestCorrelatorId"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "filter",
+        "options": [
+          {
+            "selected": true,
+            "text": "RequestCorrelatorId",
+            "value": "RequestCorrelatorId"
+          },
+          {
+            "selected": false,
+            "text": "ResponseCorrelatorId",
+            "value": "ResponseCorrelatorId"
+          },
+          {
+            "selected": false,
+            "text": "TransactionID",
+            "value": "TransactionID"
+          }
+        ],
+        "query": "RequestCorrelatorId,ResponseCorrelatorId,TransactionID",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "PA000033742022031702084584877",
+          "value": "PA000033742022031702084584877"
+        },
+        "hide": 0,
+        "label": "Value",
+        "name": "Value",
+        "options": [
+          {
+            "selected": true,
+            "text": "PA000033742022031702084584877",
+            "value": "PA000033742022031702084584877"
+          }
+        ],
+        "query": "PA000033742022031702084584877",
+        "skipUrlSync": false,
+        "type": "textbox"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "",
+          "value": ""
+        },
+        "datasource": {
+          "type": "mysql",
+          "uid": "LD3CKNT4k"
+        },
+        "definition": "Select  if('$Filter' =  'Off',\"Failure\",\"\")",
+        "hide": 2,
+        "includeAll": false,
+        "label": "State",
+        "multi": false,
+        "name": "State",
+        "options": [],
+        "query": "Select  if('$Filter' =  'Off',\"Failure\",\"\")",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }
+    ]
+  },
+  "time": {
+    "from": "now-1y",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "RequestCorrelatorID-Dashboard",
+  "uid": "lB9Dnsanznm",
+  "version": 3,
+  "weekStart": ""
+}

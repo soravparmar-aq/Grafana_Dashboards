@@ -1,0 +1,598 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": 2,
+  "iteration": 1675962623842,
+  "links": [],
+  "panels": [
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "left",
+            "filterable": true
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "USERNAME"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 113
+              },
+              {
+                "id": "displayName",
+                "value": "Username"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "CREATE_DATE"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 163
+              },
+              {
+                "id": "displayName",
+                "value": "Create Date"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "REQUEST_ID"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 206
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "API_ERROR_CODE"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 150
+              },
+              {
+                "id": "displayName",
+                "value": "API Error Code"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "REQUEST_API"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 350
+              },
+              {
+                "id": "displayName",
+                "value": "Request API"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "REQUEST_ID"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Request ID"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "MESSAGE"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Message"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "INTERNAL_FAILIURE_REASON"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Internal Failure Reason"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "API Error Code"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 170
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Request API"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 174
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Internal Failure Reason"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 176
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Request ID"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 176
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Message"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 190
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "7.4.2",
+      "repeat": "API",
+      "repeatDirection": "v",
+      "scopedVars": {
+        "API": {
+          "selected": true,
+          "text": "Ping",
+          "value": "Ping"
+        }
+      },
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT  CREATE_DATE, USERNAME, REQUEST_ID, REQUEST_API, MESSAGE, API_ERROR_CODE,  INTERNAL_FAILIURE_REASON\nfrom auditlog_api_transaction\n where  $__timeFilter(CREATE_DATE)\n and API_NAME in ($API)\n and result='failed'\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "ID"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "account_bss_mappings",
+          "timeColumn": "CREATE_DATE",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "$API Error Detail",
+      "type": "table"
+    }
+  ],
+  "refresh": false,
+  "schemaVersion": 27,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": [
+            "Ping"
+          ],
+          "value": [
+            "Ping"
+          ]
+        },
+        "datasource": null,
+        "definition": "SELECT distinct API_NAME FROM iotsmp_staging.auditlog_api_transaction",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": true,
+        "name": "API",
+        "options": [
+          {
+            "selected": false,
+            "text": "",
+            "value": ""
+          },
+          {
+            "selected": false,
+            "text": "GcApi Auth",
+            "value": "GcApi Auth"
+          },
+          {
+            "selected": false,
+            "text": "GetAllSims",
+            "value": "GetAllSims"
+          },
+          {
+            "selected": false,
+            "text": "UnitConsumeSim",
+            "value": "UnitConsumeSim"
+          },
+          {
+            "selected": false,
+            "text": "ConsumedUsage",
+            "value": "ConsumedUsage"
+          },
+          {
+            "selected": false,
+            "text": "Update Device Settings",
+            "value": "Update Device Settings"
+          },
+          {
+            "selected": false,
+            "text": "Update Rating Profile",
+            "value": "Update Rating Profile"
+          },
+          {
+            "selected": false,
+            "text": "Get SIM State",
+            "value": "Get SIM State"
+          },
+          {
+            "selected": false,
+            "text": "Sim List",
+            "value": "Sim List"
+          },
+          {
+            "selected": false,
+            "text": "TagManagement",
+            "value": "TagManagement"
+          },
+          {
+            "selected": false,
+            "text": "Get Account by Id",
+            "value": "Get Account by Id"
+          },
+          {
+            "selected": false,
+            "text": "ChangeSimGroups",
+            "value": "ChangeSimGroups"
+          },
+          {
+            "selected": false,
+            "text": "QueryExitingSubscrition",
+            "value": "QueryExitingSubscrition"
+          },
+          {
+            "selected": false,
+            "text": "Send SMS",
+            "value": "Send SMS"
+          },
+          {
+            "selected": false,
+            "text": "DeleteBan",
+            "value": "DeleteBan"
+          },
+          {
+            "selected": false,
+            "text": "Switch Profile-GM",
+            "value": "Switch Profile-GM"
+          },
+          {
+            "selected": false,
+            "text": "SwitchProfile",
+            "value": "SwitchProfile"
+          },
+          {
+            "selected": false,
+            "text": "Get Device List",
+            "value": "Get Device List"
+          },
+          {
+            "selected": false,
+            "text": "Get Device - Daimler",
+            "value": "Get Device - Daimler"
+          },
+          {
+            "selected": false,
+            "text": "Get Data Usage",
+            "value": "Get Data Usage"
+          },
+          {
+            "selected": false,
+            "text": "Device Session Info",
+            "value": "Device Session Info"
+          },
+          {
+            "selected": false,
+            "text": "Device Session History",
+            "value": "Device Session History"
+          },
+          {
+            "selected": false,
+            "text": "Update IMEI",
+            "value": "Update IMEI"
+          },
+          {
+            "selected": false,
+            "text": "Sim Audit History",
+            "value": "Sim Audit History"
+          },
+          {
+            "selected": false,
+            "text": "Sim Rate Plan",
+            "value": "Sim Rate Plan"
+          },
+          {
+            "selected": false,
+            "text": "Get SIM",
+            "value": "Get SIM"
+          },
+          {
+            "selected": false,
+            "text": "Get Device State - Hongdian",
+            "value": "Get Device State - Hongdian"
+          },
+          {
+            "selected": false,
+            "text": "Change Device State",
+            "value": "Change Device State"
+          },
+          {
+            "selected": false,
+            "text": "Get Attached Data Plan by Device ID",
+            "value": "Get Attached Data Plan by Device ID"
+          },
+          {
+            "selected": false,
+            "text": "Get device data usage New",
+            "value": "Get device data usage New"
+          },
+          {
+            "selected": false,
+            "text": "Change Password for Api User",
+            "value": "Change Password for Api User"
+          },
+          {
+            "selected": false,
+            "text": "Set eUICC Profile State",
+            "value": "Set eUICC Profile State"
+          },
+          {
+            "selected": false,
+            "text": "Get eUICC Profile Status",
+            "value": "Get eUICC Profile Status"
+          },
+          {
+            "selected": false,
+            "text": "Update Sim Alias",
+            "value": "Update Sim Alias"
+          },
+          {
+            "selected": true,
+            "text": "Ping",
+            "value": "Ping"
+          },
+          {
+            "selected": false,
+            "text": "Update Vehicle Identification Number",
+            "value": "Update Vehicle Identification Number"
+          },
+          {
+            "selected": false,
+            "text": "Sim Activation Trend",
+            "value": "Sim Activation Trend"
+          },
+          {
+            "selected": false,
+            "text": "Attach Data Plan to Device\n",
+            "value": "Attach Data Plan to Device\n"
+          },
+          {
+            "selected": false,
+            "text": "GetAllSimsByOrderID",
+            "value": "GetAllSimsByOrderID"
+          },
+          {
+            "selected": false,
+            "text": "CreateSimsByOrderID",
+            "value": "CreateSimsByOrderID"
+          },
+          {
+            "selected": false,
+            "text": "external api update device",
+            "value": "external api update device"
+          },
+          {
+            "selected": false,
+            "text": "VoiceUsageSummary",
+            "value": "VoiceUsageSummary"
+          },
+          {
+            "selected": false,
+            "text": "UsageSummary",
+            "value": "UsageSummary"
+          },
+          {
+            "selected": false,
+            "text": "SMSUsageSummary",
+            "value": "SMSUsageSummary"
+          },
+          {
+            "selected": false,
+            "text": "GetDataPlans",
+            "value": "GetDataPlans"
+          },
+          {
+            "selected": false,
+            "text": "Sim data session count",
+            "value": "Sim data session count"
+          },
+          {
+            "selected": false,
+            "text": "Session wise data usage",
+            "value": "Session wise data usage"
+          },
+          {
+            "selected": false,
+            "text": "GetVoiceUsagesByAccount",
+            "value": "GetVoiceUsagesByAccount"
+          },
+          {
+            "selected": false,
+            "text": "GetSmsUsagesByAccount",
+            "value": "GetSmsUsagesByAccount"
+          },
+          {
+            "selected": false,
+            "text": "GetVoiceUsagesSummary",
+            "value": "GetVoiceUsagesSummary"
+          },
+          {
+            "selected": false,
+            "text": "GetSmsUsagesSummary",
+            "value": "GetSmsUsagesSummary"
+          },
+          {
+            "selected": false,
+            "text": "GetDeviceByMsisdn",
+            "value": "GetDeviceByMsisdn"
+          },
+          {
+            "selected": false,
+            "text": "Sim Uplink usage",
+            "value": "Sim Uplink usage"
+          },
+          {
+            "selected": false,
+            "text": "Sim Downlink usage",
+            "value": "Sim Downlink usage"
+          }
+        ],
+        "query": "SELECT distinct API_NAME FROM iotsmp_staging.auditlog_api_transaction",
+        "refresh": 0,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }
+    ]
+  },
+  "time": {
+    "from": "2022-03-01T08:30:00.000Z",
+    "to": "2022-03-31T18:30:00.000Z"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "GC External API Error Details",
+  "uid": "eaP_e3hnz",
+  "version": 17
+}

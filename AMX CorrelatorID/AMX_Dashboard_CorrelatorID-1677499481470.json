@@ -1,0 +1,595 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 28,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "LD3CKNT4k"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "dark-green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 4,
+      "options": {
+        "displayMode": "gradient",
+        "minVizHeight": 10,
+        "minVizWidth": 0,
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [],
+          "fields": "",
+          "limit": 25,
+          "values": true
+        },
+        "showUnfilled": false,
+        "text": {}
+      },
+      "pluginVersion": "9.3.6",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "LD3CKNT4k"
+          },
+          "format": "table",
+          "group": [
+            {
+              "params": [
+                "$__interval",
+                "none"
+              ],
+              "type": "time"
+            }
+          ],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT  count(is_successful) as counts, api.name as API\nFROM goup_cmpamx_interface_testing_db.audit_log \nleft join api on api.id = audit_log.api_id\nwhere   $__unixEpochFilter(log_time) and\nis_successful=1 and api.name Is NOT NULL\ngroup by API\norder by counts desc;",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "api_group_id"
+                ],
+                "type": "column"
+              },
+              {
+                "params": [
+                  "count"
+                ],
+                "type": "aggregate"
+              },
+              {
+                "params": [
+                  "is_successful"
+                ],
+                "type": "alias"
+              }
+            ]
+          ],
+          "table": "audit_log",
+          "timeColumn": "log_time",
+          "timeColumnType": "int",
+          "where": [
+            {
+              "name": "$__unixEpochFilter",
+              "params": [],
+              "type": "macro"
+            },
+            {
+              "datatype": "tinyint",
+              "name": "",
+              "params": [
+                "is_successful",
+                "=",
+                "value"
+              ],
+              "type": "expression"
+            },
+            {
+              "name": "",
+              "params": [
+                "value",
+                "=",
+                "value"
+              ],
+              "type": "expression"
+            }
+          ]
+        }
+      ],
+      "title": "Success",
+      "transformations": [],
+      "transparent": true,
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "LD3CKNT4k"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "dark-red",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 5,
+      "options": {
+        "displayMode": "gradient",
+        "minVizHeight": 10,
+        "minVizWidth": 0,
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [],
+          "fields": "",
+          "limit": 25,
+          "values": true
+        },
+        "showUnfilled": false,
+        "text": {}
+      },
+      "pluginVersion": "9.3.6",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "LD3CKNT4k"
+          },
+          "format": "table",
+          "group": [
+            {
+              "params": [
+                "$__interval",
+                "none"
+              ],
+              "type": "time"
+            }
+          ],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT  count(is_successful) as counts, api.name as API\nFROM goup_cmpamx_interface_testing_db.audit_log \nleft join api on api.id = audit_log.api_id\nwhere   $__unixEpochFilter(log_time) and\nis_successful=0 and api.name Is NOT NULL\ngroup by API\norder by counts desc;",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "api_group_id"
+                ],
+                "type": "column"
+              },
+              {
+                "params": [
+                  "count"
+                ],
+                "type": "aggregate"
+              },
+              {
+                "params": [
+                  "is_successful"
+                ],
+                "type": "alias"
+              }
+            ]
+          ],
+          "table": "audit_log",
+          "timeColumn": "log_time",
+          "timeColumnType": "int",
+          "where": [
+            {
+              "name": "$__unixEpochFilter",
+              "params": [],
+              "type": "macro"
+            },
+            {
+              "datatype": "tinyint",
+              "name": "",
+              "params": [
+                "is_successful",
+                "=",
+                "value"
+              ],
+              "type": "expression"
+            },
+            {
+              "name": "",
+              "params": [
+                "value",
+                "=",
+                "value"
+              ],
+              "type": "expression"
+            }
+          ]
+        }
+      ],
+      "title": "Failure",
+      "transformations": [],
+      "transparent": true,
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "LD3CKNT4k"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto",
+            "filterable": false,
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Request CorrelatorId"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 270
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Response CorrelatorId"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 274
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "is_successful"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 103
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Transanction ID"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 193
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Message"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 306
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Is Successful"
+            },
+            "properties": [
+              {
+                "id": "custom.displayMode",
+                "value": "color-background"
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "0": {
+                        "text": "Fail"
+                      },
+                      "1": {
+                        "text": "Success"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "dark-red",
+                      "value": null
+                    },
+                    {
+                      "color": "dark-green",
+                      "value": 1
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "API Alias"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 163
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "RequestCorrelatorId"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 258
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "ResponseCorrelatorId"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 267
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "RequestCorrelatorId"
+            },
+            "properties": [
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "",
+                    "url": "http://localhost:3000/d/lB9Dnsanznm/amx-correlatorid-request?orgId=1&var-Filter=On&var-Value=${__data.fields[\"RequestCorrelatorId\"]}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "TransanctionID"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 260
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 17,
+        "w": 24,
+        "x": 0,
+        "y": 8
+      },
+      "id": 2,
+      "options": {
+        "footer": {
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": false,
+            "displayName": "RequestCorrelatorId"
+          }
+        ]
+      },
+      "pluginVersion": "9.3.6",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "LD3CKNT4k"
+          },
+          "format": "table",
+          "group": [],
+          "hide": true,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT distinct(tracking_message_header) as \"Transanction ID\",\napi.name as \"API\", api.alias as \"API Alias\",audit_log.is_successful as \"Is Successful\",\n\nif(value like \"%responseDescription%\",\n substring_index(substring_index(value,'RequestBody:',-1),\",\",1),\n substring_index(substring_index(value,'correlatorId:',-1),\",\",1))  as \"Request CorrelatorId\",  \nif(value like \"%responseDescription%\",\n substring_index(substring_index(value,'Response Message: ',-2),\",\",1),\n substring_index(substring_index(value,'correlatorId:',-2),\",\",1))  as \"Response CorrelatorId\",\n\naudit_log.message as \"Message\",\naudit_log.value as \"Value\",\n\nfrom_unixtime(log_time) as \"Timestamp\"\n\nFROM audit_log\nleft join api\non api.id = api_id\nwhere \nvalue like '%correlatorId:%';\n\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "ID"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "account_bss_mappings",
+          "timeColumn": "CREATE_DATE",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        },
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "LD3CKNT4k"
+          },
+          "format": "table",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT distinct(tracking_message_header) as \"TransanctionID\",\napi.name as \"API\", api.alias as \"API Alias\",audit_log.is_successful as \"Is Successful\",\n\nif(value like \"%responseDescription%\",\n substring_index(substring_index(value,'RequestBody:',-1),\",\",1),\n substring_index(substring_index(value,'correlatorId:',-1),\",\",1))  as \"RequestCorrelatorId\",  \nSUBSTRING(if(value like \"%responseDescription%\",\n substring_index(substring_index(value,'Response Message: ',-2),\",\",1),\n substring_index(substring_index(value,'correlatorId:',-2),\",\",1)),1, LENGTH(if(value like \"%responseDescription%\",\n substring_index(substring_index(value,'Response Message: ',-2),\",\",1),\n substring_index(substring_index(value,'correlatorId:',-2),\",\",1)))-4) as \"ResponseCorrelatorId\",\n\n\naudit_log.message as \"Message\",\naudit_log.value as \"Value\",\n\nfrom_unixtime(log_time) as \"Timestamp\"\n\nFROM audit_log\nleft join api\non api.id = api_id\nwhere $__unixEpochFilter(log_time) and\nvalue like '%correlatorId:%'  and api.name Is NOT NULL\n;",
+          "refId": "B",
+          "select": [
+            [
+              {
+                "params": [
+                  "ID"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "account_bss_mappings",
+          "timeColumn": "CREATE_DATE",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Correlator",
+      "transparent": true,
+      "type": "table"
+    }
+  ],
+  "refresh": false,
+  "schemaVersion": 37,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-1y",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "AMX_Dashboard_CorrelatorID",
+  "uid": "AbiuVSo4k",
+  "version": 3,
+  "weekStart": ""
+}

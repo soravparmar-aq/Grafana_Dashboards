@@ -1,0 +1,627 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": 14,
+  "iteration": 1675962606383,
+  "links": [],
+  "panels": [
+    {
+      "datasource": "MP_AMX_OL_DB",
+      "description": "Transanction ID",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": null,
+            "filterable": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Error Detail"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 326
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Transanction ID"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 190
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "",
+                    "url": "http://192.168.1.99:3000/d/lB9Dnsanz/amx_next_tab?orgId=1&var-Filter=On&var-Value=${__data.fields[\"Transanction ID\"]}&var-State=&var-Northbound=True&var-Southbound=False&var-Goup=False&var-BS_IMSI=&var-EID="
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "API"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 200
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "API Alias"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 200
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Timestamp"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 400
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Error MSISDN"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 185
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "frameIndex": 1,
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "7.4.2",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "hide": true,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n$API as \"API\",\n$API as \"API Alias\",\nif(value like \"%esponseDescription%\",\nsubstring_index(substring_index(replace(value,'\"',''),'esponseDescription:',-1),',',1),\nsubstring_index(substring_index(value,'Response Message:[',-1),'],RequestBody: ',1))  as \"Error Detail\",\nif(value like \"%responseDescription%\",\n substring_index(substring_index(value,',\"targetIMSI\":\"',-1),'\",',1),\n SUBSTRING_INDEX(SUBSTRING_INDEX(value, 'imsi:', -1), \",\", 1))  as \"Error IMSI\", \n \nif(value like \"%responseDescription%\",\n substring_index(substring_index(value,',\"targetMSISDN\":\"',-1),'\",',1),\n substring_index(substring_index(value,',msisdn:',-1),',',1))  as \"Error MSISDN\",  \n-- substring_index(substring_index(value,'Response Message:[',-1),'],RequestBody: ',1) as \"ERROR\",\ntracking_message_header as \"Transanction ID\",\nfrom_unixtime(log_time) as \"Timestamp\"\n-- audit_log.tracking_message_header,\n-- (select value  from audit_log_details where tracking_message_header= audit_log.tracking_message_header and name = 'correlatorId' limit 1) as \"Correlator Id\"\n-- count(audit_log_details.value) as \"Count\"\n-- if(audit_log_details.value like \"%resultMessage%\",substring_index(audit_log_details.value,': ',4),audit_log_details.value) as \"ERROR\",\n--  count(if(audit_log_details.value like \"%resultMessage%\",substring_index(audit_log_details.value,': ',4),audit_log_details.value)) as \"COUNT\"\n -- (select group_concat( distinct value SEPARATOR '\\n') from gmsa_claro_interface.audit_log_details where FIND_IN_SET(tracking_message_header,(group_concat(audit_log.tracking_message_header))) and name = 'imsi') as \"IMSI List\"\nFROM audit_log\nwhere  $__unixEpochFilter(log_time)\nand tracking_message_header in (select tracking_message_header from audit_log where parent_api_name \n = replace($API,\" \",\"\")\n and \n$__unixEpochFilter(log_time)) \n-- and audit_log.name like \"%End Node API%\"\nand (audit_log.is_successful= 0  )-- or audit_log_details.value not like '%200%' \n--  group by if(audit_log_details.value like \"%resultMessage%\",substring_index(audit_log_details.value,': ',4),audit_log_details.value)\n-- group by tracking_message_header",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "id"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "kafka_offset_manager",
+          "timeColumn": "processed_timestamp",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        },
+        {
+          "format": "table",
+          "group": [],
+          "hide": true,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n$API as \"API\",\n$API as \"API Alias\",\nif(value like \"%esponseDescription%\",\nsubstring_index(substring_index(replace(value,'\"',''),'esponseDescription:',-1),',',1),\nsubstring_index(substring_index(value,'Response Message:[',-1),'],RequestBody: ',1))  as \"Error Detail\",\nif(value like \"%responseDescription%\",\n substring_index(substring_index(value,',\"targetIMSI\":\"',-1),'\",',1),\n substring_index(substring_index(value,'imsi:',-1),',',1))  as \"Error IMSI\", \n \nif(value like \"%responseDescription%\",\n substring_index(substring_index(value,',\"targetMSISDN\":\"',-1),'\",',1),\n substring_index(substring_index(value,',msisdn:',-1),',',1))  as \"Error MSISDN\",  \n\ntracking_message_header as \"Transanction ID\",\nfrom_unixtime(log_time) as \"Timestamp\"\n\nFROM audit_log\nwhere  $__unixEpochFilter(log_time)\nand tracking_message_header in (select tracking_message_header from audit_log where  $__unixEpochFilter(log_time)) \nand audit_log.name like \"%End Node API%\" and value like '%imsi:%' and  value like '%msisdn:%'\nand (audit_log.is_successful = 0  )\n\ngroup by tracking_message_header",
+          "refId": "B",
+          "select": [
+            [
+              {
+                "params": [
+                  "id"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "kafka_offset_manager",
+          "timeColumn": "processed_timestamp",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        },
+        {
+          "format": "table",
+          "group": [],
+          "hide": true,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\r\n$API as \"API\",\r\n$API as \"API Alias\",\r\n\r\n\r\ntracking_message_header as \"Transanction ID\"\r\nFROM audit_log\r\nwhere  $__unixEpochFilter(log_time)\r\nand tracking_message_header in (select tracking_message_header from audit_log where  $__unixEpochFilter(log_time)) \r\nand audit_log.name like \"%End Node API%\"\r\nand (audit_log.is_successful = 0  )\r\ngroup by tracking_message_header\r\n",
+          "refId": "C",
+          "select": [
+            [
+              {
+                "params": [
+                  "id"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "kafka_offset_manager",
+          "timeColumn": "processed_timestamp",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        },
+        {
+          "format": "table",
+          "group": [],
+          "hide": true,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "CALL `sp_mnd_get_api_success_failure_type_details`(replace($API,\" \",\"\"),$__unixEpochFrom() ,$__unixEpochTo() )",
+          "refId": "D",
+          "select": [
+            [
+              {
+                "params": [
+                  "id"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "kafka_offset_manager",
+          "timeColumn": "processed_timestamp",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        },
+        {
+          "format": "table",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n$API as \"API\",\n$API as \"API Alias\",\nif(value like \"%esponseDescription%\",\nsubstring_index(substring_index(replace(value,'\"',''),'esponseDescription:',-1),',',1),\nsubstring_index(substring_index(value,'Response Message:[',-1),'],RequestBody: ',1))  as \"Error Detail\",\nif(value like \"%responseDescription%\",\n substring_index(substring_index(value,',\"targetIMSI\":\"',-1),'\",',1),\n SUBSTRING_INDEX(SUBSTRING_INDEX(value, 'imsi:', -1), \",\", 1))  as \"Error IMSI\", \n \nif(value like \"%responseDescription%\",\n substring_index(substring_index(value,',\"targetMSISDN\":\"',-1),'\",',1),\n substring_index(substring_index(value,'msisdn:',-1),\",\",1))  as \"Error MSISDN\",  \n-- substring_index(substring_index(value,'Response Message:[',-1),'],RequestBody: ',1) as \"ERROR\",\ntracking_message_header as \"Transanction ID\",\nfrom_unixtime(log_time) as \"Timestamp\"\n-- audit_log.tracking_message_header,\n-- (select value  from audit_log_details where tracking_message_header= audit_log.tracking_message_header and name = 'correlatorId' limit 1) as \"Correlator Id\"\n-- count(audit_log_details.value) as \"Count\"\n-- if(audit_log_details.value like \"%resultMessage%\",substring_index(audit_log_details.value,': ',4),audit_log_details.value) as \"ERROR\",\n--  count(if(audit_log_details.value like \"%resultMessage%\",substring_index(audit_log_details.value,': ',4),audit_log_details.value)) as \"COUNT\"\n -- (select group_concat( distinct value SEPARATOR '\\n') from gmsa_claro_interface.audit_log_details where FIND_IN_SET(tracking_message_header,(group_concat(audit_log.tracking_message_header))) and name = 'imsi') as \"IMSI List\"\nFROM audit_log\nwhere  $__unixEpochFilter(log_time)\nand tracking_message_header in (select tracking_message_header from audit_log where parent_api_name \n = replace($API,\" \",\"\")\n and \n$__unixEpochFilter(log_time)) \n-- and audit_log.name like \"%End Node API%\"\nand (audit_log.is_successful= 0  and value like '%imsi:%' and  value like '%msisdn:%')-- or audit_log_details.value not like '%200%' \n--  group by if(audit_log_details.value like \"%resultMessage%\",substring_index(audit_log_details.value,': ',4),audit_log_details.value)\n-- group by tracking_message_header",
+          "refId": "E",
+          "select": [
+            [
+              {
+                "params": [
+                  "id"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "kafka_offset_manager",
+          "timeColumn": "processed_timestamp",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "$API Error Details",
+      "transparent": true,
+      "type": "table"
+    }
+  ],
+  "refresh": false,
+  "schemaVersion": 27,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "allValue": null,
+        "current": {
+          "selected": true,
+          "text": [
+            "Activate Sim"
+          ],
+          "value": [
+            "Activate Sim"
+          ]
+        },
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "API",
+        "options": [
+          {
+            "selected": false,
+            "text": "All",
+            "value": "$__all"
+          },
+          {
+            "selected": true,
+            "text": "Activate Sim",
+            "value": "Activate Sim"
+          },
+          {
+            "selected": false,
+            "text": "Suspend Sim",
+            "value": "Suspend Sim"
+          },
+          {
+            "selected": false,
+            "text": "Sim Session Info",
+            "value": "Sim Session Info"
+          },
+          {
+            "selected": false,
+            "text": "API Transaction-Cumulative",
+            "value": "API Transaction-Cumulative"
+          },
+          {
+            "selected": false,
+            "text": "Activate Data Plan",
+            "value": "Activate Data Plan"
+          },
+          {
+            "selected": false,
+            "text": "Activate External Shared Passes Batch API",
+            "value": "Activate External Shared Passes Batch API"
+          },
+          {
+            "selected": false,
+            "text": "Activate Sms Plan",
+            "value": "Activate Sms Plan"
+          },
+          {
+            "selected": false,
+            "text": "Activate Voice Plan",
+            "value": "Activate Voice Plan"
+          },
+          {
+            "selected": false,
+            "text": "Add APN",
+            "value": "Add APN"
+          },
+          {
+            "selected": false,
+            "text": "Add Device Plan",
+            "value": "Add Device Plan"
+          },
+          {
+            "selected": false,
+            "text": "Add Order",
+            "value": "Add Order"
+          },
+          {
+            "selected": false,
+            "text": "Add SMS Order",
+            "value": "Add SMS Order"
+          },
+          {
+            "selected": false,
+            "text": "Add Voice Order",
+            "value": "Add Voice Order"
+          },
+          {
+            "selected": false,
+            "text": "Attach Device Plan",
+            "value": "Attach Device Plan"
+          },
+          {
+            "selected": false,
+            "text": "Attach Service Plan",
+            "value": "Attach Service Plan"
+          },
+          {
+            "selected": false,
+            "text": "Cancel Order",
+            "value": "Cancel Order"
+          },
+          {
+            "selected": false,
+            "text": "Change Service Plan",
+            "value": "Change Service Plan"
+          },
+          {
+            "selected": false,
+            "text": "Check Order",
+            "value": "Check Order"
+          },
+          {
+            "selected": false,
+            "text": "Deactivate Data Plan",
+            "value": "Deactivate Data Plan"
+          },
+          {
+            "selected": false,
+            "text": "Deactivate Sim",
+            "value": "Deactivate Sim"
+          },
+          {
+            "selected": false,
+            "text": "Deactivate Sms Plan",
+            "value": "Deactivate Sms Plan"
+          },
+          {
+            "selected": false,
+            "text": "Deactivate Voice Plan",
+            "value": "Deactivate Voice Plan"
+          },
+          {
+            "selected": false,
+            "text": "Device FPMS Verification",
+            "value": "Device FPMS Verification"
+          },
+          {
+            "selected": false,
+            "text": "Device Fingerprint Verification",
+            "value": "Device Fingerprint Verification"
+          },
+          {
+            "selected": false,
+            "text": "Echo",
+            "value": "Echo"
+          },
+          {
+            "selected": false,
+            "text": "Get Available Offer",
+            "value": "Get Available Offer"
+          },
+          {
+            "selected": false,
+            "text": "Get Data Plans",
+            "value": "Get Data Plans"
+          },
+          {
+            "selected": false,
+            "text": "Get Data Usage",
+            "value": "Get Data Usage"
+          },
+          {
+            "selected": false,
+            "text": "Get Expired user Purchases Batch API",
+            "value": "Get Expired user Purchases Batch API"
+          },
+          {
+            "selected": false,
+            "text": "Get External Extra Passes Batch SMS",
+            "value": "Get External Extra Passes Batch SMS"
+          },
+          {
+            "selected": false,
+            "text": "Get Rate Plans",
+            "value": "Get Rate Plans"
+          },
+          {
+            "selected": false,
+            "text": "Get Service Coverage List",
+            "value": "Get Service Coverage List"
+          },
+          {
+            "selected": false,
+            "text": "Get Service Plan List",
+            "value": "Get Service Plan List"
+          },
+          {
+            "selected": false,
+            "text": "Get Sim Details",
+            "value": "Get Sim Details"
+          },
+          {
+            "selected": false,
+            "text": "Get Sim Order Details",
+            "value": "Get Sim Order Details"
+          },
+          {
+            "selected": false,
+            "text": "Get Sim Usage",
+            "value": "Get Sim Usage"
+          },
+          {
+            "selected": false,
+            "text": "Get Sms Usage",
+            "value": "Get Sms Usage"
+          },
+          {
+            "selected": false,
+            "text": "Get Voice Usage",
+            "value": "Get Voice Usage"
+          },
+          {
+            "selected": false,
+            "text": "Insert Service Plan",
+            "value": "Insert Service Plan"
+          },
+          {
+            "selected": false,
+            "text": "Reactivate Sim",
+            "value": "Reactivate Sim"
+          },
+          {
+            "selected": false,
+            "text": "Register Enterprise Account",
+            "value": "Register Enterprise Account"
+          },
+          {
+            "selected": false,
+            "text": "Remove APN",
+            "value": "Remove APN"
+          },
+          {
+            "selected": false,
+            "text": "Remove Enterprise Account",
+            "value": "Remove Enterprise Account"
+          },
+          {
+            "selected": false,
+            "text": "Retrieve Order",
+            "value": "Retrieve Order"
+          },
+          {
+            "selected": false,
+            "text": "Retrieve Purchases",
+            "value": "Retrieve Purchases"
+          },
+          {
+            "selected": false,
+            "text": "Terminate Sim",
+            "value": "Terminate Sim"
+          },
+          {
+            "selected": false,
+            "text": "Update Data Plan",
+            "value": "Update Data Plan"
+          },
+          {
+            "selected": false,
+            "text": "Update Enterprise Account",
+            "value": "Update Enterprise Account"
+          },
+          {
+            "selected": false,
+            "text": "Update External Shared Passes Batch API",
+            "value": "Update External Shared Passes Batch API"
+          },
+          {
+            "selected": false,
+            "text": "Update Order Status",
+            "value": "Update Order Status"
+          },
+          {
+            "selected": false,
+            "text": "Update Sms Plan",
+            "value": "Update Sms Plan"
+          },
+          {
+            "selected": false,
+            "text": "Update User",
+            "value": "Update User"
+          },
+          {
+            "selected": false,
+            "text": "Update Voice Plan",
+            "value": "Update Voice Plan"
+          },
+          {
+            "selected": false,
+            "text": "User Registration",
+            "value": "User Registration"
+          },
+          {
+            "selected": false,
+            "text": "User Removal",
+            "value": "User Removal"
+          },
+          {
+            "selected": false,
+            "text": "User Retrieval",
+            "value": "User Retrieval"
+          },
+          {
+            "selected": false,
+            "text": "User Sim Swap",
+            "value": "User Sim Swap"
+          }
+        ],
+        "query": "Activate Sim, Suspend Sim,Sim Session Info,API Transaction-Cumulative,Activate Data Plan,Activate External Shared Passes Batch API,Activate Sms Plan,\nActivate Voice Plan,Add APN,Add Device Plan,Add Order,Add SMS Order,Add Voice Order,Attach Device Plan,Attach Service Plan,Cancel Order,Change Service Plan,Check Order,Deactivate Data Plan,Deactivate Sim,Deactivate Sms Plan,Deactivate Voice Plan,Device FPMS Verification,Device Fingerprint Verification,Echo,\nGet Available Offer,Get Data Plans,Get Data Usage,Get Expired user Purchases Batch API,Get External Extra Passes Batch SMS,Get Rate Plans,Get Service Coverage List,\nGet Service Plan List,Get Sim Details,Get Sim Order Details,Get Sim Usage,Get Sms Usage,Get Voice Usage,Insert Service Plan,Reactivate Sim,\nRegister Enterprise Account,Remove APN,Remove Enterprise Account,Retrieve Order,Retrieve Purchases,\nTerminate Sim,Update Data Plan,Update Enterprise Account,Update External Shared Passes Batch API,Update Order Status,\nUpdate Sms Plan,Update User,Update Voice Plan,User Registration,User Removal,User Retrieval,User Sim Swap\n",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      }
+    ]
+  },
+  "time": {
+    "from": "2022-03-01T08:30:00.000Z",
+    "to": "2022-12-31T18:30:00.000Z"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "AMX1.0",
+  "uid": "8tPROWynz",
+  "version": 12
+}
